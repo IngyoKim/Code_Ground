@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao;
@@ -17,14 +19,21 @@ class LoginPageModel extends ChangeNotifier {
     isLogined = await _socialLogin.login();
     if (isLogined) {
       user = await kakao.UserApi.instance.me();
-      final token = await _firebaseAuthData.createCustomToken({
+      final response = await _firebaseAuthData.createCustomToken({
         'uid': user!.id.toString(),
         'displayName': user!.kakaoAccount?.profile?.nickname,
         'email': user!.kakaoAccount?.email,
         'photoURL': user!.kakaoAccount?.profile?.profileImageUrl!,
       });
-      debugPrint("Received Custom Token: $token"); // 받은 토큰을 출력
-      await FirebaseAuth.instance.signInWithCustomToken(token);
+
+      // JSON 디코딩 후 `token` 필드 값만 추출
+      final tokenData = jsonDecode(response);
+      final customToken = tokenData['token'];
+
+      debugPrint("Received Custom Token: $customToken");
+
+      // 추출된 `customToken` 값을 사용하여 로그인
+      await FirebaseAuth.instance.signInWithCustomToken(customToken);
     }
   }
 
