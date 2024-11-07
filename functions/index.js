@@ -1,6 +1,29 @@
+/**
+ * Import function triggers from their respective submodules:
+ *
+ * const {onCall} = require("firebase-functions/v2/https");
+ * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
+ *
+ * See a full list of supported triggers at https://firebase.google.com/docs/functions
+ */
+// Create and deploy your first functions
+// https://firebase.google.com/docs/functions/get-started
+//
+
+/**
+ * Import function triggers from their respective submodules:
+ *
+ * const {onCall} = require("firebase-functions/v2/https");
+ * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
+ *
+ * See a full list of supported triggers at https://firebase.google.com/docs/functions
+ */
+
+// Create and deploy your first functions
+// https://firebase.google.com/docs/functions/get-started
+
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const express = require("express");
 
 var serviceAccount = require("./serviceAccountKey.json");
 
@@ -8,32 +31,34 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
-// Express 앱 생성
-const app = express();
-
-app.use(express.json()); // JSON 파싱 미들웨어
-
-app.post("/createCustomToken", async (request, response) => {
+exports.createCustomToken = functions.https.onRequest(async (request, response) => {
     const user = request.body;
 
-    const uid = `kakao: ${user.uid}`;
-    const updateParams = {
-        email: user.email,
-        photoURL: user.photoURL,
-        displayName: user.displayName,
-    };
+    const uid = `kakao_${user.uid}`; // UID 형식 준수
+
+    // 필수로 받을 정보만 남기고, 선택 사항은 조건부로 포함
+    const updateParams = {};
+    if (user.email) updateParams.email = user.email;
+    if (user.photoURL) updateParams.photoURL = user.photoURL;
+    if (user.displayName) updateParams.displayName = user.displayName;
 
     try {
-        await admin.auth().updateUser(uid, updateParams);
+        // 사용자 업데이트 또는 생성
+        try {
+            await admin.auth().updateUser(uid, updateParams);
+            console.log("User updated:", uid);
+        } catch (error) {
+            // 사용자가 없으면 새로 생성
+            updateParams["uid"] = uid;
+            await admin.auth().createUser(updateParams);
+            console.log("User created:", uid);
+        }
+
+        // 커스텀 토큰 생성
+        const token = await admin.auth().createCustomToken(uid);
+        response.json({ token });
     } catch (error) {
-        updateParams["uid"] = uid;
-        await admin.auth().createUser(updateParams);
+        console.error("Error creating custom token:", error);
+        response.status(500).json({ error: "Error creating custom token" });
     }
-
-    const token = await admin.auth().createCustomToken(uid);
-
-    response.send(token);
 });
-
-// Firebase 함수로 Express 앱을 내보내기
-exports.createCustomToken = functions.https.onRequest(app);

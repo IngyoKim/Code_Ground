@@ -23,7 +23,7 @@ class LoginPageModel extends ChangeNotifier {
         'email': user!.kakaoAccount?.email,
         'photoURL': user!.kakaoAccount?.profile?.profileImageUrl!,
       });
-
+      debugPrint("Received Custom Token: $token"); // 받은 토큰을 출력
       await FirebaseAuth.instance.signInWithCustomToken(token);
     }
   }
