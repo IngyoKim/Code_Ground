@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "278986162898",
+    "project_id": "oss-code-ground",
+    "storage_bucket": "oss-code-ground.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278986162898:android:829378f3d8488e40f7a30b",
+        "android_client_info": {
+          "package_name": "com.oss.code_ground"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUFXtHOp0H3-aEkG7AILjlmZiWf-RVvic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

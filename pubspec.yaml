@@ -1,4 +1,4 @@
-name: code_ground
+name: oss_qbank
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -30,11 +30,25 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  kakao_flutter_sdk: ^1.9.5 # 전체 추가
+  kakao_flutter_sdk_user: ^1.9.5 # 카카오 로그인 API 패키지
+  kakao_flutter_sdk_share: ^1.9.5 # 카카오톡 공유 API 패키지
+  kakao_flutter_sdk_talk: ^1.9.5 # 카카오톡 채널, 카카오톡 소셜, 카카오톡 메시지 API 패키지
+  kakao_flutter_sdk_friend: ^1.9.5 # 피커 API 패키지
+  kakao_flutter_sdk_navi: ^1.9.5 # 카카오내비 API 패키지
 
+  cloud_firestore: ^5.4.4 # 파이어베이스 추가
+  firebase_core: ^3.6.0 #파이어베이스 작업 관련 기능
+  firebase_auth: ^5.3.1 # 파이어베이스 로그인 관련 기능
+
+  http: ^1.2.2 # http 통신 기능 추가
+  provider: ^6.0.0  # 프로바이더 추가
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+  fluttertoast: ^8.0.9 # 토스트 위젯 추가
+  cupertino_icons: ^1.0.8 # IOS 모양 위젯 추가
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:
@@ -52,8 +66,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-  # The following line ensures that the Material Icons font is
+  assets:
+    - assets/images/
+   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
