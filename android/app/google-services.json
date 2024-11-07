@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "572913622341",
+    "project_id": "vscodeapp-92d15",
+    "storage_bucket": "vscodeapp-92d15.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572913622341:android:9bd9a0c903f34c5dfa722c",
+        "android_client_info": {
+          "package_name": "com.example.vscode_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu2wDPPirf9vXg-Z2a1olZKufGTCDHe5M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
