@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import 'main_page.dart';
 
 class BasePage extends StatefulWidget {
   const BasePage({super.key});
@@ -17,14 +20,10 @@ class _BasePageState extends State<BasePage> {
                 if (!snapshot.hasData) {
                   return ElevatedButton(
                     onPressed: () async {
-                      await loginViewModel.login();
-                      if (loginViewModel.isLogined) {
-                        // 로그인 성공 시 MainView로 이동
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                              builder: (context) => const MainView()),
-                        );
-                      }
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                            builder: (context) => const MainPage()),
+                      );
                     },
                     child: Image.asset(
                         'assets/images/kakao_login_medium_narrow.png'),
@@ -35,11 +34,9 @@ class _BasePageState extends State<BasePage> {
                   children: <Widget>[
                     ElevatedButton(
                       onPressed: () async {
-                        await loginViewModel.logout();
-                        // 로그아웃 후 다시 LoginView로 이동
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                              builder: (context) => const LoginView()),
+                              builder: (context) => const MainPage()),
                         );
                       },
                       child: const Text('디자인 뭐같네.. 안해 때려쳐'),
