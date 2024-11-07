@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import 'main_page.dart';
+import 'package:oss_qbank/src/services/kakao_login.dart';
+import 'package:oss_qbank/src/view_models/login_page_model.dart';
 
 class BasePage extends StatefulWidget {
   const BasePage({super.key});
@@ -11,39 +11,29 @@ class BasePage extends StatefulWidget {
 }
 
 class _BasePageState extends State<BasePage> {
+  final LoginPageModel _loginPageModel = LoginPageModel(KakaoLogin());
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: StreamBuilder<User?>(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return ElevatedButton(
-                    onPressed: () async {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                            builder: (context) => const MainPage()),
-                      );
-                    },
-                    child: Image.asset(
-                        'assets/images/kakao_login_medium_narrow.png'),
-                  );
-                }
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    ElevatedButton(
-                      onPressed: () async {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                              builder: (context) => const MainPage()),
-                        );
-                      },
-                      child: const Text('디자인 뭐같네.. 안해 때려쳐'),
-                    ),
-                  ],
-                );
-              })),
+        child: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return ElevatedButton(
+                child: const Text("Kakao"),
+                onPressed: () async {
+                  await _loginPageModel.login();
+                },
+              );
+            }
+            return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[],
+            );
+          },
+        ),
+      ),
     );
   }
 }

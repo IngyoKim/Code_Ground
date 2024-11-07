@@ -1,8 +1,7 @@
 plugins {
     id "com.android.application"
-    // START: FlutterFire Configuration
+    // FlutterFire Configuration
     id 'com.google.gms.google-services'
-    // END: FlutterFire Configuration
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
@@ -10,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.oss.code_ground"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34 // Firebase와 Flutter에서 권장하는 최신 SDK 버전 사용
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -19,18 +18,21 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = "1.8"
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.oss.code_ground"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 34 # 최소 23이상 요구
+        minSdk = 23 // Firebase, Google, Kakao 로그인 모두 최소 23이 필요
         targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Kakao SDK와 applicationName에 대한 설정 추가
+        manifestPlaceholders = [
+            KAKAO_KEY: "adee6c4e15930c7a0270ee23244fb085", // Kakao Developers에서 발급받은 네이티브 앱 키
+            applicationName: "android.app.Application" // 기본 Application 클래스 사용
+        ]
     }
 
     buildTypes {
@@ -38,6 +40,9 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
 }
@@ -45,3 +50,19 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:32.0.0') // Firebase BOM 사용
+    implementation 'com.google.firebase:firebase-auth-ktx' // Firebase 인증 모듈
+    implementation 'com.google.firebase:firebase-firestore-ktx' // Firebase Firestore
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0' // Kotlin Standard Library
+
+    // Google Play Services for Google Sign-In
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+
+    // Kakao SDK
+    implementation "com.kakao.sdk:v2-user:2.12.0" // 최신 버전 Kakao 로그인 모듈
+}
+
+// Apply the Google services Gradle plugin
+apply plugin: 'com.google.gms.google-services'

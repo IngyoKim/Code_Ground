@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao;
 import 'package:oss_qbank/src/services/firebase_auth_data.dart';
 import 'package:oss_qbank/src/services/social_login.dart';
 
-class LoginPageModel {
+class LoginPageModel extends ChangeNotifier {
   final _firebaseAuthData = FirebaseAuthData();
   final SocialLogin _socialLogin;
   bool isLogined = false; // 로그인 상태
