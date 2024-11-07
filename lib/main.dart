@@ -433,12 +433,14 @@ class SecondPage extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
               ),
               child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center, // 세로 가운데 정렬
+                crossAxisAlignment: CrossAxisAlignment.center, // 가로 가운데 정렬
                 children: [
                   Icon(Icons.calculate, size: 40.0, color: Colors.white),
                   SizedBox(height: 10),
                   Text(
                     'Math Quiz',
+                    textAlign: TextAlign.center, // 텍스트 가운데 정렬
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -462,11 +464,13 @@ class SecondPage extends StatelessWidget {
               ),
               child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(Icons.language, size: 40.0, color: Colors.white),
                   SizedBox(height: 10),
                   Text(
                     'English Quiz',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -490,11 +494,13 @@ class SecondPage extends StatelessWidget {
               ),
               child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(Icons.code, size: 40.0, color: Colors.white),
                   SizedBox(height: 10),
                   Text(
                     'Coding Quiz',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -518,11 +524,13 @@ class SecondPage extends StatelessWidget {
               ),
               child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(Icons.swap_vert, size: 40.0, color: Colors.white),
                   SizedBox(height: 10),
                   Text(
                     'Up&Down Game',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -531,33 +539,6 @@ class SecondPage extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-            // Additional Blank Buttons
-            ElevatedButton(
-              onPressed: () {
-                // Placeholder for additional button
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[400],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                padding: const EdgeInsets.all(20),
-              ),
-              child: const SizedBox(),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Placeholder for additional button
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[400],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                padding: const EdgeInsets.all(20),
-              ),
-              child: const SizedBox(),
             ),
           ],
         ),
