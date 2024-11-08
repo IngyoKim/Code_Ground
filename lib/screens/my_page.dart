@@ -13,10 +13,10 @@ class MyPage extends StatelessWidget {
           'My Page',
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 50.0, left: 10.0),
+      body: SingleChildScrollView(
+        // Scroll 기능 추가
         child: Padding(
-          padding: const EdgeInsets.only(top: 0.0, left: 10.0),
+          padding: const EdgeInsets.only(top: 50.0, left: 10.0),
           child: Column(
             children: [
               Padding(
