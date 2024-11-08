@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
-import 'math_page.dart';
+import 'package:flutter/rendering.dart';
+import 'package:vscode_app/screens/HTMLCSS_page.dart';
+import 'package:vscode_app/screens/SQL_page.dart';
+import 'package:vscode_app/screens/dart_page.dart';
+import 'package:vscode_app/screens/java_page.dart';
+import 'package:vscode_app/screens/javascript_page.dart';
+import 'package:vscode_app/screens/python_page.dart';
+import 'package:vscode_app/screens/ruby_page.dart';
+import 'c_page.dart';
 
 class SecondPage extends StatelessWidget {
-  final VoidCallback onCorrectAnswer;
-  final VoidCallback onCheat;
+  final Function(int) increaseEXP;
+  final VoidCallback setCheatLevel;
 
   const SecondPage({
     super.key,
-    required this.onCorrectAnswer,
-    required this.onCheat,
+    required this.increaseEXP,
+    required this.setCheatLevel,
   });
 
   @override
@@ -16,7 +24,7 @@ class SecondPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Quiz Selection'),
+        title: const Text('Select Page'),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
@@ -27,51 +35,20 @@ class SecondPage extends StatelessWidget {
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
           children: [
-            // Math Quiz Button
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MathPage(
-                      onCorrectAnswer: onCorrectAnswer,
-                      onCheat: onCheat,
-                    ),
+                    builder: (context) => CPage(
+                      increaseEXP: increaseEXP,
+                      setCheatLevel: setCheatLevel,
+                    ), // increaseEXP 전달
                   ),
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue[700],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                padding: const EdgeInsets.all(20),
-              ),
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center, // 세로 가운데 정렬
-                crossAxisAlignment: CrossAxisAlignment.center, // 가로 가운데 정렬
-                children: [
-                  Icon(Icons.calculate, size: 40.0, color: Colors.white),
-                  SizedBox(height: 10),
-                  Text(
-                    'Math Quiz',
-                    textAlign: TextAlign.center, // 텍스트 가운데 정렬
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // English Quiz Button
-            ElevatedButton(
-              onPressed: () {
-                // Placeholder for English Quiz
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[700],
+                backgroundColor: const Color(0xFF003366),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -81,10 +58,14 @@ class SecondPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.language, size: 40.0, color: Colors.white),
+                  Image(
+                    image: AssetImage('assets/c.png'),
+                    width: 80,
+                    height: 80,
+                  ),
                   SizedBox(height: 10),
                   Text(
-                    'English Quiz',
+                    'C/C++',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
@@ -95,13 +76,15 @@ class SecondPage extends StatelessWidget {
                 ],
               ),
             ),
-            // Coding Quiz Button
             ElevatedButton(
               onPressed: () {
-                // Placeholder for Coding Quiz
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const JavaPage()),
+                );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange[700],
+                backgroundColor: const Color(0xFFFFB84D),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -111,10 +94,14 @@ class SecondPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.code, size: 40.0, color: Colors.white),
+                  Image(
+                    image: AssetImage('assets/java.png'),
+                    width: 80, // Set width as desired
+                    height: 80, // Set height as desired
+                  ),
                   SizedBox(height: 10),
                   Text(
-                    'Coding Quiz',
+                    'Java',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
@@ -125,13 +112,15 @@ class SecondPage extends StatelessWidget {
                 ],
               ),
             ),
-            // UpDown Game Button
             ElevatedButton(
               onPressed: () {
-                // Placeholder for UpDown Game
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PythonPage()),
+                );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple[700],
+                backgroundColor: const Color(0xFF4B8BBE),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -141,10 +130,195 @@ class SecondPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.swap_vert, size: 40.0, color: Colors.white),
+                  Image(
+                    image: AssetImage('assets/python.png'),
+                    width: 80, // Set width as desired
+                    height: 80, // Set height as desired
+                  ),
                   SizedBox(height: 10),
                   Text(
-                    'Up&Down Game',
+                    'Python',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HTMLCSSPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFCC4400),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                padding: const EdgeInsets.all(20),
+              ),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image(
+                    image: AssetImage('assets/HTMLCSS.png'),
+                    width: 80, // Set width as desired
+                    height: 80, // Set height as desired
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'HTML/CSS',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const JavaScriptPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFFE135),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                padding: const EdgeInsets.all(20),
+              ),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image(
+                    image: AssetImage('assets/javascript.png'),
+                    width: 80, // Set width as desired
+                    height: 80, // Set height as desired
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Java Script',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const DartPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF01796F),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                padding: const EdgeInsets.all(20),
+              ),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image(
+                    image: AssetImage('assets/dart.png'),
+                    width: 80, // Set width as desired
+                    height: 80, // Set height as desired
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Dart',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SQLPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFB85C38),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                padding: const EdgeInsets.all(20),
+              ),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image(
+                    image: AssetImage('assets/SQL.png'),
+                    width: 80, // Set width as desired
+                    height: 80, // Set height as desired
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'SQL',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RubyPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF990000),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                padding: const EdgeInsets.all(20),
+              ),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image(
+                    image: AssetImage('assets/ruby.png'),
+                    width: 80, // Set width as desired
+                    height: 80, // Set height as desired
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Ruby',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,

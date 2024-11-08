@@ -36,11 +36,11 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void onTabTapped(int index) {
+  Future<void> onTabTapped(int index) async {
     setState(() {
       _currentIndex = index;
     });
-    _pageController.animateToPage(
+    await _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
@@ -48,20 +48,20 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void increaseExp(int amount) async {
-    int maxExp = getMaxExpForLevel(level);
+    await onTabTapped(0);
+
     int targetExp = currentExp + amount;
 
-    while (currentExp < targetExp && currentExp < maxExp) {
+    while (targetExp >= getMaxExpForLevel(level)) {
+      int maxExp = getMaxExpForLevel(level);
+
+      // 현재 레벨 최대 경험치를 초과하는 경우
       await Future.delayed(const Duration(milliseconds: 20));
       setState(() {
-        currentExp += 1;
-      });
-    }
+        targetExp -= maxExp; // 초과된 경험치 계산
+        currentExp = 0; // 현재 레벨 경험치를 0으로 설정
 
-    if (currentExp >= maxExp) {
-      await Future.delayed(const Duration(milliseconds: 500));
-      setState(() {
-        currentExp = 0;
+        // 레벨업
         if (level < 5) {
           level++;
         } else {
@@ -71,13 +71,21 @@ class _MainScreenState extends State<MainScreen> {
         }
       });
     }
+
+    // 남은 경험치를 현재 레벨의 경험치에 추가
+    await Future.delayed(const Duration(milliseconds: 20));
+    setState(() {
+      currentExp = targetExp; // 남은 경험치 추가
+    });
+
     _firestoreService.saveUserData(level, currentExp, points);
   }
 
-  void setCheatLevel() {
+  void setCheatLevel() async {
+    await onTabTapped(0);
     setState(() {
       level = 5;
-      currentExp = 250;
+      currentExp = 270;
     });
     _firestoreService.saveUserData(level, currentExp, points);
   }
@@ -181,14 +189,8 @@ class _MainScreenState extends State<MainScreen> {
             maxExp: getMaxExpForLevel(level),
           ),
           SecondPage(
-            onCorrectAnswer: () {
-              increaseExp(50);
-              onTabTapped(0);
-            },
-            onCheat: () {
-              setCheatLevel();
-              onTabTapped(0);
-            },
+            increaseEXP: increaseExp,
+            setCheatLevel: setCheatLevel,
           ),
           const MyPage(),
         ],
@@ -198,7 +200,7 @@ class _MainScreenState extends State<MainScreen> {
         onTap: onTabTapped,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Main'),
-          BottomNavigationBarItem(icon: Icon(Icons.quiz), label: 'Quiz'),
+          BottomNavigationBarItem(icon: Icon(Icons.quiz), label: 'Select'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'My Page'),
         ],
       ),
