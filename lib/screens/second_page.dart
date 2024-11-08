@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:vscode_app/screens/HTMLCSS_page.dart';
-import 'package:vscode_app/screens/SQL_page.dart';
-import 'package:vscode_app/screens/dart_page.dart';
-import 'package:vscode_app/screens/java_page.dart';
-import 'package:vscode_app/screens/javascript_page.dart';
-import 'package:vscode_app/screens/python_page.dart';
-import 'package:vscode_app/screens/ruby_page.dart';
+import 'HTMLCSS_page.dart';
+import 'SQL_page.dart';
+import 'dart_page.dart';
+import 'java_page.dart';
+import 'javascript_page.dart';
+import 'python_page.dart';
+import 'ruby_page.dart';
 import 'c_page.dart';
 
 class SecondPage extends StatelessWidget {
