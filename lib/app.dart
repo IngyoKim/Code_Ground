@@ -9,6 +9,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(context.toString());
     return MultiProvider(
       // MultiProvider를 사용하여 여러 Provider를 등록
       providers: [

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/services/google_login.dart';
 import 'package:code_ground/src/services/kakao_login.dart';
-import 'package:code_ground/src/view_models/login_page_model.dart';
+import 'package:code_ground/src/view_models/login_view_model.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,7 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     debugPrint(context.toString());
-    final loginPageModel = Provider.of<LoginPageModel>(context, listen: false);
+    final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
     return Scaffold(
       body: Center(
         // 전체를 가운데 정렬
@@ -27,16 +27,16 @@ class _LoginPageState extends State<LoginPage> {
             ElevatedButton(
               child: const Text("Kakao"),
               onPressed: () async {
-                loginPageModel.setLoginType(KakaoLogin());
-                await loginPageModel.login();
+                loginViewModel.setLoginType(KakaoLogin());
+                await loginViewModel.login();
               },
             ),
             const SizedBox(height: 20), // 버튼 간격
             ElevatedButton(
               child: const Text("Google"),
               onPressed: () async {
-                loginPageModel.setLoginType(GoogleLogin());
-                await loginPageModel.login();
+                loginViewModel.setLoginType(GoogleLogin());
+                await loginViewModel.login();
               },
             ),
           ],

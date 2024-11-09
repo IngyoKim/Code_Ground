@@ -7,13 +7,13 @@ import 'package:code_ground/src/services/social_login.dart';
 import 'package:code_ground/src/services/kakao_login.dart';
 import 'package:code_ground/src/services/google_login.dart';
 
-class LoginPageModel extends ChangeNotifier {
+class LoginViewModel extends ChangeNotifier {
   SocialLogin? _socialLogin;
   bool isLogined = false;
   bool isLoading = true;
   User? user;
 
-  LoginPageModel() {
+  LoginViewModel() {
     _initializeLoginType(); // 앱 시작 시 이전 로그인 타입 설정
   }
 
