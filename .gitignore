@@ -53,4 +53,4 @@ GoogleService-Info.plist
 # Firebase CLI settings and logs
 .firebase/
 .firebaserc
-firebase_options.dart
+lib/firebase_options.dart
