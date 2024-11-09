@@ -20,6 +20,12 @@ class _BasePageState extends State<BasePage> {
           builder: (context, snapshot) {
             debugPrint("authStateChanges snapshot: ${snapshot.data}");
 
+            // 로딩 중일 때 표시
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              debugPrint("Loading... Showing loading indicator.");
+              return const CircularProgressIndicator();
+            }
+
             if (!snapshot.hasData) {
               debugPrint("No user logged in. Showing LoginPage.");
               return const LoginPage();
