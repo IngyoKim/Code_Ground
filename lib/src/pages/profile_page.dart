@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:oss_qbank/src/pages/base_page.dart';
 import 'package:provider/provider.dart';
-
-import '../view_models/login_page_model.dart';
+import 'package:oss_qbank/src/view_models/login_page_model.dart';
 
 /// 프로필 페이지
 class ProfilePage extends StatefulWidget {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:oss_qbank/src/services/google_login.dart';
 import 'package:oss_qbank/src/services/kakao_login.dart';
 import 'package:oss_qbank/src/view_models/login_page_model.dart';
-import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,14 +15,26 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      child: const Text("Kakao"),
-      onPressed: () async {
-        final loginPageModel =
-            Provider.of<LoginPageModel>(context, listen: false);
-        loginPageModel.setLoginType(KakaoLogin());
-        await loginPageModel.login();
-      },
+    final loginPageModel = Provider.of<LoginPageModel>(context, listen: false);
+    return Scaffold(
+      body: Column(
+        children: <Widget>[
+          ElevatedButton(
+            child: const Text("Kakao"),
+            onPressed: () async {
+              loginPageModel.setLoginType(KakaoLogin());
+              await loginPageModel.login();
+            },
+          ),
+          ElevatedButton(
+            child: const Text("Google"),
+            onPressed: () async {
+              loginPageModel.setLoginType(GoogleLogin());
+              await loginPageModel.login();
+            },
+          ),
+        ],
+      ),
     );
   }
 }
