@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:oss_qbank/src/services/social_login.dart';
 
+/// Kakao Login
 class KakaoLogin implements SocialLogin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseAuthData _firebaseAuthData = FirebaseAuthData();
@@ -60,11 +61,10 @@ class KakaoLogin implements SocialLogin {
     }
 
     try {
-      debugPrint("Kakao 로그아웃 시도 중...");
       await kakao.UserApi.instance.logout();
-      debugPrint("Kakao 로그아웃 성공");
+      debugPrint("Successed login with Kakao");
     } catch (error) {
-      debugPrint("Kakao 로그아웃 실패: $error");
+      debugPrint("Failed login with Kakao: $error");
     }
   }
 }

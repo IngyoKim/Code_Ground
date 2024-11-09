@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:oss_qbank/src/services/social_login.dart';
 
+/// Google Login
 class GoogleLogin implements SocialLogin {
   @override
   Future<User?> login() async {
@@ -36,19 +37,18 @@ class GoogleLogin implements SocialLogin {
   @override
   Future<void> logout() async {
     try {
-      debugPrint("Google 로그아웃 시도 중...");
-      await GoogleSignIn().signOut();
-      debugPrint("Google 로그아웃 성공");
-    } catch (error) {
-      debugPrint("Google 로그아웃 실패: $error");
-    }
-
-    try {
       debugPrint("Firebase 로그아웃 시도 중...");
       await FirebaseAuth.instance.signOut();
       debugPrint("Firebase 로그아웃 성공");
     } catch (error) {
       debugPrint("Firebase 로그아웃 실패: $error");
+    }
+
+    try {
+      await GoogleSignIn().signOut();
+      debugPrint("Successed login with Kakao");
+    } catch (error) {
+      debugPrint("Failed login with Kakao: $error");
     }
   }
 }
