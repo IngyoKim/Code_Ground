@@ -15,6 +15,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
+    debugPrint(context.toString());
     final loginPageModel = Provider.of<LoginPageModel>(context, listen: false);
     return Scaffold(
       body: Center(

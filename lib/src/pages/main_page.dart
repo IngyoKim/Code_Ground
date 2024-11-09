@@ -27,6 +27,7 @@ class _MainPageState extends State<MainPage>
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(context.toString());
     return Scaffold(
       appBar: AppBar(),
       body: TabBarView(

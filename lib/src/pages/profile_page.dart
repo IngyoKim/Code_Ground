@@ -13,7 +13,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    final loginPageModel = Provider.of<LoginPageModel>(context, listen: false);
+    debugPrint(context.toString());
+    final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start, // 위쪽 정렬
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ListTile(
           leading: ClipOval(
             child: Image.network(
-              loginPageModel.user?.photoURL ??
+              loginViewModel.user?.photoURL ??
                   '', // 프로필 이미지 URL, 프로필이 없으면 빈 문자열 사용
               width: 50, // 원하는 너비 설정
               height: 50, // 원하는 높이 설정
@@ -30,14 +31,14 @@ class _ProfilePageState extends State<ProfilePage> {
               fit: BoxFit.cover, // 이미지를 박스에 맞춰 잘라냄
             ),
           ),
-          title: Text(loginPageModel.user!.displayName ?? ''),
-          subtitle: loginPageModel.user?.email != null
-              ? Text(loginPageModel.user!.email!)
+          title: Text(loginViewModel.user?.displayName ?? ''),
+          subtitle: loginViewModel.user?.email != null
+              ? Text(loginViewModel.user!.email!)
               : null,
           trailing: ElevatedButton(
             onPressed: () async {
               debugPrint("로그아웃 버튼 눌림");
-              await loginPageModel.logout();
+              await loginViewModel.logout();
             },
             child: const Text("로그아웃"),
           ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/pages/base_page.dart';
-import 'package:code_ground/src/view_models/login_page_model.dart';
+import 'package:code_ground/src/view_models/login_view_model.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -14,8 +14,8 @@ class App extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (_) {
-            debugPrint("LoginPageModel 생성됨");
-            return LoginPageModel();
+            debugPrint("LoginViewModel 생성됨");
+            return LoginViewModel();
           },
         ),
       ],
