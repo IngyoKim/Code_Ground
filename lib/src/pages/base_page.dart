@@ -13,6 +13,7 @@ class BasePage extends StatefulWidget {
 class _BasePageState extends State<BasePage> {
   @override
   Widget build(BuildContext context) {
+    debugPrint(context.toString());
     return Scaffold(
       body: Center(
         child: StreamBuilder<User?>(
