@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:oss_qbank/src/services/kakao_login.dart';
 import 'package:oss_qbank/src/view_models/login_page_model.dart';
 import 'package:provider/provider.dart';
 import 'src/pages/base_page.dart';
@@ -13,8 +12,10 @@ class App extends StatelessWidget {
       // MultiProvider를 사용하여 여러 Provider를 등록
       providers: [
         ChangeNotifierProvider(
-          // LoginViewModel을 Provider로 등록
-          create: (_) => LoginPageModel(KakaoLogin()),
+          create: (_) {
+            debugPrint("LoginPageModel 생성됨");
+            return LoginPageModel();
+          },
         ),
       ],
       child: MaterialApp(

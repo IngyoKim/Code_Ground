@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:oss_qbank/src/pages/login_page.dart';
 import 'package:oss_qbank/src/pages/main_page.dart';
-import 'package:oss_qbank/src/services/kakao_login.dart';
-import 'package:oss_qbank/src/view_models/login_page_model.dart';
 
 class BasePage extends StatefulWidget {
   const BasePage({super.key});
@@ -12,7 +11,6 @@ class BasePage extends StatefulWidget {
 }
 
 class _BasePageState extends State<BasePage> {
-  final LoginPageModel _loginPageModel = LoginPageModel(KakaoLogin());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,14 +18,14 @@ class _BasePageState extends State<BasePage> {
         child: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
+            debugPrint("authStateChanges snapshot: ${snapshot.data}");
+
             if (!snapshot.hasData) {
-              return ElevatedButton(
-                child: const Text("Kakao"),
-                onPressed: () async {
-                  await _loginPageModel.login();
-                },
-              );
+              debugPrint("No user logged in. Showing LoginPage.");
+              return const LoginPage();
             }
+
+            debugPrint("User is logged in. Showing MainPage.");
             return const MainPage();
           },
         ),

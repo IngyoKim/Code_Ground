@@ -15,6 +15,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+    final loginPageModel = Provider.of<LoginPageModel>(context, listen: false);
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -50,19 +51,12 @@ class _ProfilePageState extends State<ProfilePage> {
             //         'email is not found.');
             //   },
             // ),
-            trailing: Consumer<LoginPageModel>(
-              builder: (context, loginPageModel, child) {
-                return ElevatedButton(
-                  onPressed: () {
-                    loginPageModel.logout();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const BasePage()),
-                    );
-                  },
-                  child: const Text("로그아웃"),
-                );
+            trailing: ElevatedButton(
+              onPressed: () async {
+                debugPrint("로그아웃 버튼 눌림");
+                await loginPageModel.logout();
               },
+              child: const Text("로그아웃"),
             ),
           ),
           const Divider(

@@ -2,43 +2,80 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:oss_qbank/src/services/firebase_auth_data.dart';
 import 'package:oss_qbank/src/services/social_login.dart';
+import 'package:oss_qbank/src/services/kakao_login.dart';
+import 'package:oss_qbank/src/services/google_login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPageModel extends ChangeNotifier {
   final _firebaseAuthData = FirebaseAuthData();
-  final SocialLogin _socialLogin;
-  bool isLogined = false; // 로그인 상태
-  bool isLoading = true; // 로딩 상태
-  User? user; // Firebase에서 반환되는 User 객체로 수정
+  SocialLogin? _socialLogin;
+  bool isLogined = false;
+  bool isLoading = true;
+  User? user;
 
-  LoginPageModel(this._socialLogin);
+  LoginPageModel() {
+    _initializeLoginType(); // 앱 시작 시 이전 로그인 타입 설정
+  }
+
+  // 이전 로그인 타입 확인 및 설정
+  Future<void> _initializeLoginType() async {
+    final prefs = await SharedPreferences.getInstance();
+    final loginType = prefs.getString('loginType');
+
+    if (loginType == 'kakao') {
+      _socialLogin = KakaoLogin();
+    } else if (loginType == 'google') {
+      _socialLogin = GoogleLogin();
+    }
+
+    // Firebase 인증 상태가 존재하고, 로그인 타입이 설정되었다면 자동 로그인 시도
+    if (FirebaseAuth.instance.currentUser != null && _socialLogin != null) {
+      isLogined = true;
+      notifyListeners();
+    }
+  }
+
+  // 로그인 타입 설정 및 로컬 저장
+  void setLoginType(SocialLogin socialLogin) async {
+    _socialLogin = socialLogin;
+    final prefs = await SharedPreferences.getInstance();
+
+    if (socialLogin is KakaoLogin) {
+      await prefs.setString('loginType', 'kakao');
+    } else if (socialLogin is GoogleLogin) {
+      await prefs.setString('loginType', 'google');
+    }
+
+    notifyListeners();
+  }
 
   Future<void> login() async {
-    // 로딩 상태 업데이트
+    if (_socialLogin == null) {
+      debugPrint("Login type not selected.");
+      return;
+    }
+
     isLoading = true;
     notifyListeners();
 
-    // 소셜 로그인 시도
-    user = await _socialLogin.login();
+    user = await _socialLogin!.login();
     isLogined = user != null;
 
-    if (isLogined) {
-      debugPrint("Logged in as ${user!.displayName}");
-
-      // Firebase User로 로그인한 상태라면 사용자 정보를 출력
-      debugPrint("User UID: ${user!.uid}");
-      debugPrint("Display Name: ${user!.displayName}");
-      debugPrint("Email: ${user!.email}");
-    }
-
-    // 로딩 상태 업데이트
     isLoading = false;
     notifyListeners();
   }
 
   Future<void> logout() async {
-    await _socialLogin.logout();
+    if (_socialLogin == null) return;
+
+    await _socialLogin!.logout();
+
     isLogined = false;
     user = null;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('loginType');
+
     notifyListeners();
   }
 }

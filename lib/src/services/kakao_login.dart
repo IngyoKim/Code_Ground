@@ -51,10 +51,19 @@ class KakaoLogin implements SocialLogin {
   @override
   Future<void> logout() async {
     try {
+      debugPrint("Firebase 로그아웃 시도 중...");
       await _auth.signOut();
-      await kakao.UserApi.instance.logout();
+      debugPrint("Firebase 로그아웃 성공");
     } catch (error) {
-      debugPrint("Logout failed: $error");
+      debugPrint("Firebase 로그아웃 실패: $error");
+    }
+
+    try {
+      debugPrint("Kakao 로그아웃 시도 중...");
+      await kakao.UserApi.instance.logout();
+      debugPrint("Kakao 로그아웃 성공");
+    } catch (error) {
+      debugPrint("Kakao 로그아웃 실패: $error");
     }
   }
 }
