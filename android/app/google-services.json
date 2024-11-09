@@ -12,7 +12,12 @@
           "package_name": "com.oss.code_ground"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "278986162898-q8v3f7c2l2386k5ns4t24hi94tljpdvo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBUFXtHOp0H3-aEkG7AILjlmZiWf-RVvic"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "278986162898-q8v3f7c2l2386k5ns4t24hi94tljpdvo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "278986162898-bnu2t7anpspj8421ca03jn7hgb716lj5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.oss.codeGround"
+              }
+            }
+          ]
         }
       }
     }

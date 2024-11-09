@@ -64,6 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '278986162898',
     projectId: 'oss-code-ground',
     storageBucket: 'oss-code-ground.firebasestorage.app',
+    iosClientId: '278986162898-bnu2t7anpspj8421ca03jn7hgb716lj5.apps.googleusercontent.com',
     iosBundleId: 'com.oss.codeGround',
   );
 
@@ -73,6 +74,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '278986162898',
     projectId: 'oss-code-ground',
     storageBucket: 'oss-code-ground.firebasestorage.app',
+    iosClientId: '278986162898-bnu2t7anpspj8421ca03jn7hgb716lj5.apps.googleusercontent.com',
     iosBundleId: 'com.oss.codeGround',
   );
 
@@ -85,4 +87,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'oss-code-ground.firebasestorage.app',
     measurementId: 'G-WMC08GLYER',
   );
+
 }

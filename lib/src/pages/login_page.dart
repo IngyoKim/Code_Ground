@@ -17,23 +17,29 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final loginPageModel = Provider.of<LoginPageModel>(context, listen: false);
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          ElevatedButton(
-            child: const Text("Kakao"),
-            onPressed: () async {
-              loginPageModel.setLoginType(KakaoLogin());
-              await loginPageModel.login();
-            },
-          ),
-          ElevatedButton(
-            child: const Text("Google"),
-            onPressed: () async {
-              loginPageModel.setLoginType(GoogleLogin());
-              await loginPageModel.login();
-            },
-          ),
-        ],
+      body: Center(
+        // 전체를 가운데 정렬
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, // 수직 방향 가운데 정렬
+          crossAxisAlignment: CrossAxisAlignment.center, // 수평 방향 가운데 정렬
+          children: <Widget>[
+            ElevatedButton(
+              child: const Text("Kakao"),
+              onPressed: () async {
+                loginPageModel.setLoginType(KakaoLogin());
+                await loginPageModel.login();
+              },
+            ),
+            const SizedBox(height: 20), // 버튼 간격
+            ElevatedButton(
+              child: const Text("Google"),
+              onPressed: () async {
+                loginPageModel.setLoginType(GoogleLogin());
+                await loginPageModel.login();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
