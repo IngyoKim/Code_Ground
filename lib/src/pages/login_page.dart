@@ -13,34 +13,53 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool _isLoading = false;
+
+  Future<void> _loginWith(LoginViewModel loginViewModel) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await loginViewModel.login();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("로그인에 실패했습니다: $e")),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    debugPrint(context.toString());
     final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
     return Scaffold(
       body: Center(
-        // 전체를 가운데 정렬
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // 수직 방향 가운데 정렬
-          crossAxisAlignment: CrossAxisAlignment.center, // 수평 방향 가운데 정렬
-          children: <Widget>[
-            ElevatedButton(
-              child: const Text("Kakao"),
-              onPressed: () async {
-                loginViewModel.setLoginType(KakaoLogin());
-                await loginViewModel.login();
-              },
-            ),
-            const SizedBox(height: 20), // 버튼 간격
-            ElevatedButton(
-              child: const Text("Google"),
-              onPressed: () async {
-                loginViewModel.setLoginType(GoogleLogin());
-                await loginViewModel.login();
-              },
-            ),
-          ],
-        ),
+        child: _isLoading
+            ? const CircularProgressIndicator()
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () async {
+                      loginViewModel.setLoginType(KakaoLogin());
+                      await _loginWith(loginViewModel);
+                    },
+                    child: const Text("Kakao"),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      loginViewModel.setLoginType(GoogleLogin());
+                      await _loginWith(loginViewModel);
+                    },
+                    child: const Text("Google"),
+                  ),
+                ],
+              ),
       ),
     );
   }
