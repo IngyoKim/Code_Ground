@@ -33,8 +33,8 @@ class _MainPageState extends State<MainPage>
         controller: _tabController,
         children: const [
           Center(child: Text("Content for Tab 1")),
-          Center(child: ProfilePage()),
           Center(child: Text("Content for Tab 2")),
+          Center(child: ProfilePage()),
         ],
       ),
       bottomNavigationBar: TabBar(

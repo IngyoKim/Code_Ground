@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class FirebaseAuthData {
@@ -6,17 +7,25 @@ class FirebaseAuthData {
       'https://createcustomtoken-rfmajfqpua-uc.a.run.app/createCustomToken';
 
   Future<String> createCustomToken(Map<String, dynamic> user) async {
-    // `user` Map에서 `null` 값을 제거하고, 모든 값을 `String` 타입으로 변환
-    final filteredUser = user.map((key, value) {
-      return MapEntry(key, value?.toString() ?? ''); // null 값은 빈 문자열로 처리
-    });
+    final filteredUser =
+        user.map((key, value) => MapEntry(key, value?.toString() ?? ''));
 
-    final customTokenResponse = await http.post(
-      Uri.parse(url),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(filteredUser),
-    );
+    try {
+      final customTokenResponse = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(filteredUser),
+      );
 
-    return customTokenResponse.body;
+      if (customTokenResponse.statusCode != 200) {
+        throw Exception(
+            "Failed to create custom token. Status code: ${customTokenResponse.statusCode}");
+      }
+
+      return customTokenResponse.body;
+    } catch (e) {
+      debugPrint("Error creating custom token: $e");
+      rethrow;
+    }
   }
 }

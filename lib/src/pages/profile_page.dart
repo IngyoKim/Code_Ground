@@ -19,37 +19,37 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         children: [
           ListTile(
-            leading: Consumer<LoginPageModel>(
-              builder: (context, loginPageModel, child) {
-                // 프로필 이미지 URL을 가져옴
-                final profileImageUrl = loginPageModel
-                        .user?.kakaoAccount?.profile?.profileImageUrl ??
-                    '';
+            // leading: Consumer<LoginPageModel>(
+            //   builder: (context, loginPageModel, child) {
+            //     // 프로필 이미지 URL을 가져옴
+            //     final profileImageUrl = loginPageModel
+            //             .user?.kakaoAccount?.profile?.profileImageUrl ??
+            //         '';
 
-                return ClipOval(
-                  child: Image.network(
-                    profileImageUrl, // 프로필 이미지 URL, 프로필이 없으면 빈 문자열 사용
-                    width: 50, // 원하는 너비 설정
-                    height: 50, // 원하는 높이 설정
-                    cacheHeight: 50,
-                    cacheWidth: 50,
-                    fit: BoxFit.cover, // 이미지를 박스에 맞춰 잘라냄
-                  ),
-                );
-              },
-            ),
-            title: Consumer<LoginPageModel>(
-              builder: (context, loginPageModel, child) {
-                return Text(
-                    loginPageModel.user?.kakaoAccount?.profile?.nickname ?? '');
-              },
-            ),
-            subtitle: Consumer<LoginPageModel>(
-              builder: (context, loginPageModel, child) {
-                return Text(loginPageModel.user?.kakaoAccount?.email ??
-                    'email is not found.');
-              },
-            ),
+            //     return ClipOval(
+            //       child: Image.network(
+            //         profileImageUrl, // 프로필 이미지 URL, 프로필이 없으면 빈 문자열 사용
+            //         width: 50, // 원하는 너비 설정
+            //         height: 50, // 원하는 높이 설정
+            //         cacheHeight: 50,
+            //         cacheWidth: 50,
+            //         fit: BoxFit.cover, // 이미지를 박스에 맞춰 잘라냄
+            //       ),
+            //     );
+            //   },
+            // ),
+            // title: Consumer<LoginPageModel>(
+            //   builder: (context, loginPageModel, child) {
+            //     return Text(
+            //         loginPageModel.user?.kakaoAccount?.profile?.nickname ?? '');
+            //   },
+            // ),
+            // subtitle: Consumer<LoginPageModel>(
+            //   builder: (context, loginPageModel, child) {
+            //     return Text(loginPageModel.user?.kakaoAccount?.email ??
+            //         'email is not found.');
+            //   },
+            // ),
             trailing: Consumer<LoginPageModel>(
               builder: (context, loginPageModel, child) {
                 return ElevatedButton(

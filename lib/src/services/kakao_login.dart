@@ -1,44 +1,60 @@
-import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:oss_qbank/src/services/social_login.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'firebase_auth_data.dart';
+import 'dart:convert';
 
-/// Kakao Login
 class KakaoLogin implements SocialLogin {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuthData _firebaseAuthData = FirebaseAuthData();
+
   @override
-  Future<bool> login() async {
-    if (await isKakaoTalkInstalled()) {
-      //카카오톡이 설치되어 있으면 카카오톡으로 로그인 + 토큰생성
-      debugPrint("Kakaotalk is installed.");
-      try {
-        OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
-        debugPrint("Logined with Kakao. ${token.accessToken}");
-        return true;
-      } catch (error) {
-        debugPrint("Fail to login with Kakao. $error");
-        return false;
+  Future<User?> login() async {
+    try {
+      // 카카오톡 설치 여부에 따라 로그인 방식 선택
+      if (await kakao.isKakaoTalkInstalled()) {
+        await kakao.UserApi.instance.loginWithKakaoTalk();
+      } else {
+        await kakao.UserApi.instance.loginWithKakaoAccount();
       }
-    } else {
-      //카카오톡이 설치되어있지 않으면 카카오계정으로 로그인 + 토큰생성
-      try {
-        OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
-        debugPrint("Logined with KakaoAccount. ${token.accessToken}");
-        return true;
-      } catch (error) {
-        debugPrint("Fail to login with KakaoAccount. $error");
-        return false;
+
+      // 카카오 사용자 정보 가져오기
+      final user = await kakao.UserApi.instance.me();
+
+      // Firebase 커스텀 토큰 생성 요청
+      final response = await _firebaseAuthData.createCustomToken({
+        'uid': user.id.toString(),
+        'displayName': user.kakaoAccount?.profile?.nickname ?? '',
+        'email': user.kakaoAccount?.email ?? '',
+        'photoURL': user.kakaoAccount?.profile?.profileImageUrl ?? '',
+      });
+
+      final tokenData = jsonDecode(response);
+      final customToken = tokenData['token'] ?? '';
+
+      if (customToken.isEmpty) {
+        debugPrint("Failed to retrieve custom token.");
+        return null;
       }
+
+      // Firebase 로그인
+      UserCredential userCredential =
+          await _auth.signInWithCustomToken(customToken);
+      return userCredential.user;
+    } catch (error) {
+      debugPrint("Kakao login failed. $error");
+      return null;
     }
   }
 
   @override
-  Future<bool> logout() async {
+  Future<void> logout() async {
     try {
-      await UserApi.instance.unlink();
-      debugPrint('연결 끊기 성공, SDK에서 토큰 삭제');
-      return true;
+      await _auth.signOut();
+      await kakao.UserApi.instance.logout();
     } catch (error) {
-      debugPrint('연결 끊기 실패 $error');
-      return false;
+      debugPrint("Logout failed: $error");
     }
   }
 }

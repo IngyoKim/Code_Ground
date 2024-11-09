@@ -1,8 +1,5 @@
-import 'dart:convert';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:oss_qbank/src/services/firebase_auth_data.dart';
 import 'package:oss_qbank/src/services/social_login.dart';
 
@@ -11,35 +8,37 @@ class LoginPageModel extends ChangeNotifier {
   final SocialLogin _socialLogin;
   bool isLogined = false; // 로그인 상태
   bool isLoading = true; // 로딩 상태
-  kakao.User? user;
+  User? user; // Firebase에서 반환되는 User 객체로 수정
 
   LoginPageModel(this._socialLogin);
 
   Future<void> login() async {
-    isLogined = await _socialLogin.login();
+    // 로딩 상태 업데이트
+    isLoading = true;
+    notifyListeners();
+
+    // 소셜 로그인 시도
+    user = await _socialLogin.login();
+    isLogined = user != null;
+
     if (isLogined) {
-      user = await kakao.UserApi.instance.me();
-      final response = await _firebaseAuthData.createCustomToken({
-        'uid': user!.id.toString(),
-        'displayName': user!.kakaoAccount?.profile?.nickname,
-        'email': user!.kakaoAccount?.email,
-        'photoURL': user!.kakaoAccount?.profile?.profileImageUrl!,
-      });
+      debugPrint("Logged in as ${user!.displayName}");
 
-      // JSON 디코딩 후 `token` 필드 값만 추출
-      final tokenData = jsonDecode(response);
-      final customToken = tokenData['token'];
-
-      debugPrint("Received Custom Token: $customToken");
-
-      // 추출된 `customToken` 값을 사용하여 로그인
-      await FirebaseAuth.instance.signInWithCustomToken(customToken);
+      // Firebase User로 로그인한 상태라면 사용자 정보를 출력
+      debugPrint("User UID: ${user!.uid}");
+      debugPrint("Display Name: ${user!.displayName}");
+      debugPrint("Email: ${user!.email}");
     }
+
+    // 로딩 상태 업데이트
+    isLoading = false;
+    notifyListeners();
   }
 
   Future<void> logout() async {
     await _socialLogin.logout();
     isLogined = false;
     user = null;
+    notifyListeners();
   }
 }

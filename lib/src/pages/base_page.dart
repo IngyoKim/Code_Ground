@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:oss_qbank/src/pages/main_page.dart';
 import 'package:oss_qbank/src/services/kakao_login.dart';
 import 'package:oss_qbank/src/view_models/login_page_model.dart';
 
@@ -27,10 +28,7 @@ class _BasePageState extends State<BasePage> {
                 },
               );
             }
-            return const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[],
-            );
+            return const MainPage();
           },
         ),
       ),
