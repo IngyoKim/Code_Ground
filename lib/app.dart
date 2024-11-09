@@ -22,11 +22,6 @@ class App extends StatelessWidget {
       child: MaterialApp(
         title: 'Your App Title', // 앱 제목
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
-            brightness: Brightness.light,
-          ),
-          // textTheme: ,
           primarySwatch: Colors.blue, // 기본 테마 색상
         ),
         home: const BasePage(), // 기본 홈 화면 설정
