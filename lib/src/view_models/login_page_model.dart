@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:oss_qbank/src/services/firebase_auth_data.dart';
+import 'package:code_ground/src/services/firebase_auth_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:oss_qbank/src/services/social_login.dart';
-import 'package:oss_qbank/src/services/kakao_login.dart';
-import 'package:oss_qbank/src/services/google_login.dart';
+import 'package:code_ground/src/services/social_login.dart';
+import 'package:code_ground/src/services/kakao_login.dart';
+import 'package:code_ground/src/services/google_login.dart';
 
 class LoginPageModel extends ChangeNotifier {
   final _firebaseAuthData = FirebaseAuthData();

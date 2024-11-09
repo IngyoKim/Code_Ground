@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
-import 'package:oss_qbank/app.dart';
+import 'package:code_ground/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // flutter 코어엔진 초기화

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oss_qbank/src/pages/profile_page.dart';
+import 'package:code_ground/src/pages/profile_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:oss_qbank/src/services/google_login.dart';
-import 'package:oss_qbank/src/services/kakao_login.dart';
-import 'package:oss_qbank/src/view_models/login_page_model.dart';
+import 'package:code_ground/src/services/google_login.dart';
+import 'package:code_ground/src/services/kakao_login.dart';
+import 'package:code_ground/src/view_models/login_page_model.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

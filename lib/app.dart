@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:oss_qbank/src/pages/base_page.dart';
-import 'package:oss_qbank/src/view_models/login_page_model.dart';
+import 'package:code_ground/src/pages/base_page.dart';
+import 'package:code_ground/src/view_models/login_page_model.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
