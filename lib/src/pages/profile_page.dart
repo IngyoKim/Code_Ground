@@ -40,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Card(
           elevation: 2,
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(15.0),
             child: ListTile(
               leading: ClipOval(
                 child: loginViewModel.user?.photoURL != null
@@ -57,8 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
               ),
               title: Text(userViewModel.userData?.name ?? ''),
-              subtitle: userViewModel.userData?.email != null &&
-                      userViewModel.userData?.email != ''
+              subtitle: userViewModel.userData?.email != null
                   ? Text(userViewModel.userData!.email)
                   : null,
               trailing: ElevatedButton(

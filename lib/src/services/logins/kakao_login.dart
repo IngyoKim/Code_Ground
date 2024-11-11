@@ -1,14 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-
-import 'firebase_auth_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:code_ground/src/services/logins/social_login.dart';
+import 'firebase_auth_data.dart';
 
 class KakaoLogin implements SocialLogin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseAuthData _firebaseAuthData = FirebaseAuthData();
+
+  @override
+  String loginType = "Kakao";
 
   @override
   Future<User?> login() async {
@@ -42,6 +44,7 @@ class KakaoLogin implements SocialLogin {
       // Firebase 로그인
       UserCredential userCredential =
           await _auth.signInWithCustomToken(customToken);
+      await _auth.currentUser?.reload(); // 사용자 정보 갱신
       return userCredential.user;
     } catch (error) {
       debugPrint("Kakao login failed. $error");
@@ -52,19 +55,19 @@ class KakaoLogin implements SocialLogin {
   @override
   Future<void> logout() async {
     try {
+      debugPrint("Kakao 연결 끊기 시도 중...");
+      await kakao.UserApi.instance.unlink();
+      debugPrint("Kakao 연결 끊기 성공");
+    } catch (error) {
+      debugPrint("Kakao 연결 끊기 실패: $error");
+    }
+
+    try {
       debugPrint("Firebase 로그아웃 시도 중...");
       await _auth.signOut();
       debugPrint("Firebase 로그아웃 성공");
     } catch (error) {
       debugPrint("Firebase 로그아웃 실패: $error");
-    }
-
-    try {
-      debugPrint("Kakao 로그아웃 시도 중...");
-      await kakao.UserApi.instance.logout();
-      debugPrint("Kakao 로그아웃 성공");
-    } catch (error) {
-      debugPrint("Kakao 로그아웃 실패: $error");
     }
   }
 }

@@ -5,6 +5,9 @@ import 'package:code_ground/src/services/logins/social_login.dart';
 
 class GoogleLogin implements SocialLogin {
   @override
+  String loginType = "Google";
+
+  @override
   Future<User?> login() async {
     try {
       final googleUser = await GoogleSignIn().signIn();

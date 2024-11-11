@@ -22,10 +22,10 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       await loginViewModel.login();
-    } catch (error) {
+    } catch (e) {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("로그인에 실패했습니다: $error")),
+        SnackBar(content: Text("로그인에 실패했습니다: $e")),
       );
     } finally {
       setState(() {

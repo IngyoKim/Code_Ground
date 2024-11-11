@@ -1,41 +1,27 @@
-import 'package:code_ground/src/services/database/datas/user_data.dart';
 import 'package:flutter/material.dart';
-import 'package:code_ground/src/services/database/database_service.dart';
-import 'package:code_ground/src/models/user_data.dart';
+import 'package:code_ground/src/services/database/operations/user_operation.dart';
+import 'package:code_ground/src/services/database/datas/user_data.dart';
 
 class UserViewModel extends ChangeNotifier {
-  final DatabaseService _databaseService = DatabaseService();
+  final UserOperation _userOperation = UserOperation();
   UserData? _userData;
 
   UserData? get userData => _userData;
 
-  Future<void> fetchUserData(String userId) async {
-    final data = await _databaseService.readDB('users/$userId');
-    if (data != null) {
-      _userData = UserData(
-        userId: userId,
-        name: data['name'] ?? '',
-        email: data['email'] ?? '',
-        profileImageUrl: data['profileImageUrl'] ?? '',
-      );
+  Future<void> fetchUserData() async {
+    _userData = await _userOperation.readUserData();
+
+    // 데이터가 없을 경우 초기 데이터를 쓰는 로직 추가
+    if (_userData == null) {
+      await _userOperation.writeUserData(); // 초기 사용자 데이터 쓰기
+      _userData = await _userOperation.readUserData(); // 쓰고 나서 다시 가져오기
     }
+
     notifyListeners();
   }
 
-  Future<void> updateUserData(
-      String userId, Map<String, dynamic> updates) async {
-    await _databaseService.updateDB('users/$userId', updates);
-    await fetchUserData(userId);
-  }
-
-  Future<void> writeUserData(UserData newUser) async {
-    final path = 'users/${newUser.userId}';
-    await _databaseService.writeDB(path, {
-      'name': newUser.name,
-      'email': newUser.email,
-      'profileImageUrl': newUser.profileImageUrl,
-    });
-    _userData = newUser;
-    notifyListeners();
+  Future<void> updateUserData(Map<String, dynamic> updates) async {
+    await _userOperation.updateUserData(updates);
+    await fetchUserData();
   }
 }
