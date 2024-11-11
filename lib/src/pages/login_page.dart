@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:code_ground/src/services/google_login.dart';
-import 'package:code_ground/src/services/kakao_login.dart';
+import 'package:code_ground/src/services/logins/google_login.dart';
+import 'package:code_ground/src/services/logins/kakao_login.dart';
 import 'package:code_ground/src/view_models/login_view_model.dart';
 
 class LoginPage extends StatefulWidget {
@@ -22,9 +22,10 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       await loginViewModel.login();
-    } catch (e) {
+    } catch (error) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("로그인에 실패했습니다: $e")),
+        SnackBar(content: Text("로그인에 실패했습니다: $error")),
       );
     } finally {
       setState(() {

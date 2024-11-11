@@ -19,15 +19,7 @@ class _BasePageState extends State<BasePage> {
         child: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-
-            if (!snapshot.hasData) {
-              return const LoginPage();
-            }
-
-            return const MainPage();
+            return !snapshot.hasData ? const LoginPage() : const MainPage();
           },
         ),
       ),

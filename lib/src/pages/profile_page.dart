@@ -22,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Card(
           elevation: 2,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(5, 15, 5, 15), // 카드 내부 여백 설정
+            padding: const EdgeInsets.all(15.0), // 카드 내부 여백 설정
             child: ListTile(
               leading: ClipOval(
                 child: loginViewModel.user?.photoURL != null
