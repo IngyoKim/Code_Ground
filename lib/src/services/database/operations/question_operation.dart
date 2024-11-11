@@ -1,5 +1,5 @@
-import 'package:code_ground/src/services/datas/database_service.dart';
-import 'package:code_ground/src/services/datas/question_data.dart';
+import 'package:code_ground/src/services/database/database_service.dart';
+import 'package:code_ground/src/services/database/datas/question_data.dart';
 
 class QuestionOperations {
   final DatabaseService _databaseService = DatabaseService();
@@ -31,5 +31,11 @@ class QuestionOperations {
       );
     }
     return null;
+  }
+
+  Future<void> updateQuestionData(
+      String questionId, Map<String, dynamic> updates) async {
+    String path = 'questions/$questionId';
+    await _databaseService.updateDB(path, updates);
   }
 }

@@ -1,4 +1,5 @@
 class ProgressData {
+  // 경험치 저장을 위한 필드들
   final String userId;
   final int experience;
   final int level;

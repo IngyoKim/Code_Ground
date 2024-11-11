@@ -21,4 +21,10 @@ class DatabaseService {
       return null;
     }
   }
+
+  // Generic update method for any data type
+  Future<void> updateDB(String path, Map<String, dynamic> updates) async {
+    DatabaseReference ref = database.ref(path);
+    await ref.update(updates);
+  }
 }

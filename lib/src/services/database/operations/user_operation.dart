@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:code_ground/src/services/datas/user_data.dart';
-import 'package:code_ground/src/services/datas/database_service.dart';
+import 'package:code_ground/src/services/database/datas/user_data.dart';
+import 'package:code_ground/src/services/database/database_service.dart';
 
 class UserOperations {
   final DatabaseService _databaseService = DatabaseService();
@@ -29,5 +29,11 @@ class UserOperations {
       );
     }
     return null;
+  }
+
+  Future<void> updateUserData(Map<String, dynamic> updates) async {
+    if (user == null) return;
+    String path = 'users/${user!.uid}';
+    await _databaseService.updateDB(path, updates);
   }
 }

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:code_ground/src/services/social_login.dart';
-import 'package:code_ground/src/services/kakao_login.dart';
-import 'package:code_ground/src/services/google_login.dart';
+import 'package:code_ground/src/services/logins/social_login.dart';
+import 'package:code_ground/src/services/logins/kakao_login.dart';
+import 'package:code_ground/src/services/logins/google_login.dart';
 
 class LoginViewModel extends ChangeNotifier {
   SocialLogin? _socialLogin;

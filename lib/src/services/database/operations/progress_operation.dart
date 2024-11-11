@@ -1,5 +1,5 @@
-import 'package:code_ground/src/services/datas/database_service.dart';
-import 'package:code_ground/src/services/datas/progress_data.dart';
+import 'package:code_ground/src/services/database/database_service.dart';
+import 'package:code_ground/src/services/database/datas/progress_data.dart';
 
 class ProgressOperations {
   final DatabaseService _databaseService = DatabaseService();
@@ -36,5 +36,11 @@ class ProgressOperations {
       );
     }
     return null;
+  }
+
+  Future<void> updateProgressData(
+      String userId, String questionId, Map<String, dynamic> updates) async {
+    String path = 'progress/$userId/$questionId';
+    await _databaseService.updateDB(path, updates);
   }
 }
