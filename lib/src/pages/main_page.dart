@@ -1,5 +1,8 @@
+import 'package:code_ground/app.dart';
+import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:code_ground/src/pages/profile_page.dart';
+import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -15,8 +18,10 @@ class _MainPageState extends State<MainPage>
   @override
   void initState() {
     super.initState();
-    // TabController 초기화
     _tabController = TabController(length: 3, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UserViewModel>(context, listen: false).fetchUserData();
+    });
   }
 
   @override

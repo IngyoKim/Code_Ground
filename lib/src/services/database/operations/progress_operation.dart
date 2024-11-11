@@ -1,7 +1,7 @@
 import 'package:code_ground/src/services/database/database_service.dart';
 import 'package:code_ground/src/services/database/datas/progress_data.dart';
 
-class ProgressOperations {
+class ProgressOperation {
   final DatabaseService _databaseService = DatabaseService();
 
   Future<void> writeProgressData(ProgressData progressData) async {

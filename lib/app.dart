@@ -1,3 +1,6 @@
+import 'package:code_ground/src/view_models/progress_view_model.dart';
+import 'package:code_ground/src/view_models/question_view_model.dart';
+import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -13,12 +16,10 @@ class App extends StatelessWidget {
     return MultiProvider(
       // MultiProvider를 사용하여 여러 Provider를 등록
       providers: [
-        ChangeNotifierProvider(
-          create: (_) {
-            debugPrint("LoginViewModel 생성됨");
-            return LoginViewModel();
-          },
-        ),
+        ChangeNotifierProvider(create: (_) => LoginViewModel()),
+        ChangeNotifierProvider(create: (_) => UserViewModel()),
+        ChangeNotifierProvider(create: (_) => ProgressViewModel()),
+        ChangeNotifierProvider(create: (_) => QuestionViewModel()),
       ],
       child: MaterialApp(
         title: 'Your App Title', // 앱 제목

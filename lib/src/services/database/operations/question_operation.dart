@@ -1,7 +1,7 @@
 import 'package:code_ground/src/services/database/database_service.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
 
-class QuestionOperations {
+class QuestionOperation {
   final DatabaseService _databaseService = DatabaseService();
 
   Future<void> writeQuestionData(QuestionData questionData) async {

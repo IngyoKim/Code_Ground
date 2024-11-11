@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/view_models/login_view_model.dart';
+import 'package:code_ground/src/view_models/user_view_model.dart';
+import 'package:code_ground/src/view_models/progress_view_model.dart';
 
-/// 프로필 페이지
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -12,17 +13,34 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   @override
+  void initState() {
+    super.initState();
+    // ProfilePage가 열릴 때 필요한 데이터들을 가져오는 부분
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+      final progressViewModel =
+          Provider.of<ProgressViewModel>(context, listen: false);
+
+      userViewModel.fetchUserData();
+      progressViewModel.fetchProgressData(
+          userViewModel.userData?.userId ?? '', 'questionId'); // 예시 questionId
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    debugPrint(context.toString());
     final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
+    final userViewModel = Provider.of<UserViewModel>(context);
+    final progressViewModel = Provider.of<ProgressViewModel>(context);
+
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start, // 위쪽 정렬
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Card(
           elevation: 2,
           child: Padding(
-            padding: const EdgeInsets.all(15.0), // 카드 내부 여백 설정
+            padding: const EdgeInsets.all(10.0),
             child: ListTile(
               leading: ClipOval(
                 child: loginViewModel.user?.photoURL != null
@@ -38,13 +56,13 @@ class _ProfilePageState extends State<ProfilePage> {
                         size: 50,
                       ),
               ),
-              title: Text(loginViewModel.user?.displayName ?? ''),
-              subtitle: loginViewModel.user?.email != null
-                  ? Text(loginViewModel.user!.email!)
+              title: Text(userViewModel.userData?.name ?? ''),
+              subtitle: userViewModel.userData?.email != null &&
+                      userViewModel.userData?.email != ''
+                  ? Text(userViewModel.userData!.email)
                   : null,
               trailing: ElevatedButton(
                 onPressed: () async {
-                  debugPrint("로그아웃 버튼 눌림");
                   await loginViewModel.logout();
                 },
                 child: const Text("로그아웃"),
@@ -55,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Card(
           elevation: 2,
           child: Padding(
-            padding: const EdgeInsets.all(15.0), // 카드 내부 여백 설정
+            padding: const EdgeInsets.all(15.0),
             child: Column(
               children: <Widget>[
                 const Text(
@@ -65,21 +83,22 @@ class _ProfilePageState extends State<ProfilePage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8.0), // EXP 텍스트와 바 사이 간격 추가
+                const SizedBox(height: 8.0),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(20.0), // 둥근 모서리 설정
+                  borderRadius: BorderRadius.circular(20.0),
                   child: LinearProgressIndicator(
-                    value: 0.7, // 경험치 비율 (0.0 - 1.0)
+                    value: (progressViewModel.progressData?.experience ?? 0) /
+                        (progressViewModel.progressData?.expToNextLevel ?? 1),
                     backgroundColor: Colors.grey[300],
                     valueColor:
                         const AlwaysStoppedAnimation<Color>(Colors.blue),
-                    minHeight: 8.0, // 바의 높이
+                    minHeight: 8.0,
                   ),
                 ),
-                const SizedBox(height: 8.0), // 바와 퍼센트 텍스트 사이 간격 추가
-                const Text(
-                  "70%", // 경험치 퍼센트 표시 (실제로는 동적으로 계산해서 넣을 수 있음)
-                  style: TextStyle(
+                const SizedBox(height: 8.0),
+                Text(
+                  "${((progressViewModel.progressData?.experience ?? 0) / (progressViewModel.progressData?.expToNextLevel ?? 1) * 100).toInt()}%",
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
                   ),
@@ -89,14 +108,14 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         ClipRRect(
-          borderRadius: BorderRadius.circular(16.0), // 둥근 모서리 반경 설정
+          borderRadius: BorderRadius.circular(16.0),
           child: Container(
             height: 200,
             padding: const EdgeInsets.all(16.0),
-            child: const Center(
+            child: Center(
               child: Text(
-                "Tier", // 텍스트 내용
-                style: TextStyle(
+                "Tier: ${progressViewModel.progressData?.level ?? 'Loading...'}",
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),

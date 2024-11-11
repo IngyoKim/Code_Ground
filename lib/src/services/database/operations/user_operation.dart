@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:code_ground/src/services/database/datas/user_data.dart';
 import 'package:code_ground/src/services/database/database_service.dart';
 
-class UserOperations {
+class UserOperation {
   final DatabaseService _databaseService = DatabaseService();
   final User? user = FirebaseAuth.instance.currentUser;
 

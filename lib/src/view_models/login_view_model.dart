@@ -9,8 +9,6 @@ import 'package:code_ground/src/services/logins/google_login.dart';
 
 class LoginViewModel extends ChangeNotifier {
   SocialLogin? _socialLogin;
-  bool isLogined = false;
-  bool isLoading = true;
   User? user;
 
   LoginViewModel() {
@@ -30,7 +28,6 @@ class LoginViewModel extends ChangeNotifier {
 
     /// Firebase 인증 상태가 존재하고, 로그인 타입이 설정되었다면 자동 로그인 시도
     if (FirebaseAuth.instance.currentUser != null && _socialLogin != null) {
-      isLogined = true;
       notifyListeners();
     }
   }
@@ -56,13 +53,7 @@ class LoginViewModel extends ChangeNotifier {
       return;
     }
 
-    isLoading = true;
-    notifyListeners();
-
     user = await _socialLogin!.login();
-    isLogined = user != null;
-
-    isLoading = false;
     notifyListeners();
   }
 
@@ -72,7 +63,6 @@ class LoginViewModel extends ChangeNotifier {
 
     await _socialLogin!.logout();
 
-    isLogined = false;
     user = null;
 
     final prefs = await SharedPreferences.getInstance();
