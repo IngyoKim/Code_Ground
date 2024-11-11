@@ -29,6 +29,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(context.toString());
+
     final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
     final userViewModel = Provider.of<UserViewModel>(context);
     final progressViewModel = Provider.of<ProgressViewModel>(context);
@@ -57,7 +59,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
               ),
               title: Text(userViewModel.userData?.name ?? ''),
-              subtitle: userViewModel.userData?.email != null
+              subtitle: userViewModel.userData?.email != null &&
+                      userViewModel.userData?.email != ''
                   ? Text(userViewModel.userData!.email)
                   : null,
               trailing: ElevatedButton(

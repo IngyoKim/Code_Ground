@@ -29,6 +29,7 @@ class GoogleLogin implements SocialLogin {
 
       final userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
+      debugPrint("Successed to login with Google.");
       return userCredential.user;
     } catch (e) {
       debugPrint("Google Sign-In Error: $e");

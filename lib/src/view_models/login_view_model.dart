@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:code_ground/src/services/logins/social_login.dart';
@@ -6,7 +7,7 @@ import 'package:code_ground/src/services/logins/login_preference.dart';
 class LoginViewModel extends ChangeNotifier {
   final LoginPreference _loginPreference = LoginPreference();
   SocialLogin? _socialLogin;
-  User? get user => FirebaseAuth.instance.currentUser;
+  User? user;
 
   LoginViewModel() {
     _initialize();
@@ -29,7 +30,8 @@ class LoginViewModel extends ChangeNotifier {
       return;
     }
 
-    await _socialLogin!.login();
+    user = await _socialLogin!.login();
+    debugPrint("User Id: ${user?.uid}");
     await FirebaseAuth.instance.currentUser?.reload();
     notifyListeners();
   }
@@ -37,7 +39,9 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> logout() async {
     if (_socialLogin != null) {
       await _socialLogin!.logout();
-      await _loginPreference.clearPreferences(); // 로그인 데이터 초기화
+      await FirebaseAuth.instance.currentUser?.reload();
+      await FirebaseFirestore.instance.clearPersistence();
+      await _loginPreference.clearPreferences();
       _socialLogin = null;
       notifyListeners();
     }

@@ -1,3 +1,4 @@
+import 'package:code_ground/src/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
@@ -30,20 +31,15 @@ class _MainPageState extends State<MainPage>
 
   @override
   Widget build(BuildContext context) {
-    final userData = Provider.of<UserViewModel>(context).userData;
-
+    debugPrint(context.toString());
     return Scaffold(
-      appBar: AppBar(
-        title: userData != null
-            ? Text("Welcome, ${userData.name}")
-            : const Text("Loading..."),
-      ),
+      appBar: AppBar(),
       body: TabBarView(
         controller: _tabController,
         children: const [
           Center(child: Text("Content for Tab 1")),
           Center(child: Text("Content for Tab 2")),
-          Center(child: Text("Profile")),
+          ProfilePage(),
         ],
       ),
       bottomNavigationBar: TabBar(

@@ -13,8 +13,8 @@ class UserViewModel extends ChangeNotifier {
 
     // 데이터가 없을 경우 초기 데이터를 쓰는 로직 추가
     if (_userData == null) {
-      await _userOperation.writeUserData(); // 초기 사용자 데이터 쓰기
-      _userData = await _userOperation.readUserData(); // 쓰고 나서 다시 가져오기
+      await _userOperation.writeUserData();
+      _userData = await _userOperation.readUserData();
     }
 
     notifyListeners();
@@ -23,5 +23,11 @@ class UserViewModel extends ChangeNotifier {
   Future<void> updateUserData(Map<String, dynamic> updates) async {
     await _userOperation.updateUserData(updates);
     await fetchUserData();
+  }
+
+  // 사용자 데이터 초기화
+  void clearUserData() {
+    _userData = null;
+    notifyListeners();
   }
 }

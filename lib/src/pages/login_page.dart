@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/services/logins/google_login.dart';
-import 'package:code_ground/src/services/logins/kakao_login.dart';
+// import 'package:code_ground/src/services/logins/kakao_login.dart';
 import 'package:code_ground/src/view_models/login_view_model.dart';
 
 class LoginPage extends StatefulWidget {
@@ -36,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(context.toString());
     final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
     return Scaffold(
       body: Center(
@@ -46,8 +47,9 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   ElevatedButton(
                     onPressed: () async {
-                      loginViewModel.setLoginType(KakaoLogin());
-                      await _loginWith(loginViewModel);
+                      // loginViewModel.setLoginType(KakaoLogin());
+                      // await _loginWith(loginViewModel);
+                      throw UnimplementedError();
                     },
                     child: const Text("Kakao"),
                   ),

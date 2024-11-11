@@ -37,9 +37,10 @@ dependencies:
   kakao_flutter_sdk_friend: ^1.9.5 # 피커 API 패키지
   kakao_flutter_sdk_navi: ^1.9.5 # 카카오내비 API 패키지
 
-  cloud_firestore: ^5.4.4 # 파이어베이스 추가
   firebase_core: ^3.6.0 #파이어베이스 작업 관련 기능
   firebase_auth: ^5.3.1 # 파이어베이스 로그인 관련 기능
+  cloud_firestore: ^5.4.4 # 파이어베이스 클라우드 관련 기능
+  firebase_database: ^11.1.5 # 파이어베이스 리얼타임 데이터베이스
 
   http: ^1.2.2 # http 통신 기능 추가
   provider: ^6.1.2  # 프로바이더 추가
@@ -50,7 +51,6 @@ dependencies:
   cupertino_icons: ^1.0.8 # IOS 모양 위젯 추가
   shared_preferences: ^2.3.2
   google_sign_in: ^6.2.2
-  firebase_database: ^11.1.5
 
 dev_dependencies:
   flutter_test:
@@ -61,7 +61,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

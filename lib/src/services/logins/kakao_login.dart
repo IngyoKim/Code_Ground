@@ -17,9 +17,21 @@ class KakaoLogin implements SocialLogin {
     try {
       // 카카오톡 설치 여부에 따라 로그인 방식 선택
       if (await kakao.isKakaoTalkInstalled()) {
-        await kakao.UserApi.instance.loginWithKakaoTalk();
+        debugPrint("KakaoTalk is installed.");
+        try {
+          await kakao.UserApi.instance.loginWithKakaoTalk();
+          debugPrint("Successed to login with Kakao.");
+        } catch (error) {
+          debugPrint("Fail to login with Kakao.\n$error");
+        }
       } else {
-        await kakao.UserApi.instance.loginWithKakaoAccount();
+        debugPrint("KakaoTalk isn't installed.");
+        try {
+          await kakao.UserApi.instance.loginWithKakaoAccount();
+          debugPrint("Successed to login with Kakao.");
+        } catch (error) {
+          debugPrint("Fail to login with Kakao.\n$error");
+        }
       }
 
       // 카카오 사용자 정보 가져오기
