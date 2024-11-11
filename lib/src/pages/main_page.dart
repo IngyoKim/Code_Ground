@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:code_ground/src/pages/profile_page.dart';
+import 'package:code_ground/src/components/expandable_fab.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -15,25 +16,24 @@ class _MainPageState extends State<MainPage>
   @override
   void initState() {
     super.initState();
-    // TabController 초기화
     _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
   void dispose() {
-    _tabController.dispose(); // TabController 해제
+    _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(context.toString());
     return Scaffold(
       appBar: AppBar(),
       body: TabBarView(
         controller: _tabController,
+        physics: const NeverScrollableScrollPhysics(), // 페이지 스와이프 비활성화
         children: const [
-          Center(child: Text("Content for Tab 1")),
+          Center(child: ExpandableFab()), // ExpandableFab이 포함된 첫 번째 탭
           Center(child: Text("Content for Tab 2")),
           Center(child: ProfilePage()),
         ],

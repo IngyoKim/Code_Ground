@@ -13,17 +13,17 @@ class KakaoLogin implements SocialLogin {
   @override
   Future<User?> login() async {
     try {
-      // 카카오톡 설치 여부에 따라 로그인 방식 선택
+      // Choose login method depending on KakaoTalk installation
       if (await kakao.isKakaoTalkInstalled()) {
         await kakao.UserApi.instance.loginWithKakaoTalk();
       } else {
         await kakao.UserApi.instance.loginWithKakaoAccount();
       }
 
-      // 카카오 사용자 정보 가져오기
+      // Retrieve Kakao user information
       final user = await kakao.UserApi.instance.me();
 
-      // Firebase 커스텀 토큰 생성 요청
+      // Request to create Firebase custom token
       final response = await _firebaseAuthData.createCustomToken({
         'uid': user.id.toString(),
         'displayName': user.kakaoAccount?.profile?.nickname ?? '',
@@ -39,7 +39,7 @@ class KakaoLogin implements SocialLogin {
         return null;
       }
 
-      // Firebase 로그인
+      // Sign in with Firebase using custom token
       UserCredential userCredential =
           await _auth.signInWithCustomToken(customToken);
       return userCredential.user;
@@ -52,19 +52,19 @@ class KakaoLogin implements SocialLogin {
   @override
   Future<void> logout() async {
     try {
-      debugPrint("Firebase 로그아웃 시도 중...");
+      debugPrint("Attempting to log out from Firebase.");
       await _auth.signOut();
-      debugPrint("Firebase 로그아웃 성공");
+      debugPrint("Successfully logged out from Firebase.");
     } catch (error) {
-      debugPrint("Firebase 로그아웃 실패: $error");
+      debugPrint("Failed to log out from Firebase: $error");
     }
 
     try {
-      debugPrint("Kakao 로그아웃 시도 중...");
+      debugPrint("Attempting to log out from Kakao.");
       await kakao.UserApi.instance.logout();
-      debugPrint("Kakao 로그아웃 성공");
+      debugPrint("Successfully logged out from Kakao.");
     } catch (error) {
-      debugPrint("Kakao 로그아웃 실패: $error");
+      debugPrint("Failed to log out from Kakao: $error");
     }
   }
 }
