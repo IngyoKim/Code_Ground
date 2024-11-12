@@ -3,14 +3,14 @@ import 'second_page.dart';
 import 'profile_page.dart';
 import '../services/firestore_service.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainPageState extends State<MainPage> {
   final FirestoreService _firestoreService = FirestoreService();
   final PageController _pageController = PageController();
   int _currentIndex = 0;

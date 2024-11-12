@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:code_ground/pages/main_screen.dart';
+import 'package:code_ground/pages/main_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MainScreen(),
+      home: const MainPage(),
     );
   }
 }
