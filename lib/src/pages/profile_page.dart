@@ -1,6 +1,7 @@
-import 'package:code_ground/components/logout_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'package:code_ground/components/logout_dialog.dart';
 import 'package:code_ground/src/view_models/login_view_model.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';

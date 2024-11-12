@@ -33,10 +33,4 @@ class ProgressViewModel extends ChangeNotifier {
     _progressData = progressData; // 업데이트된 진행 상황 반영
     notifyListeners();
   }
-
-  // 진행 상황 초기화 메서드
-  void clearProgressData() {
-    _progressData = null;
-    notifyListeners();
-  }
 }

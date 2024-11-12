@@ -24,10 +24,4 @@ class UserViewModel extends ChangeNotifier {
     await _userOperation.updateUserData(updates);
     await fetchUserData();
   }
-
-  // 사용자 데이터 초기화
-  void clearUserData() {
-    _userData = null;
-    notifyListeners();
-  }
 }
