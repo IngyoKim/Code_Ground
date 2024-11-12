@@ -1,6 +1,8 @@
-import 'package:code_ground/src/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'package:code_ground/src/pages/quiz_page.dart';
+import 'package:code_ground/src/pages/profile_page.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 
 class MainPage extends StatefulWidget {
@@ -38,7 +40,7 @@ class _MainPageState extends State<MainPage>
         controller: _tabController,
         children: const [
           Center(child: Text("Content for Tab 1")),
-          Center(child: Text("Content for Tab 2")),
+          QuizPage(),
           ProfilePage(),
         ],
       ),

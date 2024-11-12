@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:code_ground/src/services/database/operations/user_operation.dart';
 import 'package:code_ground/src/services/database/datas/user_data.dart';
+import 'package:code_ground/src/services/database/operations/user_operation.dart';
 
 class UserViewModel extends ChangeNotifier {
   final UserOperation _userOperation = UserOperation();

@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
+
 import 'package:code_ground/src/services/logins/social_login.dart';
-import 'firebase_auth_data.dart';
+import 'package:code_ground/src/services/logins/firebase_auth_data.dart';
 
 class KakaoLogin implements SocialLogin {
   final FirebaseAuth _auth = FirebaseAuth.instance;

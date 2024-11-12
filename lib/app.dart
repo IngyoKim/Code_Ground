@@ -1,11 +1,12 @@
-import 'package:code_ground/src/view_models/progress_view_model.dart';
-import 'package:code_ground/src/view_models/question_view_model.dart';
-import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
+
 import 'package:code_ground/src/pages/base_page.dart';
 import 'package:code_ground/src/view_models/login_view_model.dart';
+
+import 'package:code_ground/src/view_models/user_view_model.dart';
+import 'package:code_ground/src/view_models/question_view_model.dart';
+import 'package:code_ground/src/view_models/progress_view_model.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:code_ground/src/services/database/operations/progress_operation.dart';
 import 'package:code_ground/src/services/database/datas/progress_data.dart';
+import 'package:code_ground/src/services/database/operations/progress_operation.dart';
 
 class ProgressViewModel extends ChangeNotifier {
   final ProgressOperation _progressOperation = ProgressOperation();

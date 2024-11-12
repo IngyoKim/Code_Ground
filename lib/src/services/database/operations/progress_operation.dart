@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:code_ground/src/services/database/datas/progress_data.dart';
+
 import 'package:code_ground/src/services/database/database_service.dart';
+import 'package:code_ground/src/services/database/datas/progress_data.dart';
 
 class ProgressOperation {
   final DatabaseService _databaseService = DatabaseService();

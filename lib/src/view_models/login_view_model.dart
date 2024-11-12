@@ -1,6 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:code_ground/src/services/logins/social_login.dart';
 import 'package:code_ground/src/services/logins/login_preference.dart';
 

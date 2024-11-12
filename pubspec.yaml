@@ -73,6 +73,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/images/languages/
 
    # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
