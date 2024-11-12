@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 flutter/ephemeral/
 
 # Visual Studio user-specific files.
@@ -15,3 +16,22 @@ x86/
 *.[Cc]ache
 # but keep track of directories ending in .cache
 !*.[Cc]ache/
+=======
+flutter/ephemeral/
+
+# Visual Studio user-specific files.
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio build-related files.
+x64/
+x86/
+
+# Visual Studio cache files
+# files ending in .cache can be ignored
+*.[Cc]ache
+# but keep track of directories ending in .cache
+!*.[Cc]ache/
+>>>>>>> 589c2d6c027939a59a3c470434c384cfc2ea8747

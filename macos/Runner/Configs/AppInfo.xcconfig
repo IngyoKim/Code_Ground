@@ -1,3 +1,19 @@
+<<<<<<< HEAD
+// Application-level settings for the Runner target.
+//
+// This may be replaced with something auto-generated from metadata (e.g., pubspec.yaml) in the
+// future. If not, the values below would default to using the project name when this becomes a
+// 'flutter create' template.
+
+// The application's name. By default this is also the title of the Flutter window.
+PRODUCT_NAME = code_ground
+
+// The application's bundle identifier
+PRODUCT_BUNDLE_IDENTIFIER = com.oss.codeGround
+
+// The copyright displayed in application information
+PRODUCT_COPYRIGHT = Copyright © 2024 com.oss. All rights reserved.
+=======
 // Application-level settings for the Runner target.
 //
 // This may be replaced with something auto-generated from metadata (e.g., pubspec.yaml) in the
@@ -12,3 +28,4 @@ PRODUCT_BUNDLE_IDENTIFIER = com.example.flutterApplication1
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2024 com.example. All rights reserved.
+>>>>>>> 589c2d6c027939a59a3c470434c384cfc2ea8747

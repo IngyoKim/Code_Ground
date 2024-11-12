@@ -1,3 +1,25 @@
+<<<<<<< HEAD
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        // Kakao SDK 저장소 추가
+        maven { url "https://devrepo.kakao.com/nexus/content/groups/public/" }
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
+=======
 allprojects {
     repositories {
         google()
@@ -16,3 +38,4 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+>>>>>>> 589c2d6c027939a59a3c470434c384cfc2ea8747
