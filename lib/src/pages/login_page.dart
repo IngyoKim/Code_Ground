@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/services/logins/google_login.dart';
-// import 'package:code_ground/src/services/logins/kakao_login.dart';
+import 'package:code_ground/src/services/logins/kakao_login.dart';
 import 'package:code_ground/src/view_models/login_view_model.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,18 +15,15 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
-  Future<void> _loginWith(LoginViewModel loginViewModel) async {
+  Future<void> _tryLogin(LoginViewModel loginViewModel) async {
     setState(() {
       _isLoading = true;
     });
 
     try {
       await loginViewModel.login();
-    } catch (e) {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("로그인에 실패했습니다: $e")),
-      );
+    } catch (error) {
+      debugPrint("로그인에 실패했습니다: $error");
     } finally {
       setState(() {
         _isLoading = false;
@@ -47,9 +44,8 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   ElevatedButton(
                     onPressed: () async {
-                      // loginViewModel.setLoginType(KakaoLogin());
-                      // await _loginWith(loginViewModel);
-                      throw UnimplementedError();
+                      loginViewModel.setLoginType(KakaoLogin());
+                      await _tryLogin(loginViewModel);
                     },
                     child: const Text("Kakao"),
                   ),
@@ -57,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: () async {
                       loginViewModel.setLoginType(GoogleLogin());
-                      await _loginWith(loginViewModel);
+                      await _tryLogin(loginViewModel);
                     },
                     child: const Text("Google"),
                   ),

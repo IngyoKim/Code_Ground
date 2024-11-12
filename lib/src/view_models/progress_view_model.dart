@@ -8,31 +8,35 @@ class ProgressViewModel extends ChangeNotifier {
 
   ProgressData? get progressData => _progressData;
 
-  Future<void> fetchProgressData(String userId, String questionId) async {
-    _progressData =
-        await _progressOperation.readProgressData(userId, questionId);
+  // 진행 상황을 불러오는 메서드
+  Future<void> fetchProgressData() async {
+    _progressData = await _progressOperation.readProgressData();
 
     // 데이터가 없을 경우 초기 데이터를 쓰는 로직 추가
     if (_progressData == null) {
-      final initialProgressData = ProgressData(
-        userId: userId,
+      _progressData = ProgressData(
+        userId: '', // userId는 빈 값으로 두고, 실제 데이터는 유저 로그인 시에 적용
+        level: 0,
         experience: 0,
-        level: 1,
-        expToNextLevel: 100,
-        questionId: questionId,
-        timeTaken: 0,
-        attempts: 0,
+        solvedQuestions: [],
+        questionStatus: {},
       );
-      await _progressOperation.writeProgressData(initialProgressData);
-      _progressData = initialProgressData;
+      await _progressOperation.writeProgressData(_progressData!);
     }
 
     notifyListeners();
   }
 
-  Future<void> updateProgressData(
-      String userId, String questionId, Map<String, dynamic> updates) async {
-    await _progressOperation.updateProgressData(userId, questionId, updates);
-    await fetchProgressData(userId, questionId);
+  // 진행 상황을 업데이트하는 메서드
+  Future<void> updateProgressData(ProgressData progressData) async {
+    await _progressOperation.updateProgressData(progressData);
+    _progressData = progressData; // 업데이트된 진행 상황 반영
+    notifyListeners();
+  }
+
+  // 진행 상황 초기화 메서드
+  void clearProgressData() {
+    _progressData = null;
+    notifyListeners();
   }
 }

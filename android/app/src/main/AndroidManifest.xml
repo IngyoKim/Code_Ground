@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:label="code_ground"
         android:name="${applicationName}"
@@ -35,7 +37,7 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="kakao${KAKAO_KEY}"/>
+                <data android:scheme="kakaoadee6c4e15930c7a0270ee23244fb085"/>
             </intent-filter>
         </activity>
         

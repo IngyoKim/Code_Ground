@@ -27,7 +27,7 @@ class LoginPreference {
     }
   }
 
-  /// SharedPreferences 전체 초기화 (로그아웃 시 호출)
+  /// SharedPreferences 전체 초기화
   Future<void> clearPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear(); // 전체 초기화

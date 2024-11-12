@@ -1,3 +1,4 @@
+import 'package:code_ground/components/logout_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/view_models/login_view_model.dart';
@@ -22,8 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Provider.of<ProgressViewModel>(context, listen: false);
 
       userViewModel.fetchUserData();
-      progressViewModel.fetchProgressData(
-          userViewModel.userData?.userId ?? '', 'questionId'); // 예시 questionId
+      progressViewModel.fetchProgressData();
     });
   }
 
@@ -64,8 +64,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   ? Text(userViewModel.userData!.email)
                   : null,
               trailing: ElevatedButton(
-                onPressed: () async {
-                  await loginViewModel.logout();
+                onPressed: () {
+                  showLogoutDialog(context);
                 },
                 child: const Text("로그아웃"),
               ),
@@ -90,7 +90,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   borderRadius: BorderRadius.circular(20.0),
                   child: LinearProgressIndicator(
                     value: (progressViewModel.progressData?.experience ?? 0) /
-                        (progressViewModel.progressData?.expToNextLevel ?? 1),
+                        (progressViewModel.progressData!.experience + 100),
                     backgroundColor: Colors.grey[300],
                     valueColor:
                         const AlwaysStoppedAnimation<Color>(Colors.blue),
@@ -99,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  "${((progressViewModel.progressData?.experience ?? 0) / (progressViewModel.progressData?.expToNextLevel ?? 1) * 100).toInt()}%",
+                  "${((progressViewModel.progressData?.experience ?? 0) / (progressViewModel.progressData!.experience + 100) * 100).toInt()}%",
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,

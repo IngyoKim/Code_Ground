@@ -42,6 +42,8 @@ dependencies:
   cloud_firestore: ^5.4.4 # 파이어베이스 클라우드 관련 기능
   firebase_database: ^11.1.5 # 파이어베이스 리얼타임 데이터베이스
 
+  webview_flutter: ^4.9.0
+
   http: ^1.2.2 # http 통신 기능 추가
   provider: ^6.1.2  # 프로바이더 추가
 

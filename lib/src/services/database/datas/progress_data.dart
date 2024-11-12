@@ -1,27 +1,15 @@
 class ProgressData {
-  // 경험치 저장을 위한 필드들
   final String userId;
-  final int experience;
   final int level;
-  final int expToNextLevel;
-  final DateTime lastUpdated;
-
-  // 문제 풀이 기록을 위한 필드들
-  final String questionId;
-  final DateTime solvedAt;
-  final int timeTaken;
-  final int attempts;
+  final int experience;
+  final List<String> solvedQuestions; // 푼 문제의 ID 리스트
+  final Map<String, DateTime?> questionStatus; // 문제 ID를 키로, 해결 시간을 값으로 저장
 
   ProgressData({
     required this.userId,
-    required this.experience,
     required this.level,
-    required this.expToNextLevel,
-    DateTime? lastUpdated, // 기본값 제공을 위한 optional parameter
-    required this.questionId,
-    DateTime? solvedAt, // 기본값 제공을 위한 optional parameter
-    required this.timeTaken,
-    required this.attempts,
-  })  : lastUpdated = lastUpdated ?? DateTime.now(), // 기본값으로 현재 시간 할당
-        solvedAt = solvedAt ?? DateTime.now(); // 기본값으로 현재 시간 할당
+    required this.experience,
+    required this.solvedQuestions,
+    required this.questionStatus,
+  });
 }
