@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "278986162898",
+    "firebase_url": "https://oss-code-ground-default-rtdb.firebaseio.com",
     "project_id": "oss-code-ground",
     "storage_bucket": "oss-code-ground.firebasestorage.app"
   },
