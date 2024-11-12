@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:code_ground/firebase_options.dart';
 import 'package:code_ground/app.dart';
 
 void main() async {
