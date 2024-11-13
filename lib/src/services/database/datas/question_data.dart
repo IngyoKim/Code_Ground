@@ -1,6 +1,7 @@
 class QuestionData {
   final String questionId;
   final String title;
+  final String category;
   final String description;
   final String difficulty;
   final List<String> tags;
@@ -10,6 +11,7 @@ class QuestionData {
   QuestionData({
     required this.questionId,
     required this.title,
+    required this.category,
     required this.description,
     required this.difficulty,
     required this.tags,

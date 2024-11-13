@@ -1,8 +1,9 @@
+import 'package:code_ground/src/pages/add_question.dart';
+import 'package:code_ground/src/pages/question_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/components/logout_dialog.dart';
-import 'package:code_ground/src/view_models/login_view_model.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
 
@@ -11,7 +12,6 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
     final userViewModel = Provider.of<UserViewModel>(context);
     final progressViewModel = Provider.of<ProgressViewModel>(context);
 
@@ -24,12 +24,26 @@ class ProfilePage extends StatelessWidget {
       {
         'icon': Icons.info,
         'text': 'About',
-        'onTap': () => debugPrint('About is clicked'),
+        'onTap': () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => QuestionListPage(),
+            ),
+          );
+        },
       },
       {
         'icon': Icons.help,
         'text': 'Help',
-        'onTap': () => debugPrint('Help is clicked'),
+        'onTap': () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => QuestionInputPage(),
+            ),
+          );
+        },
       },
       {
         'icon': Icons.question_answer,
@@ -56,9 +70,9 @@ class ProfilePage extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
                   child: ListTile(
                     leading: ClipOval(
-                      child: loginViewModel.user?.photoURL != null
+                      child: userViewModel.userData?.profileImageUrl != null
                           ? Image.network(
-                              loginViewModel.user!.photoURL!,
+                              userViewModel.userData!.profileImageUrl,
                               width: 50,
                               height: 50,
                               fit: BoxFit.cover,
@@ -112,7 +126,7 @@ class ProfilePage extends StatelessWidget {
                       const SizedBox(height: 8.0),
                       Text(
                         progressViewModel.progressData?.exp != null
-                            ? "${((progressViewModel.progressData!.exp / (progressViewModel.progressData!.exp + 100)) * 100).toInt()}%"
+                            ? "${((progressViewModel.progressData!.exp / 100) * 100).toInt()}%"
                             : "0%",
                         style: const TextStyle(
                           fontSize: 14,
@@ -129,28 +143,30 @@ class ProfilePage extends StatelessWidget {
                 thickness: 0.5,
                 endIndent: 20.0,
               ),
-              ...menuItems.map((item) => Column(
-                    children: [
-                      ListTile(
-                        leading: Icon(
-                          item['icon'],
-                          color: Colors.black,
-                        ),
-                        title: Text(item['text']),
-                        onTap: item['onTap'],
-                        trailing: const Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.black,
-                        ),
+              ...menuItems.map(
+                (item) => Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(
+                        item['icon'],
+                        color: Colors.black,
                       ),
-                      const Divider(
-                        height: 10.0,
-                        color: Colors.grey,
-                        thickness: 0.5,
-                        endIndent: 20.0,
+                      title: Text(item['text']),
+                      onTap: item['onTap'],
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.black,
                       ),
-                    ],
-                  )),
+                    ),
+                    const Divider(
+                      height: 10.0,
+                      color: Colors.grey,
+                      thickness: 0.5,
+                      endIndent: 20.0,
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

@@ -15,11 +15,14 @@ class UserOperation {
     }
     String path = 'users/${user!.uid}';
     debugPrint("Writing user data to $path");
-    await _databaseService.writeDB(path, {
-      'name': user?.displayName ?? '',
-      'email': user?.email ?? '',
-      'profileImageUrl': user?.photoURL ?? '',
-    });
+    await _databaseService.writeDB(
+      path,
+      {
+        'name': user?.displayName ?? '',
+        'email': user?.email ?? '',
+        'profileImageUrl': user?.photoURL ?? '',
+      },
+    );
   }
 
   Future<UserData?> readUserData() async {

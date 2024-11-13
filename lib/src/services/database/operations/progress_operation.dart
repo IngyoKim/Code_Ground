@@ -16,13 +16,20 @@ class ProgressOperation {
     }
     String path = 'progress/${user!.uid}';
     debugPrint("Writing progress data to $path");
-    await _databaseService.writeDB(path, {
-      'level': progressData.level,
-      'experience': progressData.exp,
-      'solvedQuestions': progressData.solvedQuestions,
-      'questionStatus': progressData.questionStatus.map((key, value) =>
-          MapEntry(key, value?.toIso8601String())), // DateTime을 String으로 변환
-    });
+    await _databaseService.writeDB(
+      path,
+      {
+        'level': progressData.level,
+        'experience': progressData.exp,
+        'solvedQuestions': progressData.solvedQuestions,
+        'questionStatus': progressData.questionStatus.map(
+          (key, value) => MapEntry(
+            key,
+            value?.toIso8601String(),
+          ),
+        ), // DateTime을 String으로 변환
+      },
+    );
   }
 
   // 유저의 진행 상황을 데이터베이스에서 읽기
@@ -59,7 +66,7 @@ class ProgressOperation {
     }
 
     String path = 'progress/${user!.uid}';
-    debugPrint("Updating progress at $path with $updates");
+    debugPrint("Updating progress data at $path with $updates");
 
     // 전달된 필드만 업데이트
     await _databaseService.updateDB(path, updates);

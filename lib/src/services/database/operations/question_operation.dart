@@ -8,6 +8,7 @@ class QuestionOperation {
     String path = 'questions/${questionData.questionId}';
     await _databaseService.writeDB(path, {
       'title': questionData.title,
+      'category': questionData.category,
       'description': questionData.description,
       'difficulty': questionData.difficulty,
       'tags': questionData.tags,
@@ -23,6 +24,7 @@ class QuestionOperation {
       return QuestionData(
         questionId: questionId,
         title: data['title'] ?? '',
+        category: data['category'] ?? '',
         description: data['description'] ?? '',
         difficulty: data['difficulty'] ?? 'Unknown',
         tags: List<String>.from(data['tags'] ?? []),
