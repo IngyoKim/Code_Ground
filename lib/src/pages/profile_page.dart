@@ -19,7 +19,7 @@ class ProfilePage extends StatelessWidget {
       {
         'icon': Icons.settings,
         'text': 'Setting',
-        'onTap': () => debugPrint('Settings is clicked'),
+        'onTap': () => context.read<ProgressViewModel>().addExp(10),
       },
       {
         'icon': Icons.info,
@@ -100,11 +100,8 @@ class ProfilePage extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20.0),
                         child: LinearProgressIndicator(
-                          value: progressViewModel.progressData?.experience !=
-                                  null
-                              ? (progressViewModel.progressData!.experience /
-                                  (progressViewModel.progressData!.experience +
-                                      100))
+                          value: progressViewModel.progressData?.exp != null
+                              ? (progressViewModel.progressData!.exp / 100)
                               : 0.0,
                           backgroundColor: Colors.grey[300],
                           valueColor:
@@ -114,8 +111,8 @@ class ProfilePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8.0),
                       Text(
-                        progressViewModel.progressData?.experience != null
-                            ? "${((progressViewModel.progressData!.experience / (progressViewModel.progressData!.experience + 100)) * 100).toInt()}%"
+                        progressViewModel.progressData?.exp != null
+                            ? "${((progressViewModel.progressData!.exp / (progressViewModel.progressData!.exp + 100)) * 100).toInt()}%"
                             : "0%",
                         style: const TextStyle(
                           fontSize: 14,

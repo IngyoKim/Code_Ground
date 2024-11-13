@@ -18,7 +18,7 @@ class ProgressOperation {
     debugPrint("Writing progress data to $path");
     await _databaseService.writeDB(path, {
       'level': progressData.level,
-      'experience': progressData.experience,
+      'experience': progressData.exp,
       'solvedQuestions': progressData.solvedQuestions,
       'questionStatus': progressData.questionStatus.map((key, value) =>
           MapEntry(key, value?.toIso8601String())), // DateTime을 String으로 변환
@@ -39,7 +39,7 @@ class ProgressOperation {
       return ProgressData(
         userId: user!.uid,
         level: data['level'] ?? 0,
-        experience: data['experience'] ?? 0,
+        exp: data['exp'] ?? 0,
         solvedQuestions: List<String>.from(data['solvedQuestions'] ?? []),
         questionStatus: Map<String, DateTime?>.from(data['questionStatus']?.map(
                 (key, value) => MapEntry(
@@ -52,20 +52,16 @@ class ProgressOperation {
   }
 
   // 유저의 진행 상황을 업데이트
-  Future<void> updateProgressData(ProgressData progressData) async {
+  Future<void> updateProgressData(Map<String, dynamic> updates) async {
     if (user == null) {
       debugPrint("User not logged in.");
       return;
     }
+
     String path = 'progress/${user!.uid}';
-    debugPrint(
-        "Updating progress data at $path with ${progressData.toString()}");
-    await _databaseService.updateDB(path, {
-      'level': progressData.level,
-      'experience': progressData.experience,
-      'solvedQuestions': progressData.solvedQuestions,
-      'questionStatus': progressData.questionStatus.map((key, value) =>
-          MapEntry(key, value?.toIso8601String())), // DateTime을 String으로 변환
-    });
+    debugPrint("Updating progress at $path with $updates");
+
+    // 전달된 필드만 업데이트
+    await _databaseService.updateDB(path, updates);
   }
 }

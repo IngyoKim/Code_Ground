@@ -17,7 +17,7 @@ class ProgressViewModel extends ChangeNotifier {
       _progressData = ProgressData(
         userId: '', // userId는 빈 값으로 두고, 실제 데이터는 유저 로그인 시에 적용
         level: 0,
-        experience: 0,
+        exp: 0,
         solvedQuestions: [],
         questionStatus: {},
       );
@@ -28,9 +28,21 @@ class ProgressViewModel extends ChangeNotifier {
   }
 
   // 진행 상황을 업데이트하는 메서드
-  Future<void> updateProgressData(ProgressData progressData) async {
-    await _progressOperation.updateProgressData(progressData);
-    _progressData = progressData; // 업데이트된 진행 상황 반영
-    notifyListeners();
+  Future<void> addExp(int data) async {
+    if (_progressData == null) {
+      debugPrint("Progress data not loaded. Fetching progress data...");
+      await fetchProgressData();
+      if (_progressData == null) {
+        debugPrint("Failed to load progress data.");
+        return;
+      }
+    }
+
+    // 기존 경험치에 experiencePoints를 더하여 데이터베이스에 반영
+    await _progressOperation
+        .updateProgressData({'exp': _progressData!.exp + data});
+
+    // 업데이트된 데이터를 다시 불러와서 상태 반영
+    await fetchProgressData();
   }
 }
