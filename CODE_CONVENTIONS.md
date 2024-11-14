@@ -31,6 +31,7 @@
   - `remove`: Deleting files only
   - `design`: Modifying the UI design
   - `docs`: Document changes
+  - `merge`: Merge branches
   - Example: `feat: Add user profile page`
 
 ## Widget Development Guidelines

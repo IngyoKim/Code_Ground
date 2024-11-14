@@ -23,11 +23,11 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => QuestionViewModel()),
       ],
       child: MaterialApp(
-        title: 'Code Ground', // 앱 제목
+        title: 'Code Ground',
         theme: ThemeData(
-          primarySwatch: Colors.blue, // 기본 테마 색상
+          primarySwatch: Colors.blue,
         ),
-        home: const BasePage(), // 기본 홈 화면 설정
+        home: const BasePage(),
       ),
     );
   }
