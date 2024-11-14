@@ -10,6 +10,7 @@
   - Use PascalCase for all class and widget names. Example: `UserData`
   - Widget classes should be named to clearly reflect their roles. Example: `UserCard`
 - **Commenting**: Use `///` for concise explanations where needed.
+- **Debugging**: For debugging purposes, use debugPrint instead of print.
 
 ## File and Folder Structure
 - **Folder Structure**:
