@@ -1,16 +1,57 @@
-# code_ground
+# Code Ground - Coding Problem Solving Application
 
-A new Flutter project.
+## Project Overview
+**Code Ground** is a coding problem-solving application with the goal of making coding a daily habit. It supports users in solving coding problems and learning at any time, helping them improve their coding skills through regular practice and repetition.
 
-## Getting Started
+## Team Introduction
+- **Ingyo Kim**: Responsible for project coordination and developing the problem selection page
+- **Jian Shin**: Design and widget setup, app beta testing
+- **Yoonho Jang**: Design and widget setup, login feature development
+- **Sangmin Jeon**: Login functionality, database management, and code integration
+- **Heejin Choi**: Core app functionalities and user data page development
 
-This project is a starting point for a Flutter application.
+## Development Goals and Key Features
 
-A few resources to get you started if this is your first Flutter project:
+### Development Goals
+- Enable users to select a programming language of their choice and solve related problems anywhere and anytime, making coding a part of daily life.
+- Provide motivation to learners through repetitive practice and visual progress tracking.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Key Features
+1. **Programming Language Selection and Problem Solving**  
+   Users can select the programming language they want to study and solve problems in that language.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+2. **Solution Review Feature**  
+   After solving a problem, users can review their solutions to identify areas for improvement.
+
+3. **Smartphone Notification Feature**  
+   Regular notifications encourage users to practice coding consistently.
+
+4. **Tier System**  
+   Users’ tiers increase as they solve problems and gain experience points, allowing them to visually track their skill progression.
+
+5. **Easy Login Feature**  
+   Supports convenient login via Google and Kakao.
+
+6. **Friend Invite and Info Sharing Feature**  
+   Users can invite friends and share progress with each other to stay motivated.
+
+## Development Environment and Tools
+- **Framework**: Flutter
+- **Database**: Firebase (for storing user accounts, tiers, and experience points)
+- **Development Tools**: Visual Studio Code
+- **Collaboration Tools**:
+  - **Communication**: Discord
+  - **Version Control**: GitHub
+  - **Documentation**: Notion
+
+## Plan for Results Utilization
+The ultimate goal of Code Ground is to support users in self-development through regular coding practice and learning. We aim to generate revenue through ad-based monetization, ensuring ongoing service provision. In the future, we plan to add features such as allowing users to create their own problems and to expand the platform to the web to reach a broader audience.
+
+## App Components
+- **Main Page**: Displays users’ experience progress as a growing plant, providing a visual representation of skill progression.
+- **Problem Selection Page**: Allows users to choose and solve problems in the programming language they prefer.
+- **Additional Features Page**: Displays account information, app settings, FAQ, and other supplementary features.
+- **Login and Account Management Page**: Enables easy login with Google and Kakao accounts and manages user account data.
+
+## Contact and Q&A
+For questions or suggestions regarding this project, please feel free to open an issue on GitHub.
