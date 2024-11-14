@@ -4,11 +4,11 @@
 **Code Ground** is a coding problem-solving application with the goal of making coding a daily habit. It supports users in solving coding problems and learning at any time, helping them improve their coding skills through regular practice and repetition.
 
 ## Team Introduction
-- **Ingyo Kim**: Responsible for project coordination and developing the problem selection page
-- **Jian Shin**: Design and widget setup, app beta testing
-- **Yoonho Jang**: Design and widget setup, login feature development
-- **Sangmin Jeon**: Login functionality, database management, and code integration
-- **Heejin Choi**: Core app functionalities and user data page development
+- [**Ingyo Kim**](https://github.com/IngyoKim): Responsible for project coordination and developing the problem selection page
+- [**Jian Shin**](https://github.com/sinjian11): Design and widget setup, app beta testing
+- [**Heejin Choi**](https://github.com/HJ1263532): Core app functionalities and user data page development
+- [**Yoonho Jang**](https://github.com/YunhoJangg): Design and widget setup, login feature development
+- [**Sangmin Jeon**](https://github.com/A-X-Y-S-T): Login functionality, database management, and code integration
 
 ## Development Goals and Key Features
 
