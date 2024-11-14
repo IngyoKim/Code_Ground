@@ -1,5 +1,6 @@
 import 'package:code_ground/src/services/database/database_service.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
+import 'package:flutter/material.dart';
 
 class QuestionOperation {
   final DatabaseService _databaseService = DatabaseService();
@@ -19,18 +20,7 @@ class QuestionOperation {
     String questionId = generateQuestionId();
 
     String path = 'questions/${questionData.category}/$questionId';
-    await _databaseService.writeDB(path, {
-      'title': questionData.title,
-      'writer': questionData.writer,
-      'category': questionData.category,
-      'description': questionData.description,
-      'difficulty': questionData.difficulty,
-      'rewardExp': questionData.rewardExp,
-      'rewardScore': questionData.rewardScore,
-      'questionType': questionData.questionType,
-      'solvedCount': questionData.solvedCount,
-      'updatedAt': questionData.updatedAt.toIso8601String(),
-    });
+    await _databaseService.writeDB(path, questionData.toMap());
   }
 
   // QuestionData를 데이터베이스에서 읽어오는 함수
@@ -38,23 +28,17 @@ class QuestionOperation {
       String category, String questionId) async {
     String path = 'questions/$category/$questionId';
     final data = await _databaseService.readDB(path);
-    if (data != null) {
-      return QuestionData(
-        questionId: questionId,
-        writer: data['writer'] ?? '',
-        category: data['category'] ?? category,
-        questionType: data['questionType'] ?? 'Unknown',
-        updatedAt: DateTime.parse(data['updatedAt']),
-        title: data['title'] ?? '',
-        description: data['description'] ?? '',
-        answer: data['answer'] ?? '',
-        difficulty: data['difficulty'] ?? 'Unknown',
-        rewardExp: data['rewardExp'] ?? 0,
-        rewardScore: data['rewardScore'] ?? 0,
-        solvedCount: data['solvedCount'] ?? 0,
+
+    if (data is Map<String, dynamic>) {
+      // 데이터가 Map 형식이면 적절한 서브클래스로 변환
+      return QuestionData.fromMap(data);
+    } else {
+      // 데이터 형식이 Map이 아닌 경우 오류 메시지 출력
+      debugPrint(
+        "Error: Expected a Map<String, dynamic> but got ${data.runtimeType}",
       );
+      return null;
     }
-    return null;
   }
 
   // QuestionData를 업데이트하는 함수
