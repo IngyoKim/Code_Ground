@@ -17,7 +17,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
     super.initState();
     Future.microtask(
       () => Provider.of<QuestionViewModel>(context, listen: false)
-          .fetchQuestions(),
+          .fetchQuestions(category: ''),
     );
 
     _scrollController = ScrollController();
@@ -28,7 +28,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       Provider.of<QuestionViewModel>(context, listen: false)
-          .fetchQuestions(loadMore: true);
+          .fetchQuestions(category: '', loadMore: true);
     }
   }
 

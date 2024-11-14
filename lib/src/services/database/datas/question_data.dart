@@ -1,21 +1,30 @@
+// question_data.dart
 class QuestionData {
   final String questionId;
-  final String title;
+  final String writer;
   final String category;
-  final String description;
-  final String difficulty;
-  final List<String> tags;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String questionType; // 주관식 또는 객관식 구분
+  DateTime updatedAt;
+  String title;
+  String description;
+  String answer;
+  String difficulty;
+  int rewardExp;
+  int rewardScore;
+  int solvedCount; // 푼 사람의 수
 
   QuestionData({
     required this.questionId,
-    required this.title,
+    required this.writer,
     required this.category,
-    required this.description,
-    required this.difficulty,
-    required this.tags,
-    required this.createdAt,
     required this.updatedAt,
+    required this.title,
+    required this.description,
+    required this.answer,
+    required this.difficulty,
+    required this.rewardExp,
+    required this.rewardScore,
+    required this.questionType,
+    required this.solvedCount,
   });
 }
