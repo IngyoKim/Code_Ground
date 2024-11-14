@@ -1,3 +1,4 @@
+import 'package:code_ground/src/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -35,13 +36,12 @@ class _MainPageState extends State<MainPage>
   Widget build(BuildContext context) {
     debugPrint(context.toString());
     return Scaffold(
-      appBar: AppBar(),
       body: TabBarView(
         controller: _tabController,
-        children: const [
-          Center(child: Text("Content for Tab 1")),
-          QuizPage(),
-          ProfilePage(),
+        children: [
+          HomePage(),
+          const QuizPage(),
+          const ProfilePage(),
         ],
       ),
       bottomNavigationBar: TabBar(

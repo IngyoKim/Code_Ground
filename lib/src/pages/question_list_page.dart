@@ -15,9 +15,10 @@ class _QuestionListPageState extends State<QuestionListPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<QuestionViewModel>(context, listen: false)
-            .fetchQuestions());
+    Future.microtask(
+      () => Provider.of<QuestionViewModel>(context, listen: false)
+          .fetchQuestions(),
+    );
 
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
@@ -39,6 +40,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(context.toString());
     final questionViewModel = Provider.of<QuestionViewModel>(context);
 
     return Scaffold(

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-class QuestionInputPage extends StatefulWidget {
-  const QuestionInputPage({super.key});
+class AddQuestion extends StatefulWidget {
+  const AddQuestion({super.key});
 
   @override
-  State<QuestionInputPage> createState() => _QuestionInputPageState();
+  State<AddQuestion> createState() => _AddQuestionState();
 }
 
-class _QuestionInputPageState extends State<QuestionInputPage> {
+class _AddQuestionState extends State<AddQuestion> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -28,14 +29,18 @@ class _QuestionInputPageState extends State<QuestionInputPage> {
       await Provider.of<QuestionViewModel>(context, listen: false)
           .addQuestion(title, description);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Question added successfully!')),
+      Fluttertoast.showToast(
+        msg: "Question added successfully!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
       );
 
       Navigator.pop(context); // 페이지를 닫습니다.
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields')),
+      Fluttertoast.showToast(
+        msg: "Please fill in all fields",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
       );
     }
   }

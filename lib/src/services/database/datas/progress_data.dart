@@ -7,8 +7,8 @@ class ProgressData {
 
   ProgressData({
     required this.userId,
-    this.level = 0,
-    this.exp = 0,
+    required this.level,
+    required this.exp,
     required this.solvedQuestions,
     required this.questionStatus,
   });

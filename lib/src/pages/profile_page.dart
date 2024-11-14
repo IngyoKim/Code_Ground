@@ -1,7 +1,8 @@
-import 'package:code_ground/src/pages/add_question.dart';
-import 'package:code_ground/src/pages/question_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'package:code_ground/src/pages/add_question.dart';
+import 'package:code_ground/src/pages/question_list_page.dart';
 
 import 'package:code_ground/src/components/logout_dialog.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
@@ -40,7 +41,7 @@ class ProfilePage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => QuestionInputPage(),
+              builder: (context) => AddQuestion(),
             ),
           );
         },
@@ -103,8 +104,8 @@ class ProfilePage extends StatelessWidget {
                   padding: const EdgeInsets.all(15.0),
                   child: Column(
                     children: <Widget>[
-                      const Text(
-                        "EXP",
+                      Text(
+                        "${progressViewModel.progressData?.level ?? 0}",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

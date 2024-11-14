@@ -29,36 +29,19 @@ class ProgressViewModel extends ChangeNotifier {
 
   // 진행 상황을 업데이트하는 메서드
   Future<void> addExp(int data) async {
-    if (_progressData == null) {
-      debugPrint("Progress data not loaded. Fetching progress data...");
-      await fetchProgressData();
-      if (_progressData == null) {
-        debugPrint("Failed to load progress data.");
-        return;
-      }
-    }
+    if (_progressData == null) await fetchProgressData();
 
-    // 기존 경험치에 experiencePoints를 더하여 데이터베이스에 반영
     _progressData!.exp += data;
     await _progressOperation.updateProgressData({'exp': _progressData!.exp});
 
-    if (_progressData!.exp >= 100) {
-      await increaseLevel();
-    }
+    if (_progressData!.exp >= 100) await levelUp();
 
     // 업데이트된 데이터를 다시 불러와서 상태 반영
     await fetchProgressData();
   }
 
-  Future<void> increaseLevel() async {
-    if (_progressData == null) {
-      debugPrint("Progress data not loaded. Fetching progress data...");
-      await fetchProgressData();
-      if (_progressData == null) {
-        debugPrint("Failed to load progress data.");
-        return;
-      }
-    }
+  Future<void> levelUp() async {
+    if (_progressData == null) await fetchProgressData();
 
     // 경험치가 100 이상이면 레벨을 올리고 경험치를 차감
     while (_progressData!.exp >= 100) {
