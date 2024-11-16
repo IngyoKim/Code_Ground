@@ -9,78 +9,64 @@ class ProgressViewModel extends ChangeNotifier {
 
   ProgressData? get progressData => _progressData;
 
-  // 진행 상황을 불러오는 메서드
+  /// 진행 상황 불러오기
   Future<void> fetchProgressData([String? userId]) async {
-    _progressData = await _progressOperation.readProgressData(userId);
+    if (_progressData != null) return;
+    _progressData = await _progressOperation.readProgressData(userId) ??
+        ProgressData(
+          userId: userId ?? '',
+          level: 0,
+          exp: 0,
+          tier: 'Bronze',
+          grade: 'V',
+          score: 0,
+          quizState: {},
+        );
 
-    if (_progressData == null) {
-      _progressData = ProgressData(
-        userId: '',
-        level: 0,
-        exp: 0,
-        tier: 'Bronze',
-        grade: 'V',
-        score: 0,
-        quizState: {},
-      );
+    // 초기 데이터 저장
+    if (userId == null) {
       await _progressOperation.writeProgressData(_progressData!);
     }
-
     notifyListeners();
   }
 
+  /// 경험치 추가 및 레벨 업 처리
   Future<void> addExp(int data) async {
     if (_progressData == null) await fetchProgressData();
-
     _progressData!.exp += data;
+
+    // 경험치 처리 및 레벨 업
+    while (_progressData!.exp >= 100) {
+      _progressData!.exp -= 100;
+      _progressData!.level++;
+    }
+
     await _progressOperation.updateProgressData(_progressData!.userId, {
       'exp': _progressData!.exp,
+      'level': _progressData!.level,
     });
-
-    if (_progressData!.exp >= 100) await levelUp();
-
-    // 업데이트된 데이터를 다시 불러와서 상태 반영
-    await fetchProgressData();
-  }
-
-  // 레벨 업 메서드
-  Future<void> levelUp() async {
-    if (_progressData == null) await fetchProgressData();
-
-    // 경험치가 100 이상이면 레벨을 올리고 경험치를 차감
-    while (_progressData!.exp >= 100) {
-      _progressData!.level += 1;
-      _progressData!.exp -= 100;
-
-      await _progressOperation.updateProgressData(_progressData!.userId, {
-        'level': _progressData!.level,
-        'exp': _progressData!.exp,
-        'tier': _progressData!.tier,
-      });
-    }
-    // 상태 업데이트
     notifyListeners();
   }
 
-  // 점수 추가 및 티어 업데이트
+  /// 점수 추가 및 티어 업데이트
   Future<void> addScore(int score) async {
     if (_progressData == null) await fetchProgressData();
-
     _progressData!.score += score;
-    final newTierAndGrade = _determineTierAndGrade(_progressData!.score);
-    _progressData!.tier = newTierAndGrade['tier']!;
-    _progressData!.grade = newTierAndGrade['grade']!;
+
+    final newTier = _determineTierAndGrade(_progressData!.score);
+    _progressData!
+      ..tier = newTier['tier']!
+      ..grade = newTier['grade']!;
 
     await _progressOperation.updateProgressData(_progressData!.userId, {
       'score': _progressData!.score,
       'tier': _progressData!.tier,
       'grade': _progressData!.grade,
     });
-
     notifyListeners();
   }
 
-  // 점수에 따른 티어와 등급 결정
+  /// 점수 기반 티어 결정
   Map<String, String> _determineTierAndGrade(int score) {
     for (final tier in tiers.reversed) {
       for (final grade in tier.grades.reversed) {
@@ -89,6 +75,6 @@ class ProgressViewModel extends ChangeNotifier {
         }
       }
     }
-    return {'tier': 'Bronze', 'grade': 'V'}; // 기본값
+    return {'tier': 'Bronze', 'grade': 'V'};
   }
 }
