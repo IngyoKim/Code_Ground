@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
+import 'package:code_ground/src/view_models/category_view_model.dart';
 
 class QuestionListPage extends StatefulWidget {
   const QuestionListPage({super.key});
@@ -15,10 +16,13 @@ class _QuestionListPageState extends State<QuestionListPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(
-      () => Provider.of<QuestionViewModel>(context, listen: false)
-          .fetchQuestions(category: ''),
-    );
+    Future.microtask(() {
+      final selectedCategory =
+          Provider.of<CategoryViewModel>(context, listen: false)
+              .selectedCategory;
+      Provider.of<QuestionViewModel>(context, listen: false)
+          .fetchQuestions(category: selectedCategory);
+    });
 
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
@@ -27,8 +31,11 @@ class _QuestionListPageState extends State<QuestionListPage> {
   void _onScroll() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
+      final selectedCategory =
+          Provider.of<CategoryViewModel>(context, listen: false)
+              .selectedCategory;
       Provider.of<QuestionViewModel>(context, listen: false)
-          .fetchQuestions(category: '', loadMore: true);
+          .fetchQuestions(category: selectedCategory, loadMore: true);
     }
   }
 
@@ -40,12 +47,13 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(context.toString());
     final questionViewModel = Provider.of<QuestionViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Question List'),
+        title: Text(
+          Provider.of<CategoryViewModel>(context).selectedCategory,
+        ),
         backgroundColor: Colors.black,
       ),
       body: questionViewModel.isLoading && questionViewModel.questions.isEmpty

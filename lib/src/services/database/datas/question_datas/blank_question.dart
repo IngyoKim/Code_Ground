@@ -1,54 +1,38 @@
 import 'package:code_ground/src/services/database/datas/question_data.dart';
 
 class BlankQuestion extends QuestionData {
-  final int rewardScore;
-  final String difficulty;
-  final int solvedCount;
-
   BlankQuestion({
     required super.questionId,
     required super.writer,
     required super.category,
+    required super.questionType,
+    required super.difficulty,
     required super.updatedAt,
     required super.title,
     required super.description,
-    required super.rewardExp,
-    required super.questionType,
-    required super.answer,
-    required this.rewardScore,
-    required this.difficulty,
-    required this.solvedCount,
+    required super.languages,
+    required super.hint,
   });
 
   @override
   Map<String, dynamic> toMap() {
-    return {
-      ...toBaseMap(),
-      'rewardScore': rewardScore,
-      'difficulty': difficulty,
-      'solvedCount': solvedCount,
-      'answer': answer,
-    };
+    return toBaseMap();
   }
 
   factory BlankQuestion.fromMap(Map<String, dynamic> data) {
-    return QuestionData.fromMapBase(data, (baseData) {
-      return BlankQuestion(
-        questionId: baseData['questionId'] ?? 'unknown_id',
-        writer: baseData['writer'] ?? 'unknown_writer',
-        category: baseData['category'] ?? 'Blank',
-        updatedAt: baseData['updatedAt'] != null
-            ? DateTime.parse(baseData['updatedAt'])
-            : DateTime.now(),
-        title: baseData['title'] ?? 'No Title',
-        description: baseData['description'] ?? 'No Description',
-        rewardExp: baseData['rewardExp'] ?? 0,
-        questionType: baseData['questionType'] ?? 'Objective',
-        answer: baseData['answer'] ?? '',
-        rewardScore: baseData['rewardScore'] ?? 0,
-        difficulty: baseData['difficulty'] ?? 'Easy',
-        solvedCount: baseData['solvedCount'] ?? 0,
-      );
-    });
+    return BlankQuestion(
+      questionId: data['questionId'] ?? 'unknown_id',
+      writer: data['writer'] ?? 'unknown_writer',
+      category: data['category'] ?? 'Blank',
+      questionType: data['questionType'] ?? 'Objective',
+      difficulty: data['difficulty'] ?? 'Easy',
+      updatedAt: data['updatedAt'] != null
+          ? DateTime.parse(data['updatedAt'])
+          : DateTime.now(),
+      title: data['title'] ?? 'No Title',
+      description: data['description'] ?? 'No Description',
+      languages: List<String>.from(data['languages'] ?? []),
+      hint: data['hint'] ?? 'No Hint',
+    );
   }
 }

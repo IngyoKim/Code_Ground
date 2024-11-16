@@ -1,3 +1,4 @@
+import 'package:code_ground/src/view_models/category_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserViewModel()),
         ChangeNotifierProvider(create: (_) => ProgressViewModel()),
         ChangeNotifierProvider(create: (_) => QuestionViewModel()),
+        ChangeNotifierProvider(create: (_) => CategoryViewModel()),
       ],
       child: MaterialApp(
         title: 'Code Ground', // 앱 제목

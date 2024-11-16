@@ -9,43 +9,39 @@ abstract class QuestionData {
   final String writer;
   final String category;
   final String questionType;
-  int rewardExp;
-  DateTime updatedAt;
-  String title;
-  String description;
-  String answer;
+  final String difficulty;
+  final DateTime updatedAt;
+  final String title;
+  final String description;
+  final List<String> languages; // 여러 언어 지원
+  final String hint; // 힌트 필드 추가
 
   QuestionData({
     required this.questionId,
     required this.writer,
     required this.category,
     required this.questionType,
-    required this.rewardExp,
+    required this.difficulty,
     required this.updatedAt,
     required this.title,
     required this.description,
-    required this.answer,
+    required this.languages,
+    required this.hint,
   });
 
-  // 공통 필드를 포함하는 기본 Map 변환
   Map<String, dynamic> toBaseMap() {
     return {
       'questionId': questionId,
       'writer': writer,
       'category': category,
       'questionType': questionType,
+      'difficulty': difficulty,
       'updatedAt': updatedAt.toIso8601String(),
       'title': title,
       'description': description,
-      'rewardExp': rewardExp,
-      'answer': answer,
+      'languages': languages,
+      'hint': hint,
     };
-  }
-
-  // 서브클래스에서 호출할 공통 필드 초기화 메서드
-  static T fromMapBase<T extends QuestionData>(
-      Map<String, dynamic> data, T Function(Map<String, dynamic>) create) {
-    return create(data);
   }
 
   static QuestionData fromMap(Map<String, dynamic> data) {
@@ -65,5 +61,5 @@ abstract class QuestionData {
     }
   }
 
-  Map<String, dynamic> toMap(); // 각 서브클래스에서 구현
+  Map<String, dynamic> toMap();
 }

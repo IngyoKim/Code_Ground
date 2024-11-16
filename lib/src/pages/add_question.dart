@@ -32,7 +32,6 @@ class _AddQuestionState extends State<AddQuestion> {
   void _submitQuestion(BuildContext context) async {
     final title = _titleController.text;
     final description = _descriptionController.text;
-    final rewardExp = int.tryParse(_rewardExpController.text) ?? 0;
     final difficulty = _difficultyController.text;
     final answerSequence = _answerSequenceController.text.split(',');
 
@@ -42,7 +41,10 @@ class _AddQuestionState extends State<AddQuestion> {
         description: description,
         writer: 'Anonymous',
         category: _selectedCategory,
-        rewardExp: rewardExp,
+        hint: '',
+        languages: [],
+        questionType: '',
+        step: 1,
         difficulty: difficulty,
         answerSequence: _selectedCategory == 'Sequencing' ? answerSequence : [],
       );
