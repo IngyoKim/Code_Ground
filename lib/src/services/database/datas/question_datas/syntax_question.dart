@@ -10,9 +10,9 @@ class SyntaxQuestion extends QuestionData {
     required super.updatedAt,
     required super.title,
     required super.description,
-    required List<String> languages,
+    required super.languages,
     required super.hint,
-  }) : super(languages: languages);
+  });
 
   @override
   Map<String, dynamic> toMap() {

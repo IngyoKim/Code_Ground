@@ -60,13 +60,21 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(categoryViewModel.selectedCategory),
+        title: Text(
+          categoryViewModel.selectedCategory,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+        ),
         backgroundColor: Colors.black,
       ),
       body: questionViewModel.isLoading && questionViewModel.questions.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : questionViewModel.questions.isEmpty
-              ? const Center(child: Text('No questions found'))
+              ? const Center(
+                  child: Text(
+                    'No questions found',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                )
               : ListView.builder(
                   controller: _scrollController,
                   itemCount: questionViewModel.questions.length +
@@ -74,9 +82,42 @@ class _QuestionListPageState extends State<QuestionListPage> {
                   itemBuilder: (context, index) {
                     if (index < questionViewModel.questions.length) {
                       final question = questionViewModel.questions[index];
-                      return ListTile(
-                        title: Text(question.title),
-                        subtitle: Text(question.description),
+                      return Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey.shade900,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              question.title,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              question.description,
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     } else {
                       return const Center(child: CircularProgressIndicator());
