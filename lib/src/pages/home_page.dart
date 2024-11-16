@@ -34,11 +34,8 @@ class HomePage extends StatelessWidget {
             final category = categories[index];
             return GestureDetector(
               onTap: () {
-                // CategoryViewModel에 선택한 카테고리를 설정
                 Provider.of<CategoryViewModel>(context, listen: false)
                     .selectCategory(category);
-
-                // QuestionListPage로 이동
                 Navigator.push(
                   context,
                   MaterialPageRoute(

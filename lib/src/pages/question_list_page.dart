@@ -16,26 +16,32 @@ class _QuestionListPageState extends State<QuestionListPage> {
   @override
   void initState() {
     super.initState();
+
+    // 처음 카테고리의 질문 가져오기
     Future.microtask(() {
       final selectedCategory =
           Provider.of<CategoryViewModel>(context, listen: false)
               .selectedCategory;
       Provider.of<QuestionViewModel>(context, listen: false)
-          .fetchQuestions(category: selectedCategory);
+          .fetchQuestions(selectedCategory);
     });
 
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
   }
 
+  /// 스크롤 이벤트 처리
   void _onScroll() {
+    final questionViewModel =
+        Provider.of<QuestionViewModel>(context, listen: false);
+
     if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
+            _scrollController.position.maxScrollExtent &&
+        !questionViewModel.isLoading) {
       final selectedCategory =
           Provider.of<CategoryViewModel>(context, listen: false)
               .selectedCategory;
-      Provider.of<QuestionViewModel>(context, listen: false)
-          .fetchQuestions(category: selectedCategory, loadMore: true);
+      questionViewModel.fetchQuestions(selectedCategory);
     }
   }
 
@@ -48,32 +54,33 @@ class _QuestionListPageState extends State<QuestionListPage> {
   @override
   Widget build(BuildContext context) {
     final questionViewModel = Provider.of<QuestionViewModel>(context);
+    final categoryViewModel = Provider.of<CategoryViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          Provider.of<CategoryViewModel>(context).selectedCategory,
-        ),
+        title: Text(categoryViewModel.selectedCategory),
         backgroundColor: Colors.black,
       ),
       body: questionViewModel.isLoading && questionViewModel.questions.isEmpty
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              controller: _scrollController,
-              itemCount: questionViewModel.questions.length +
-                  (questionViewModel.isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index < questionViewModel.questions.length) {
-                  final question = questionViewModel.questions[index];
-                  return ListTile(
-                    title: Text(question.title),
-                    subtitle: Text(question.description),
-                  );
-                } else {
-                  return const Center(child: CircularProgressIndicator());
-                }
-              },
-            ),
+          : questionViewModel.questions.isEmpty
+              ? const Center(child: Text('No questions found'))
+              : ListView.builder(
+                  controller: _scrollController,
+                  itemCount: questionViewModel.questions.length +
+                      (questionViewModel.isLoading ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index < questionViewModel.questions.length) {
+                      final question = questionViewModel.questions[index];
+                      return ListTile(
+                        title: Text(question.title),
+                        subtitle: Text(question.description),
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
     );
   }
 }

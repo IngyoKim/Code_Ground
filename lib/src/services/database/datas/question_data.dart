@@ -3,6 +3,7 @@ import 'package:code_ground/src/services/database/datas/question_datas/debugging
 import 'package:code_ground/src/services/database/datas/question_datas/output_question.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/blank_question.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/sequencing_question.dart';
+import 'package:flutter/material.dart';
 
 abstract class QuestionData {
   final String questionId;
@@ -31,7 +32,6 @@ abstract class QuestionData {
 
   Map<String, dynamic> toBaseMap() {
     return {
-      'questionId': questionId,
       'writer': writer,
       'category': category,
       'questionType': questionType,
@@ -45,6 +45,7 @@ abstract class QuestionData {
   }
 
   static QuestionData fromMap(Map<String, dynamic> data) {
+    debugPrint('Converting data to QuestionData: $data');
     switch (data['category']) {
       case 'Syntax':
         return SyntaxQuestion.fromMap(data);

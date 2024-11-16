@@ -6,7 +6,8 @@
     <application
         android:label="code_ground"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true"> <!-- 뒤로가기 콜백 활성화 -->
 
         <!-- Main Activity 설정 -->
         <activity

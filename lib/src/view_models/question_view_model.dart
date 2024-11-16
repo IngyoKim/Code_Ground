@@ -6,8 +6,7 @@ class QuestionViewModel extends ChangeNotifier {
   final QuestionOperation _questionOperation = QuestionOperation();
   final List<QuestionData> _questions = [];
   bool _isLoading = false;
-  int _currentPage = 1;
-  final int _limit = 15;
+  int _currentPage = 0; // 현재 페이지
 
   List<QuestionData> get questions => _questions;
   bool get isLoading => _isLoading;
@@ -17,73 +16,71 @@ class QuestionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Fetch questions from the database
-  Future<void> fetchQuestions({
-    required String category,
-    bool loadMore = false,
-  }) async {
-    if (_isLoading) return;
+  /// 데이터를 가져오는 함수 (페이징 처리)
+  Future<void> fetchQuestions(String category) async {
+    if (_isLoading) return; // 중복 호출 방지
 
     _setLoading(true);
 
-    if (!loadMore) {
-      _questions.clear();
-      _currentPage = 1;
-    }
+    try {
+      debugPrint('Fetching page $_currentPage for category: $category');
 
-    List<QuestionData> loadedQuestions = [];
-    for (int i = 0; i < _limit; i++) {
-      String questionId =
-          '${_questionOperation.generateQuestionId(category)}${(_currentPage - 1) * _limit + i + 1}';
-      final question =
-          await _questionOperation.readQuestionData(category, questionId);
-      if (question != null) {
-        loadedQuestions.add(question);
-      } else {
-        break;
+      // 현재 페이지에 해당하는 10개의 데이터를 가져옴
+      final startId = _currentPage * 10 + 1;
+      final endId = startId + 10;
+
+      for (int i = startId; i < endId; i++) {
+        final questionId = i.toString().padLeft(5, '0'); // 00001, 00002, ...
+        final question =
+            await _questionOperation.readQuestionData(category, questionId);
+
+        if (question != null) {
+          _questions.add(question);
+        }
       }
+
+      _currentPage++; // 다음 페이지로 이동
+
+      if (_questions.isEmpty) {
+        debugPrint('No questions found for category: $category');
+      } else {
+        debugPrint('Fetched ${_questions.length} total questions');
+      }
+    } catch (e) {
+      debugPrint('Error fetching questions: $e');
+    } finally {
+      _setLoading(false);
     }
-
-    _questions.addAll(loadedQuestions);
-    if (loadedQuestions.isNotEmpty) _currentPage++;
-
-    _setLoading(false);
   }
 
-  /// Add a new question to the database
-  Future<void> addQuestion({
-    required String title,
-    required String description,
-    required String writer,
-    required String category,
-    required String difficulty,
-    required String questionType,
-    required String hint,
-    required List<String> languages,
-    int step = 1,
-    List<String> answerSequence = const [],
-  }) async {
-    String questionId = _questionOperation.generateQuestionId(category);
-    DateTime updatedAt = DateTime.now();
-
-    // Create an instance of the appropriate subclass
-    QuestionData questionData = QuestionData.fromMap({
-      'questionId': questionId,
-      'writer': writer,
-      'category': category,
-      'questionType': questionType,
-      'difficulty': difficulty,
-      'updatedAt': updatedAt.toIso8601String(),
-      'title': title,
-      'description': description,
-      'languages': languages, // SyntaxQuestion도 리스트로 통합
-      'hint': hint,
-      'step': step,
-      'answerSequence': answerSequence,
-    });
-
-    await _questionOperation.writeQuestionData(questionData);
-    _questions.add(questionData);
+  /// 데이터를 초기화 (카테고리 변경 시 호출)
+  void clearQuestions() {
+    _questions.clear();
+    _currentPage = 0;
+    debugPrint('Cleared all questions');
     notifyListeners();
+  }
+
+  Future<void> addQuestion(QuestionData questionData) async {
+    try {
+      // questionId 생성
+      String questionId =
+          _questionOperation.generateQuestionId(questionData.category);
+
+      // QuestionData 객체에 questionId를 설정
+      final updatedQuestion = QuestionData.fromMap({
+        ...questionData.toMap(),
+        'questionId': questionId,
+      });
+
+      debugPrint('Adding question: ${updatedQuestion.toMap()}');
+      await _questionOperation.writeQuestionData(updatedQuestion);
+
+      _questions.insert(0, updatedQuestion); // 새 질문을 목록 맨 앞에 추가
+      debugPrint('Question added successfully');
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error adding question: $e');
+    }
   }
 }
