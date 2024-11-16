@@ -14,6 +14,7 @@ class ProgressOperation {
       'level': progressData.level,
       'exp': progressData.exp,
       'tier': progressData.tier,
+      'grade': progressData.grade,
       'score': progressData.score,
       'quizState': progressData.quizState,
     });
@@ -21,11 +22,8 @@ class ProgressOperation {
 
   // ProgressData를 데이터베이스에서 읽어오는 함수 (현재 사용자 ID 사용)
   Future<ProgressData?> readProgressData([String? userId]) async {
-    // 현재 로그인한 사용자 ID를 기본값으로 설정
     final String currentUserId = userId ?? _auth.currentUser?.uid ?? '';
-
     if (currentUserId.isEmpty) {
-      // 유저가 로그인하지 않은 경우
       debugPrint("No user logged in.");
       return null;
     }
@@ -37,7 +35,8 @@ class ProgressOperation {
         userId: currentUserId,
         level: data['level'] ?? 0,
         exp: data['exp'] ?? 0,
-        tier: data['tier'] ?? 'Bronze', // 기본값 설정
+        tier: data['tier'] ?? 'Bronze',
+        grade: data['grade'] ?? 'V',
         score: data['score'] ?? 0,
         quizState: Map<String, bool>.from(data['quizState'] ?? {}),
       );

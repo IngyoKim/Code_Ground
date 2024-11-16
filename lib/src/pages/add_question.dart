@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth 추가
 import 'package:code_ground/src/services/database/datas/question_datas/syntax_question.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -40,9 +41,13 @@ class _AddQuestionState extends State<AddQuestion> {
       return;
     }
 
+    // FirebaseAuth를 통해 현재 유저의 UID를 가져옴
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final uid = currentUser?.uid ?? 'Anonymous';
+
     final questionData = SyntaxQuestion(
       questionId: '', // ID는 QuestionOperation에서 생성
-      writer: 'Anonymous',
+      writer: uid, // 유저 UID를 writer로 설정
       category: _selectedCategory,
       questionType: 'Subjective',
       difficulty: _difficultyController.text,
@@ -76,7 +81,7 @@ class _AddQuestionState extends State<AddQuestion> {
             _buildDropdown(
               'Category',
               _selectedCategory,
-              ['Syntax', 'Debugging', 'Output', 'Blank', 'Sequencing'], // 수정
+              ['Syntax', 'Debugging', 'Output', 'Blank', 'Sequencing'],
               (value) => setState(() => _selectedCategory = value!),
             ),
             _buildDropdown(

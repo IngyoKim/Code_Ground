@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:code_ground/src/services/database/datas/tier_data.dart';
 import 'package:code_ground/src/services/database/datas/progress_data.dart';
 import 'package:code_ground/src/services/database/operations/progress_operation.dart';
 
@@ -12,13 +13,13 @@ class ProgressViewModel extends ChangeNotifier {
   Future<void> fetchProgressData([String? userId]) async {
     _progressData = await _progressOperation.readProgressData(userId);
 
-    // 데이터가 없을 경우 초기 데이터를 쓰는 로직 추가
     if (_progressData == null) {
       _progressData = ProgressData(
-        userId: '', // userId는 빈 값으로 두고, 실제 데이터는 유저 로그인 시에 적용
+        userId: '',
         level: 0,
         exp: 0,
-        tier: 'Bronze', // 초기 tier 설정
+        tier: 'Bronze',
+        grade: 'V',
         score: 0,
         quizState: {},
       );
@@ -28,7 +29,6 @@ class ProgressViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 경험치를 추가하는 메서드
   Future<void> addExp(int data) async {
     if (_progressData == null) await fetchProgressData();
 
@@ -52,9 +52,6 @@ class ProgressViewModel extends ChangeNotifier {
       _progressData!.level += 1;
       _progressData!.exp -= 100;
 
-      // 티어 업데이트 로직 추가 (예: 특정 레벨에 따라 티어를 변경)
-      _progressData!.tier = _determineTier(_progressData!.level);
-
       await _progressOperation.updateProgressData(_progressData!.userId, {
         'level': _progressData!.level,
         'exp': _progressData!.exp,
@@ -65,14 +62,33 @@ class ProgressViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 레벨에 따른 티어를 결정하는 메서드
-  String _determineTier(int level) {
-    if (level >= 10) {
-      return 'Gold';
-    } else if (level >= 5) {
-      return 'Silver';
-    } else {
-      return 'Bronze';
+  // 점수 추가 및 티어 업데이트
+  Future<void> addScore(int score) async {
+    if (_progressData == null) await fetchProgressData();
+
+    _progressData!.score += score;
+    final newTierAndGrade = _determineTierAndGrade(_progressData!.score);
+    _progressData!.tier = newTierAndGrade['tier']!;
+    _progressData!.grade = newTierAndGrade['grade']!;
+
+    await _progressOperation.updateProgressData(_progressData!.userId, {
+      'score': _progressData!.score,
+      'tier': _progressData!.tier,
+      'grade': _progressData!.grade,
+    });
+
+    notifyListeners();
+  }
+
+  // 점수에 따른 티어와 등급 결정
+  Map<String, String> _determineTierAndGrade(int score) {
+    for (final tier in tiers.reversed) {
+      for (final grade in tier.grades.reversed) {
+        if (score >= grade.minScore) {
+          return {'tier': tier.name, 'grade': grade.name};
+        }
+      }
     }
+    return {'tier': 'Bronze', 'grade': 'V'}; // 기본값
   }
 }

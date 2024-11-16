@@ -49,7 +49,7 @@ class ProfilePage extends StatelessWidget {
       {
         'icon': Icons.question_answer,
         'text': 'FAQ',
-        'onTap': () => debugPrint('FAQ is clicked'),
+        'onTap': () => progressViewModel.addScore(100),
       },
     ];
 

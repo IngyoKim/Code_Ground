@@ -97,26 +97,26 @@ class _QuestionListPageState extends State<QuestionListPage> {
                             ),
                           ],
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              question.title,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
+                        child: ListTile(
+                          tileColor: Colors.blueGrey.shade900, // 배경색 설정
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          title: Text(
+                            question.title,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              question.description,
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16,
-                              ),
+                          ),
+                          subtitle: Text(
+                            question.languages.join(', '),
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 16,
                             ),
-                          ],
+                          ),
                         ),
                       );
                     } else {
