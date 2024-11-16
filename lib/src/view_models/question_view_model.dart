@@ -5,10 +5,12 @@ import 'package:code_ground/src/services/database/operations/question_operation.
 class QuestionViewModel extends ChangeNotifier {
   final QuestionOperation _operation = QuestionOperation();
   final List<QuestionData> _questions = [];
+  QuestionData? _selectedQuestion; // 선택된 질문
   bool _isLoading = false;
   String? _lastFetchedKey; // 마지막으로 가져온 질문의 키 (startAfter에 사용)
 
   List<QuestionData> get questions => _questions;
+  QuestionData? get selectedQuestion => _selectedQuestion;
   bool get isLoading => _isLoading;
 
   void _setLoading(bool loading) {
@@ -58,5 +60,10 @@ class QuestionViewModel extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error adding question: $e');
     }
+  }
+
+  void selectQuestion(QuestionData question) {
+    _selectedQuestion = question;
+    notifyListeners();
   }
 }

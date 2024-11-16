@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:code_ground/src/pages/add_question.dart';
-import 'package:code_ground/src/pages/question_list_page.dart';
+import 'package:code_ground/src/pages/questions/add_question.dart';
+import 'package:code_ground/src/pages/questions/question_list_page.dart';
 
 import 'package:code_ground/src/components/logout_dialog.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';

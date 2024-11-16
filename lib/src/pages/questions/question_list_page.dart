@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:code_ground/src/pages/questions/question_detail_page.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
 
@@ -117,6 +118,16 @@ class _QuestionListPageState extends State<QuestionListPage> {
                               fontSize: 16,
                             ),
                           ),
+                          onTap: () {
+                            questionViewModel.selectQuestion(question);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const QuestionDetailPage(),
+                              ),
+                            );
+                          },
                         ),
                       );
                     } else {
