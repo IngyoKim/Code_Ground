@@ -19,7 +19,7 @@ class _AddQuestionState extends State<AddQuestion> {
   final _answerController = TextEditingController();
 
   String _selectedCategory = 'Syntax';
-  String _selectedLanguage = 'Python';
+  String _selectedLanguage = 'C';
 
   @override
   void dispose() {
@@ -76,13 +76,13 @@ class _AddQuestionState extends State<AddQuestion> {
             _buildDropdown(
               'Category',
               _selectedCategory,
-              ['Syntax'],
+              ['Syntax', 'Debugging', 'Output', 'Blank', 'Sequencing'], // 수정
               (value) => setState(() => _selectedCategory = value!),
             ),
             _buildDropdown(
               'Language',
               _selectedLanguage,
-              ['Python', 'Java', 'C++', 'Dart'],
+              ['C', 'Python', 'Java', 'C++', 'Dart'],
               (value) => setState(() => _selectedLanguage = value!),
             ),
             _buildTextField('Difficulty (Numeric)', _difficultyController,

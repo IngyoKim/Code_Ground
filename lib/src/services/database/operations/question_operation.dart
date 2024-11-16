@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:code_ground/src/services/database/operations/database_service.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
@@ -85,5 +86,26 @@ class QuestionOperation {
       debugPrint('Error updating question data: $e');
       rethrow;
     }
+  }
+
+  Future<List<QuestionData>> fetchRecentQuestions(String category,
+      {int limit = 10, String? startAfter}) async {
+    final ref = _databaseService.database.ref('questions/$category');
+    Query query = ref.orderByChild('createdAt').limitToFirst(limit);
+
+    if (startAfter != null) {
+      query = query.startAfter([startAfter]);
+    }
+
+    final snapshot = await query.get();
+    if (snapshot.exists) {
+      final data = snapshot.value as Map<dynamic, dynamic>;
+      return data.entries.map((entry) {
+        final questionMap = Map<String, dynamic>.from(entry.value as Map);
+        questionMap['questionId'] = entry.key;
+        return QuestionData.fromMap(questionMap);
+      }).toList();
+    }
+    return [];
   }
 }

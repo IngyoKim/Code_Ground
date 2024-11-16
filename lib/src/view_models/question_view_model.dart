@@ -3,10 +3,10 @@ import 'package:code_ground/src/services/database/datas/question_data.dart';
 import 'package:code_ground/src/services/database/operations/question_operation.dart';
 
 class QuestionViewModel extends ChangeNotifier {
-  final QuestionOperation _questionOperation = QuestionOperation();
+  final QuestionOperation _operation = QuestionOperation();
   final List<QuestionData> _questions = [];
   bool _isLoading = false;
-  int _currentPage = 0; // 현재 페이지
+  String? _lastFetchedKey; // 마지막으로 가져온 질문의 키 (startAfter에 사용)
 
   List<QuestionData> get questions => _questions;
   bool get isLoading => _isLoading;
@@ -16,35 +16,24 @@ class QuestionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 데이터를 가져오는 함수 (페이징 처리)
-  Future<void> fetchQuestions(String category) async {
-    if (_isLoading) return; // 중복 호출 방지
+  /// 질문 가져오기
+  Future<void> fetchQuestions(String category, {int limit = 10}) async {
+    if (_isLoading) return;
 
     _setLoading(true);
-
     try {
-      debugPrint('Fetching page $_currentPage for category: $category');
+      final newQuestions = await _operation.fetchRecentQuestions(
+        category,
+        limit: limit,
+        startAfter: _lastFetchedKey,
+      );
 
-      // 현재 페이지에 해당하는 10개의 데이터를 가져옴
-      final startId = _currentPage * 10 + 1;
-      final endId = startId + 10;
-
-      for (int i = startId; i < endId; i++) {
-        final questionId = i.toString().padLeft(5, '0'); // 00001, 00002, ...
-        final question =
-            await _questionOperation.readQuestionData(category, questionId);
-
-        if (question != null) {
-          _questions.add(question);
-        }
-      }
-
-      _currentPage++; // 다음 페이지로 이동
-
-      if (_questions.isEmpty) {
-        debugPrint('No questions found for category: $category');
+      if (newQuestions.isNotEmpty) {
+        _lastFetchedKey = newQuestions.last.questionId; // 마지막 키 업데이트
+        _questions.addAll(newQuestions);
+        notifyListeners();
       } else {
-        debugPrint('Fetched ${_questions.length} total questions');
+        debugPrint('No more questions available for category: $category');
       }
     } catch (e) {
       debugPrint('Error fetching questions: $e');
@@ -53,31 +42,18 @@ class QuestionViewModel extends ChangeNotifier {
     }
   }
 
-  /// 데이터를 초기화 (카테고리 변경 시 호출)
+  /// 질문 초기화
   void clearQuestions() {
     _questions.clear();
-    _currentPage = 0;
-    debugPrint('Cleared all questions');
+    _lastFetchedKey = null;
     notifyListeners();
   }
 
+  /// 질문 추가
   Future<void> addQuestion(QuestionData questionData) async {
     try {
-      // questionId 생성
-      String questionId =
-          _questionOperation.generateQuestionId(questionData.category);
-
-      // QuestionData 객체에 questionId를 설정
-      final updatedQuestion = QuestionData.fromMap({
-        ...questionData.toMap(),
-        'questionId': questionId,
-      });
-
-      debugPrint('Adding question: ${updatedQuestion.toMap()}');
-      await _questionOperation.writeQuestionData(updatedQuestion);
-
-      _questions.insert(0, updatedQuestion); // 새 질문을 목록 맨 앞에 추가
-      debugPrint('Question added successfully');
+      await _operation.writeQuestionData(questionData);
+      _questions.insert(0, questionData); // 새 질문을 목록 맨 앞에 추가
       notifyListeners();
     } catch (e) {
       debugPrint('Error adding question: $e');

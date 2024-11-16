@@ -17,20 +17,22 @@ class _QuestionListPageState extends State<QuestionListPage> {
   void initState() {
     super.initState();
 
-    // 처음 카테고리의 질문 가져오기
     Future.microtask(() {
       final selectedCategory =
           Provider.of<CategoryViewModel>(context, listen: false)
               .selectedCategory;
-      Provider.of<QuestionViewModel>(context, listen: false)
-          .fetchQuestions(selectedCategory);
+
+      final questionViewModel =
+          Provider.of<QuestionViewModel>(context, listen: false);
+
+      questionViewModel.clearQuestions();
+      questionViewModel.fetchQuestions(selectedCategory);
     });
 
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
   }
 
-  /// 스크롤 이벤트 처리
   void _onScroll() {
     final questionViewModel =
         Provider.of<QuestionViewModel>(context, listen: false);
