@@ -1,9 +1,9 @@
-import 'package:code_ground/src/pages/home_page.dart';
+import 'package:code_ground/src/pages/features/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:code_ground/src/pages/quiz_page.dart';
-import 'package:code_ground/src/pages/profile_page.dart';
+import 'package:code_ground/src/pages/features/quiz_page.dart';
+import 'package:code_ground/src/pages/features/profile_page.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 
 class MainPage extends StatefulWidget {

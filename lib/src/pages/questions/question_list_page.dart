@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:code_ground/src/pages/questions/question_detail_page.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
+import 'package:code_ground/src/view_models/progress_view_model.dart';
 
 class QuestionListPage extends StatefulWidget {
   const QuestionListPage({super.key});
@@ -58,6 +59,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
   Widget build(BuildContext context) {
     final questionViewModel = Provider.of<QuestionViewModel>(context);
     final categoryViewModel = Provider.of<CategoryViewModel>(context);
+    final progressViewModel = Provider.of<ProgressViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -83,6 +85,21 @@ class _QuestionListPageState extends State<QuestionListPage> {
                   itemBuilder: (context, index) {
                     if (index < questionViewModel.questions.length) {
                       final question = questionViewModel.questions[index];
+                      final questionState = progressViewModel
+                          .progressData?.quizState[question.questionId];
+
+                      IconData? leadingIcon;
+                      Color? iconColor;
+
+                      // 문제 상태에 따른 아이콘 설정
+                      if (questionState == true) {
+                        leadingIcon = Icons.check_circle;
+                        iconColor = Colors.green;
+                      } else if (questionState == false) {
+                        leadingIcon = Icons.cancel;
+                        iconColor = Colors.red;
+                      }
+
                       return Container(
                         margin: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
@@ -99,7 +116,10 @@ class _QuestionListPageState extends State<QuestionListPage> {
                           ],
                         ),
                         child: ListTile(
-                          tileColor: Colors.blueGrey.shade900, // 배경색 설정
+                          leading: leadingIcon != null
+                              ? Icon(leadingIcon, color: iconColor)
+                              : null,
+                          tileColor: Colors.blueGrey.shade900,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -111,12 +131,17 @@ class _QuestionListPageState extends State<QuestionListPage> {
                               fontSize: 18,
                             ),
                           ),
-                          subtitle: Text(
-                            question.languages.join(', '),
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 16,
-                            ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                question.languages.join(', '),
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                           onTap: () {
                             questionViewModel.selectQuestion(question);

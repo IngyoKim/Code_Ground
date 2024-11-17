@@ -111,7 +111,14 @@ class _AddQuestionState extends State<AddQuestion> {
               'Category',
               _selectedCategory,
               ['Syntax', 'Debugging', 'Output', 'Blank', 'Sequencing'],
-              (value) => setState(() => _selectedCategory = value!),
+              (value) {
+                setState(() {
+                  _selectedCategory = value!;
+                  if (_selectedCategory == 'Syntax') {
+                    _codeSnippets.clear();
+                  }
+                });
+              },
             ),
             _buildTextField('Difficulty (Numeric)', _difficultyController,
                 keyboardType: TextInputType.number),
@@ -134,13 +141,13 @@ class _AddQuestionState extends State<AddQuestion> {
               ['C', 'Python', 'Java', 'C++', 'Dart'],
               (value) => setState(() => _selectedLanguage = value!),
             ),
-            _buildTextField('Description', _descriptionController, maxLines: 3),
-            _buildTextField('Code Snippet', _codeSnippetController,
-                maxLines: 3),
-            ElevatedButton(
-              onPressed: _addCodeSnippet,
-              child: const Text('Add Code Snippet'),
-            ),
+            _buildMultilineTextField('Description', _descriptionController),
+            _buildMultilineTextField('Code Snippet', _codeSnippetController),
+            if (_selectedCategory != 'Syntax')
+              ElevatedButton(
+                onPressed: _addCodeSnippet,
+                child: const Text('Add Code Snippet'),
+              ),
             if (_codeSnippets.isNotEmpty) _buildCodeSnippetsList(),
             _buildTextField('Hint (Optional)', _hintController),
             const SizedBox(height: 20),
@@ -180,14 +187,27 @@ class _AddQuestionState extends State<AddQuestion> {
   }
 
   Widget _buildTextField(String label, TextEditingController controller,
-      {int maxLines = 1, TextInputType keyboardType = TextInputType.text}) {
+      {TextInputType keyboardType = TextInputType.text}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
         controller: controller,
         decoration: InputDecoration(labelText: label),
-        maxLines: maxLines,
         keyboardType: keyboardType,
+      ),
+    );
+  }
+
+  Widget _buildMultilineTextField(
+      String label, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(labelText: label),
+        textInputAction: TextInputAction.newline,
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
       ),
     );
   }
