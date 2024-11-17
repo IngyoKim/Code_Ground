@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:code_ground/src/services/database/datas/question_data.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/syntax_question.dart';
+import 'package:code_ground/src/services/database/datas/question_datas/debugging_question.dart';
+import 'package:code_ground/src/services/database/datas/question_datas/output_question.dart';
+import 'package:code_ground/src/services/database/datas/question_datas/blank_question.dart';
+import 'package:code_ground/src/services/database/datas/question_datas/sequencing_question.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -37,6 +42,39 @@ class _AddQuestionState extends State<AddQuestion> {
     super.dispose();
   }
 
+  QuestionData _createQuestionData(String uid) {
+    final baseData = {
+      'questionId': '',
+      'writer': uid,
+      'category': _selectedCategory,
+      'questionType': _questionType,
+      'difficulty': _difficultyController.text,
+      'updatedAt': DateTime.now().toIso8601String(),
+      'title': _titleController.text,
+      'description': _descriptionController.text,
+      'codeSnippets': _codeSnippets,
+      'languages': _codeSnippets.keys.toList(),
+      'hint': _hintController.text.isEmpty
+          ? 'No hint provided'
+          : _hintController.text,
+      'answers':
+          _questionType == 'Objective' ? _answers : [_answerController.text],
+    };
+
+    switch (_selectedCategory) {
+      case 'Debugging':
+        return DebuggingQuestion.fromMap(baseData);
+      case 'Output':
+        return OutputQuestion.fromMap(baseData);
+      case 'Blank':
+        return BlankQuestion.fromMap(baseData);
+      case 'Sequencing':
+        return SequencingQuestion.fromMap(baseData);
+      default:
+        return SyntaxQuestion.fromMap(baseData);
+    }
+  }
+
   void _submitQuestion() async {
     if (_titleController.text.isEmpty ||
         _descriptionController.text.isEmpty ||
@@ -49,21 +87,7 @@ class _AddQuestionState extends State<AddQuestion> {
     final currentUser = FirebaseAuth.instance.currentUser;
     final uid = currentUser?.uid ?? 'Anonymous';
 
-    final questionData = SyntaxQuestion(
-      questionId: '', // ID는 QuestionOperation에서 생성
-      writer: uid, // 유저 UID를 writer로 설정
-      category: _selectedCategory,
-      questionType: _questionType,
-      difficulty: _difficultyController.text,
-      updatedAt: DateTime.now(),
-      title: _titleController.text,
-      description: _descriptionController.text,
-      codeSnippets: Map.from(_codeSnippets),
-      languages: _codeSnippets.keys.toList(),
-      hint: _hintController.text.isEmpty
-          ? 'No hint provided'
-          : _hintController.text,
-    );
+    final questionData = _createQuestionData(uid);
 
     await Provider.of<QuestionViewModel>(context, listen: false)
         .addQuestion(questionData);
@@ -74,28 +98,30 @@ class _AddQuestionState extends State<AddQuestion> {
   }
 
   void _addCodeSnippet() {
+    if (_codeSnippetController.text.isEmpty) {
+      Fluttertoast.showToast(
+          msg: "Code snippet cannot be empty!", gravity: ToastGravity.BOTTOM);
+      return;
+    }
     if (_codeSnippets.containsKey(_selectedLanguage)) {
       Fluttertoast.showToast(
           msg: "Code snippet for $_selectedLanguage already exists!",
           gravity: ToastGravity.BOTTOM);
       return;
     }
-    if (_codeSnippetController.text.isEmpty) {
-      Fluttertoast.showToast(
-          msg: "Code snippet cannot be empty!", gravity: ToastGravity.BOTTOM);
-      return;
-    }
-    _codeSnippets[_selectedLanguage] = _codeSnippetController.text;
-    _codeSnippetController.clear();
-    setState(() {});
+    setState(() {
+      _codeSnippets[_selectedLanguage] = _codeSnippetController.text;
+      _codeSnippetController.clear();
+    });
   }
 
   void _deleteCodeSnippet(String language) {
-    _codeSnippets.remove(language);
+    setState(() {
+      _codeSnippets.remove(language);
+    });
     Fluttertoast.showToast(
         msg: "Code snippet for $language removed!",
         gravity: ToastGravity.BOTTOM);
-    setState(() {});
   }
 
   @override
@@ -126,14 +152,10 @@ class _AddQuestionState extends State<AddQuestion> {
               'Question Type',
               _questionType,
               ['Subjective', 'Objective'],
-              (value) {
-                setState(() {
-                  _questionType = value!;
-                  if (_questionType == 'Subjective') {
-                    _answers.clear(); // 주관식 선택 시 답 초기화
-                  }
-                });
-              },
+              (value) => setState(() {
+                _questionType = value!;
+                if (_questionType == 'Subjective') _answers.clear();
+              }),
             ),
             _buildDropdown(
               'Language',
@@ -151,30 +173,7 @@ class _AddQuestionState extends State<AddQuestion> {
             if (_codeSnippets.isNotEmpty) _buildCodeSnippetsList(),
             _buildTextField('Hint (Optional)', _hintController),
             const SizedBox(height: 20),
-            _buildTextField('Answer', _answerController),
-            if (_questionType == 'Objective') ...[
-              ElevatedButton(
-                onPressed: () {
-                  if (_answers.length >= 10) {
-                    Fluttertoast.showToast(
-                        msg: "You can only add up to 10 answers!",
-                        gravity: ToastGravity.BOTTOM);
-                    return;
-                  }
-                  if (_answerController.text.isEmpty) {
-                    Fluttertoast.showToast(
-                        msg: "Answer cannot be empty!",
-                        gravity: ToastGravity.BOTTOM);
-                    return;
-                  }
-                  _answers.add(_answerController.text);
-                  _answerController.clear();
-                  setState(() {});
-                },
-                child: const Text('Add Answer'),
-              ),
-              if (_answers.isNotEmpty) _buildAnswersList(),
-            ],
+            _buildAnswerInput(),
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: _submitQuestion,
@@ -205,7 +204,6 @@ class _AddQuestionState extends State<AddQuestion> {
       child: TextField(
         controller: controller,
         decoration: InputDecoration(labelText: label),
-        textInputAction: TextInputAction.newline,
         keyboardType: TextInputType.multiline,
         maxLines: null,
       ),
@@ -231,40 +229,55 @@ class _AddQuestionState extends State<AddQuestion> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Code Snippets:',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        ..._codeSnippets.entries.map((entry) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('${entry.key}: ${entry.value}',
-                      style: const TextStyle(fontSize: 14)),
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _deleteCodeSnippet(entry.key),
-                  ),
-                ],
+        const Text('Code Snippets:',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        ..._codeSnippets.entries.map((entry) => ListTile(
+              title: Text('${entry.key}: ${entry.value}'),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: () => _deleteCodeSnippet(entry.key),
               ),
             )),
       ],
     );
   }
 
-  Widget _buildAnswersList() {
+  Widget _buildAnswerInput() {
+    if (_questionType == 'Subjective') {
+      return _buildTextField('Answer', _answerController);
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Answers:',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        _buildTextField('Answer', _answerController),
+        ElevatedButton(
+          onPressed: () {
+            if (_answers.length >= 10) {
+              Fluttertoast.showToast(
+                  msg: "You can only add up to 10 answers!",
+                  gravity: ToastGravity.BOTTOM);
+              return;
+            }
+            if (_answerController.text.isEmpty) {
+              Fluttertoast.showToast(
+                  msg: "Answer cannot be empty!", gravity: ToastGravity.BOTTOM);
+              return;
+            }
+            setState(() {
+              _answers.add(_answerController.text);
+              _answerController.clear();
+            });
+          },
+          child: const Text('Add Answer'),
         ),
-        ..._answers.map((answer) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Text(answer, style: const TextStyle(fontSize: 14)),
-            )),
+        if (_answers.isNotEmpty)
+          ..._answers.map((answer) => ListTile(
+                title: Text(answer),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => setState(() => _answers.remove(answer)),
+                ),
+              )),
       ],
     );
   }
