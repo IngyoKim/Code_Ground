@@ -10,13 +10,18 @@ class SyntaxQuestion extends QuestionData {
     required super.updatedAt,
     required super.title,
     required super.description,
+    required super.codeSnippets, // 언어별 코드 스니펫 추가
     required super.languages,
     required super.hint,
   });
 
   @override
   Map<String, dynamic> toMap() {
-    return toBaseMap();
+    final baseMap = toBaseMap();
+    baseMap.addAll({
+      'codeSnippets': codeSnippets, // 언어별 코드 추가
+    });
+    return baseMap;
   }
 
   factory SyntaxQuestion.fromMap(Map<String, dynamic> data) {
@@ -31,6 +36,8 @@ class SyntaxQuestion extends QuestionData {
           : DateTime.now(),
       title: data['title'] ?? 'No Title',
       description: data['description'] ?? 'No Description',
+      codeSnippets:
+          Map<String, String>.from(data['codeSnippets'] ?? {}), // 언어별 코드 스니펫 처리
       languages: List<String>.from(data['languages'] ?? []),
       hint: data['hint'] ?? 'No Hint',
     );

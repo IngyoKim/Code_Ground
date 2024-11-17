@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/syntax_question.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/debugging_question.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/output_question.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/blank_question.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/sequencing_question.dart';
-import 'package:flutter/material.dart';
 
 abstract class QuestionData {
   final String questionId;
@@ -13,9 +13,10 @@ abstract class QuestionData {
   final String difficulty;
   final DateTime updatedAt;
   final String title;
-  final String description;
-  final List<String> languages; // 여러 언어 지원
-  final String hint; // 힌트 필드 추가
+  final String description; // 설명은 단일 필드로 유지
+  final Map<String, String> codeSnippets; // 언어별 코드 스니펫
+  final List<String> languages; // 지원하는 프로그래밍 언어
+  final String hint; // 힌트 필드
 
   QuestionData({
     required this.questionId,
@@ -26,6 +27,7 @@ abstract class QuestionData {
     required this.updatedAt,
     required this.title,
     required this.description,
+    required this.codeSnippets,
     required this.languages,
     required this.hint,
   });
@@ -39,6 +41,7 @@ abstract class QuestionData {
       'updatedAt': updatedAt.toIso8601String(),
       'title': title,
       'description': description,
+      'codeSnippets': codeSnippets,
       'languages': languages,
       'hint': hint,
     };

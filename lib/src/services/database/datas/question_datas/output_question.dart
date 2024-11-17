@@ -10,13 +10,18 @@ class OutputQuestion extends QuestionData {
     required super.updatedAt,
     required super.title,
     required super.description,
+    required super.codeSnippets,
     required super.languages,
     required super.hint,
   });
 
   @override
   Map<String, dynamic> toMap() {
-    return toBaseMap();
+    final baseMap = toBaseMap();
+    baseMap.addAll({
+      'codeSnippets': codeSnippets,
+    });
+    return baseMap;
   }
 
   factory OutputQuestion.fromMap(Map<String, dynamic> data) {
@@ -31,6 +36,7 @@ class OutputQuestion extends QuestionData {
           : DateTime.now(),
       title: data['title'] ?? 'No Title',
       description: data['description'] ?? 'No Description',
+      codeSnippets: Map<String, String>.from(data['codeSnippets'] ?? {}),
       languages: List<String>.from(data['languages'] ?? []),
       hint: data['hint'] ?? 'No Hint',
     );

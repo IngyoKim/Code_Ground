@@ -40,6 +40,7 @@ class QuestionOperation {
       final data = {
         ...questionData.toMap(),
         'createdAt': DateTime.now().toIso8601String(),
+        'codeSnippets': questionData.codeSnippets, // codeSnippets 추가
       };
 
       debugPrint('Writing question data to $path: $data');
@@ -61,7 +62,11 @@ class QuestionOperation {
 
       if (data is Map<String, dynamic>) {
         debugPrint('Successfully read question data: $data');
-        return QuestionData.fromMap(data);
+        return QuestionData.fromMap({
+          ...data,
+          'codeSnippets': Map<String, String>.from(
+              data['codeSnippets'] ?? {}), // codeSnippets 처리
+        });
       } else {
         debugPrint(
           "Error: Expected a Map<String, dynamic> but got ${data.runtimeType}",
@@ -88,6 +93,7 @@ class QuestionOperation {
     }
   }
 
+  // 최신 문제 가져오기
   Future<List<QuestionData>> fetchRecentQuestions(String category,
       {int limit = 10, String? startAfter}) async {
     final ref = _databaseService.database.ref('questions/$category');
@@ -103,6 +109,8 @@ class QuestionOperation {
       return data.entries.map((entry) {
         final questionMap = Map<String, dynamic>.from(entry.value as Map);
         questionMap['questionId'] = entry.key;
+        questionMap['codeSnippets'] = Map<String, String>.from(
+            questionMap['codeSnippets'] ?? {}); // codeSnippets 처리
         return QuestionData.fromMap(questionMap);
       }).toList();
     }

@@ -55,15 +55,48 @@ class QuestionViewModel extends ChangeNotifier {
   Future<void> addQuestion(QuestionData questionData) async {
     try {
       await _operation.writeQuestionData(questionData);
-      _questions.insert(0, questionData); // 새 질문을 목록 맨 앞에 추가
+
+      // 새 질문 추가 시 codeSnippets 필드 확인
+      final updatedQuestionData = QuestionData.fromMap({
+        ...questionData.toMap(),
+        'codeSnippets': questionData.codeSnippets,
+      });
+
+      _questions.insert(0, updatedQuestionData); // 새 질문을 목록 맨 앞에 추가
       notifyListeners();
     } catch (e) {
       debugPrint('Error adding question: $e');
     }
   }
 
+  /// 선택된 질문 설정
   void selectQuestion(QuestionData question) {
     _selectedQuestion = question;
     notifyListeners();
+  }
+
+  /// codeSnippets 필드 업데이트
+  Future<void> updateCodeSnippets(
+      String category, String questionId, Map<String, String> snippets) async {
+    try {
+      await _operation.updateQuestionData(
+        category,
+        questionId,
+        {'codeSnippets': snippets},
+      );
+
+      final questionIndex =
+          _questions.indexWhere((q) => q.questionId == questionId);
+      if (questionIndex != -1) {
+        final updatedQuestion = QuestionData.fromMap({
+          ..._questions[questionIndex].toMap(),
+          'codeSnippets': snippets,
+        });
+        _questions[questionIndex] = updatedQuestion;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error updating code snippets: $e');
+    }
   }
 }
