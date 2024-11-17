@@ -20,8 +20,15 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateUserData(Map<String, dynamic> updates) async {
-    await _userOperation.updateUserData(updates);
+  Future<void> updateNickname(String data) async {
+    if (_userData == null) fetchUserData();
+    await _userOperation.updateUserData({'nickname': data});
+    await fetchUserData();
+  }
+
+  Future<void> grantAdmin(bool data) async {
+    if (_userData == null) fetchUserData();
+    await _userOperation.updateUserData({'isAdmin': data});
     await fetchUserData();
   }
 }

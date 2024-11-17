@@ -3,13 +3,14 @@ import 'package:code_ground/src/services/database/datas/question_data.dart';
 import 'package:code_ground/src/services/database/operations/question_operation.dart';
 
 class QuestionViewModel extends ChangeNotifier {
-  final QuestionOperation _questionOperation = QuestionOperation();
+  final QuestionOperation _operation = QuestionOperation();
   final List<QuestionData> _questions = [];
+  QuestionData? _selectedQuestion; // 선택된 질문
   bool _isLoading = false;
-  int _currentPage = 1;
-  final int _limit = 15;
+  String? _lastFetchedKey; // 마지막으로 가져온 질문의 키 (startAfter에 사용)
 
   List<QuestionData> get questions => _questions;
+  QuestionData? get selectedQuestion => _selectedQuestion;
   bool get isLoading => _isLoading;
 
   void _setLoading(bool loading) {
@@ -17,63 +18,85 @@ class QuestionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 첫 질문 목록 로드 및 추가 로드를 위한 메서드
-  Future<void> fetchQuestions({bool loadMore = false}) async {
+  /// 질문 가져오기
+  Future<void> fetchQuestions(String category, {int limit = 10}) async {
     if (_isLoading) return;
 
     _setLoading(true);
-    debugPrint("Loading ${loadMore ? 'more' : 'initial'} questions...");
+    try {
+      final newQuestions = await _operation.fetchRecentQuestions(
+        category,
+        limit: limit,
+        startAfter: _lastFetchedKey,
+      );
 
-    if (!loadMore) {
-      _questions.clear(); // 처음 로드 시 기존 데이터를 초기화
-      _currentPage = 1;
-      debugPrint("Starting fresh load. Resetting currentPage to 1.");
-    } else {
-      debugPrint("Fetching page $_currentPage with limit $_limit");
-    }
-
-    List<QuestionData> loadedQuestions = [];
-    for (int i = 0; i < _limit; i++) {
-      String questionId = 'question${(_currentPage - 1) * _limit + i + 1}';
-      debugPrint("Attempting to load question with ID: $questionId");
-      final question = await _questionOperation.readQuestionData(questionId);
-      if (question != null) {
-        loadedQuestions.add(question);
-        debugPrint("Loaded question: ${question.title}");
+      if (newQuestions.isNotEmpty) {
+        _lastFetchedKey = newQuestions.last.questionId; // 마지막 키 업데이트
+        _questions.addAll(newQuestions);
+        notifyListeners();
       } else {
-        debugPrint("No question found for ID: $questionId, stopping fetch.");
-        break;
+        debugPrint('No more questions available for category: $category');
       }
+    } catch (e) {
+      debugPrint('Error fetching questions: $e');
+    } finally {
+      _setLoading(false);
     }
-
-    _questions.addAll(loadedQuestions);
-    if (loadedQuestions.isNotEmpty) {
-      _currentPage++; // 데이터가 있을 경우에만 페이지 증가
-      debugPrint(
-          "Page $_currentPage loaded with ${loadedQuestions.length} questions.");
-    } else {
-      debugPrint("No more questions to load.");
-    }
-
-    _setLoading(false);
-    debugPrint(
-        "Loading complete. Total questions loaded: ${_questions.length}");
   }
 
-  Future<void> addQuestion(String title, String description) async {
-    final questionData = QuestionData(
-      questionId: 'question${_questions.length + 1}',
-      title: title,
-      category: 'General',
-      description: description,
-      difficulty: 'Easy',
-      tags: [],
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-    await _questionOperation.writeQuestionData(questionData);
-    _questions.add(questionData);
+  /// 질문 초기화
+  void clearQuestions() {
+    _questions.clear();
+    _lastFetchedKey = null;
     notifyListeners();
-    debugPrint("Added new question: ${questionData.title}");
+  }
+
+  /// 질문 추가
+  Future<void> addQuestion(QuestionData questionData) async {
+    try {
+      await _operation.writeQuestionData(questionData);
+
+      // 새 질문 추가 시 codeSnippets 필드 확인
+      final updatedQuestionData = QuestionData.fromMap({
+        ...questionData.toMap(),
+        'codeSnippets': questionData.codeSnippets,
+      });
+
+      _questions.insert(0, updatedQuestionData); // 새 질문을 목록 맨 앞에 추가
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error adding question: $e');
+    }
+  }
+
+  /// 선택된 질문 설정
+  void selectQuestion(QuestionData question) {
+    _selectedQuestion = question;
+    notifyListeners();
+  }
+
+  /// codeSnippets 필드 업데이트
+  Future<void> updateCodeSnippets(
+      String category, String questionId, Map<String, String> snippets) async {
+    try {
+      await _operation.updateQuestionData(
+        category,
+        questionId,
+        {'codeSnippets': snippets},
+      );
+
+      final questionIndex =
+          _questions.indexWhere((q) => q.questionId == questionId);
+      if (questionIndex != -1) {
+        final updatedQuestion = QuestionData.fromMap({
+          ..._questions[questionIndex].toMap(),
+          'codeSnippets': snippets,
+        });
+        _questions[questionIndex] = updatedQuestion;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error updating code snippets: $e');
+    }
   }
 }

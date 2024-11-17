@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:code_ground/src/services/database/database_service.dart';
+import 'package:code_ground/src/services/database/operations/database_service.dart';
 import 'package:code_ground/src/services/database/datas/user_data.dart';
 
 class UserOperation {
@@ -21,6 +20,8 @@ class UserOperation {
         'name': user?.displayName ?? '',
         'email': user?.email ?? '',
         'profileImageUrl': user?.photoURL ?? '',
+        'nickname': '', // Default empty or assign a default value
+        'isadmin': false, // Default value, modify if needed
       },
     );
   }
@@ -40,6 +41,8 @@ class UserOperation {
         name: data['name'] ?? '',
         email: data['email'] ?? '',
         profileImageUrl: data['profileImageUrl'] ?? '',
+        nickname: data['nickname'] ?? '',
+        isAdmin: data['isadmin'] ?? false,
       );
     }
     debugPrint("No data found for user.");

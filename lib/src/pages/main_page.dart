@@ -1,9 +1,9 @@
-import 'package:code_ground/src/pages/home_page.dart';
+import 'package:code_ground/src/pages/features/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:code_ground/src/pages/quiz_page.dart';
-import 'package:code_ground/src/pages/profile_page.dart';
+import 'package:code_ground/src/pages/features/quiz_page.dart';
+import 'package:code_ground/src/pages/features/profile_page.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 
 class MainPage extends StatefulWidget {
@@ -20,7 +20,8 @@ class _MainPageState extends State<MainPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController =
+        TabController(length: 3, vsync: this, initialIndex: 1); // 두 번째 탭에서 시작
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserViewModel>(context, listen: false).fetchUserData();
     });
@@ -34,13 +35,12 @@ class _MainPageState extends State<MainPage>
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(context.toString());
     return Scaffold(
       body: TabBarView(
         controller: _tabController,
         children: [
-          HomePage(),
           const QuizPage(),
+          HomePage(),
           const ProfilePage(),
         ],
       ),
