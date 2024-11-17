@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CPage extends StatelessWidget {
-  final Function(int) increaseEXP;
-  final VoidCallback setCheatLevel;
-
   const CPage({
     super.key,
-    required this.increaseEXP,
-    required this.setCheatLevel,
   });
 
   @override
@@ -29,16 +24,17 @@ class CPage extends StatelessWidget {
             const SizedBox(height: 20), // 간격 추가
             ElevatedButton(
               onPressed: () {
-                // 버튼을 누르면 경험치가 50 증가
+                // 버튼을 누르면 다른 행동을 수행
                 Navigator.pop(context);
-                increaseEXP(30);
+                // 여기에 경험치 증가 기능을 추가할 수 있습니다.
               },
               child: const Text('Test'),
             ),
             ElevatedButton(
               onPressed: () {
-                setCheatLevel(); // 버튼을 누르면 경험치가 50 증가
+                // 버튼을 누르면 치트 레벨 설정 기능을 수행
                 Navigator.pop(context);
+                // 여기에 치트 레벨 설정 기능을 추가할 수 있습니다.
               },
               child: const Text('Cheat'),
             ),

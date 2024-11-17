@@ -1,6 +1,8 @@
+import 'package:code_ground/src/pages/quiz_page.dart'; // Import QuizPage
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:code_ground/src/pages/quiztype_page.dart';
 import 'package:code_ground/src/pages/add_question.dart';
 import 'package:code_ground/src/pages/question_list_page.dart';
 
@@ -51,6 +53,20 @@ class ProfilePage extends StatelessWidget {
         'text': 'FAQ',
         'onTap': () => debugPrint('FAQ is clicked'),
       },
+
+      // Add the new ListTile for "QuizPage"
+      {
+        'icon': Icons.quiz,
+        'text': 'Quiz',
+        'onTap': () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => QuizType(), // Navigate to QuizPage
+            ),
+          );
+        },
+      },
     ];
 
     return Scaffold(
@@ -64,7 +80,7 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
           child: Column(
             children: [
-              // 기존 UI의 프로필 정보 및 로그아웃 버튼
+              // Existing profile and logout button UI
               Card(
                 elevation: 2,
                 child: Padding(
