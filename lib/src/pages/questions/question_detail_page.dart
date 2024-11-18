@@ -5,9 +5,6 @@ import 'dart:math'; // 랜덤 기능을 사용하기 위해 import
 import 'package:code_ground/src/pages/correct_page.dart'; // CorrectPage import
 import 'package:code_ground/src/pages/wrong_page.dart'; // WrongPage import
 
-//해결 과제: 어떤 문제든 같은 페이지가 뜸. 따라서 이름어 따라 다른 페이지가 뜨도록 하기
-//출력 문제에서 언어에 따라 하나만 보이게 할거 아님 다 보이게 할거??
-
 class QuestionDetailPage extends StatefulWidget {
   const QuestionDetailPage({super.key});
 
@@ -16,30 +13,12 @@ class QuestionDetailPage extends StatefulWidget {
 }
 
 class _QuestionDetailPageState extends State<QuestionDetailPage> {
-  // late List<String> boxNames;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-
-  //   // 박스 이름을 초기화하고 섞기
-  //   boxNames = [
-  //     'printf',
-  //     '2번',
-  //     '3번',
-  //     '4번',
-  //   ];
-
-  //   boxNames.shuffle(Random()); // 랜덤으로 섞기
-  // }
-
   @override
   Widget build(BuildContext context) {
     final questionViewModel = Provider.of<QuestionViewModel>(context);
     final question = questionViewModel.selectedQuestion;
 
     if (question == null) {
-      //질문이 없을 떄.
       return Scaffold(
         appBar: AppBar(
           title: const Text('Question Details'),
@@ -48,9 +27,35 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
         body: const Center(child: Text('No question selected.')),
       );
     }
+    final questiontype = question.questionType;
+    // Check if the question type is Objective(여기 수정부분 확인하기)
+    if (questiontype != 'Objective') {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Question Details'),
+          backgroundColor: Colors.black,
+        ),
+        body: const Center(child: Text('This question type is not supported.')),
+      );
+    }
 
-    // 코드 스니펫들
+    // 문제 내용 및 코드 스니펫들
     final codeSnippets = question.codeSnippets.entries;
+
+    // boxNames를 language와 code 쌍으로 초기화
+    List<MapEntry<String, String>> boxNames = [];
+
+    // 코드 스니펫을 boxNames 리스트에 추가
+    for (var entry in codeSnippets) {
+      boxNames.add(MapEntry('정답', entry.value)); // language와 code를 하나의 항목으로 추가
+    }
+
+    boxNames.add(MapEntry('오답1', 'Custom Value 1'));
+    boxNames.add(MapEntry('오답2', 'Custom Value 2'));
+    boxNames.add(MapEntry('오답3', 'Print Sample Code'));
+
+    // boxNames를 랜덤하게 섞기
+    boxNames.shuffle(Random());
 
     return Scaffold(
       appBar: AppBar(
@@ -58,14 +63,14 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
         backgroundColor: Colors.black,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0), //위치 설정
+        padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
             // Title
             Text(
               question.title,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ), //문제 이름
+            ),
             const SizedBox(height: 16),
 
             // 문제 내용(설명)
@@ -93,6 +98,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
               ),
             const SizedBox(height: 8),
 
+            // 코드 스니펫이 있을 때만 보여주기
             if (question.codeSnippets.isNotEmpty)
               ...question.codeSnippets.entries.map(
                 (entry) {
@@ -126,7 +132,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                               ),
                               padding: const EdgeInsets.all(8),
                               child: Text(
-                                code, // codeSnippets 부분
+                                code,
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontFamily: 'monospace',
@@ -138,30 +144,34 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                       ),
                     ),
                   );
-                  // build() 안에서 변수 초기화
-                  List<String> boxNames = [
-                    'printf',
-                    '2번',
-                    '3번',
-                    '4번',
-                  ];
-
-                  // boxNames를 랜덤하게 섞기 (상태 변경)
-                  boxNames.shuffle(Random());
                 },
               ),
 
-            // 여기에 30px 높이의 상자 4개를 추가
-            const SizedBox(height: 20), // 20px 간격 추가
+            const SizedBox(height: 20),
+            // 각 상자를 생성
             ...List.generate(boxNames.length, (index) {
+              final selectedBox = boxNames[index];
+              String boxText = selectedBox.key; // 기본값은 boxNames의 key (language)
+
+              // "printf"인 경우 code 값을 넣기
+              if (selectedBox.key == '정답') {
+                boxText = selectedBox.value; // "printf" 박스는 code 값으로 변경
+              }
+
               return GestureDetector(
                 onTap: () {
-                  // 박스 클릭 시 텍스트가 code와 일치하는지 확인
-                  final selectedBox = boxNames[index];
                   bool isCorrect = false;
 
+                  // selectedBox는 MapEntry 형태로 (language, code) 값을 포함하고 있음
+                  final selectedLanguage = selectedBox.key;
+                  final selectedCode = selectedBox.value;
+
+                  // codeSnippets와 비교해서 일치하는지 확인
                   for (var entry in codeSnippets) {
-                    if (selectedBox.contains(entry.value)) {
+                    final language = entry.key;
+                    final code = entry.value;
+
+                    if (selectedCode == code) {
                       isCorrect = true;
                       break;
                     }
@@ -189,16 +199,13 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                   height: 30,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.blueGrey.shade700, // 원하는 색상으로 설정
-                    borderRadius: BorderRadius.circular(10), // 곡률을 10으로 설정
+                    color: Colors.blueGrey.shade700,
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
                     child: Text(
-                      boxNames[index], // 각 상자의 텍스트
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
+                      boxText, // 수정된 boxText를 표시
+                      style: const TextStyle(color: Colors.white, fontSize: 14),
                     ),
                   ),
                 ),
