@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:code_ground/src/services/database/datas/tier_data.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/syntax_question.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/debugging_question.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/output_question.dart';
@@ -10,45 +10,57 @@ abstract class QuestionData {
   final String writer;
   final String category;
   final String questionType;
-  final String difficulty;
   final DateTime updatedAt;
   final String title;
-  final String description; // 설명은 단일 필드로 유지
-  final Map<String, String> codeSnippets; // 언어별 코드 스니펫
-  final List<String> languages; // 지원하는 프로그래밍 언어
-  final String hint; // 힌트 필드
+  final String description;
+  final Map<String, String> codeSnippets;
+  final List<String> languages;
+  final String hint;
+  final dynamic answer;
+  final List<String>? answerChoices;
+  final Tier? tier;
+  final Grade? grade;
+  final int? solvers;
 
   QuestionData({
     required this.questionId,
     required this.writer,
     required this.category,
     required this.questionType,
-    required this.difficulty,
     required this.updatedAt,
     required this.title,
     required this.description,
     required this.codeSnippets,
     required this.languages,
     required this.hint,
+    required this.answer,
+    this.answerChoices,
+    this.tier,
+    this.grade,
+    this.solvers,
   });
 
   Map<String, dynamic> toBaseMap() {
     return {
+      'questionId': questionId,
       'writer': writer,
       'category': category,
       'questionType': questionType,
-      'difficulty': difficulty,
       'updatedAt': updatedAt.toIso8601String(),
       'title': title,
       'description': description,
       'codeSnippets': codeSnippets,
       'languages': languages,
       'hint': hint,
+      'answer': answer,
+      if (answerChoices != null) 'answerChoices': answerChoices,
+      if (tier != null) 'tier': tier!.name,
+      if (grade != null) 'grade': grade!.name,
+      if (solvers != null) 'solvers': solvers,
     };
   }
 
   static QuestionData fromMap(Map<String, dynamic> data) {
-    debugPrint('Converting data to QuestionData: $data');
     switch (data['category']) {
       case 'Syntax':
         return SyntaxQuestion.fromMap(data);
@@ -61,7 +73,7 @@ abstract class QuestionData {
       case 'Sequencing':
         return SequencingQuestion.fromMap(data);
       default:
-        throw Exception("Unknown category: ${data['category']}");
+        throw Exception('Unknown category: ${data['category']}');
     }
   }
 
