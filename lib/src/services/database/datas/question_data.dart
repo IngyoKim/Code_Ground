@@ -40,6 +40,7 @@ abstract class QuestionData {
     this.solvers,
   });
 
+  /// 공통 데이터를 Map으로 변환
   Map<String, dynamic> toBaseMap() {
     return {
       'questionId': questionId,
@@ -60,8 +61,11 @@ abstract class QuestionData {
     };
   }
 
-  static QuestionData fromMap(Map<String, dynamic> data) {
-    switch (data['category']) {
+  /// 데이터를 Map에서 적절한 서브클래스로 변환
+  factory QuestionData.fromMap(Map<String, dynamic> data) {
+    final category = data['category'] as String? ?? '';
+
+    switch (category) {
       case 'Syntax':
         return SyntaxQuestion.fromMap(data);
       case 'Debugging':
@@ -73,9 +77,10 @@ abstract class QuestionData {
       case 'Sequencing':
         return SequencingQuestion.fromMap(data);
       default:
-        throw Exception('Unknown category: ${data['category']}');
+        throw Exception('Unknown or missing category: $category');
     }
   }
 
+  /// 서브클래스에서 구현해야 할 Map 변환
   Map<String, dynamic> toMap();
 }

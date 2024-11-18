@@ -38,8 +38,8 @@ dependencies:
   kakao_flutter_sdk_navi: ^1.9.5 # 카카오내비 API 패키지
 
   firebase_core: ^3.8.0 #파이어베이스 작업 관련 기능
-  firebase_auth: ^5.3.1 # 파이어베이스 로그인 관련 기능
-  cloud_firestore: ^5.4.4 # 파이어베이스 클라우드 관련 기능
+  firebase_auth: ^5.3.3 # 파이어베이스 로그인 관련 기능
+  cloud_firestore: ^5.5.0 # 파이어베이스 클라우드 관련 기능
   firebase_database: ^11.1.5 # 파이어베이스 리얼타임 데이터베이스
 
   webview_flutter: ^4.9.0

@@ -1,5 +1,5 @@
-import 'package:code_ground/src/services/database/datas/tier_data.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
+import 'package:code_ground/src/services/database/datas/tier_data.dart';
 
 class SequencingQuestion extends QuestionData {
   SequencingQuestion({
