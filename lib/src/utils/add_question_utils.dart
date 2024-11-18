@@ -12,38 +12,40 @@ bool validateFields({
   List<String>? answerChoices,
   String? selectedAnswer,
   String? subjectiveAnswer,
-  Map<int, String>? sequencingSteps,
+  Map<int, String>? sequencingSteps, // 추가
 }) {
   if (title.isEmpty || description.isEmpty) {
     Fluttertoast.showToast(msg: 'Please fill in all required fields!');
     return false;
   }
 
-  // 객관식 검증
-  if (selectedType == 'Objective' &&
-      (answerChoices == null ||
-          answerChoices.isEmpty ||
-          selectedAnswer == null)) {
-    Fluttertoast.showToast(
-        msg: 'Add answer choices and select a correct answer!');
-    return false;
+  if (selectedCategory == 'Sequencing') {
+    if (sequencingSteps == null || sequencingSteps.isEmpty) {
+      Fluttertoast.showToast(
+          msg: 'Please add steps for the sequencing question!');
+      return false;
+    }
+    return true;
   }
 
-  // 주관식 검증
+  if (selectedType == 'Objective') {
+    if (answerChoices == null ||
+        answerChoices.isEmpty ||
+        selectedAnswer == null) {
+      Fluttertoast.showToast(
+          msg: 'Please provide choices and select an answer!');
+      return false;
+    }
+  }
+
   if (selectedType == 'Subjective' &&
       (subjectiveAnswer == null || subjectiveAnswer.isEmpty)) {
-    Fluttertoast.showToast(msg: 'Provide the correct answer for Subjective!');
+    Fluttertoast.showToast(
+        msg: 'Please provide an answer for subjective type!');
     return false;
   }
 
-  // Sequencing 검증
-  if (selectedCategory == 'Sequencing' &&
-      (sequencingSteps == null || sequencingSteps.isEmpty)) {
-    Fluttertoast.showToast(msg: 'Add steps for the sequencing question!');
-    return false;
-  }
-
-  return true;
+  return true; // 모든 검증 통과
 }
 
 /// 질문 데이터 준비
@@ -60,8 +62,15 @@ QuestionData prepareAddQuestionData({
   List<String>? answerChoices,
   String? selectedAnswer,
   String? subjectiveAnswer,
-  Map<int, String>? sequencingSteps,
+  Map<int, String>? sequencingSteps, // Sequencing steps 추가
 }) {
+  // Sequencing의 경우 codeSnippets에 steps를 추가
+  if (selectedCategory == 'Sequencing' && sequencingSteps != null) {
+    codeSnippets['SequencingSteps'] = sequencingSteps.entries
+        .map((e) => '${e.key}: ${e.value}')
+        .join('|'); // 키-값으로 문자열 변환
+  }
+
   return QuestionData.fromMap({
     'questionId': questionId,
     'writer': writerUid,
@@ -76,6 +85,5 @@ QuestionData prepareAddQuestionData({
     'answerChoices': answerChoices,
     'selectedAnswer': selectedAnswer,
     'subjectiveAnswer': subjectiveAnswer,
-    'steps': sequencingSteps,
   });
 }

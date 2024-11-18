@@ -23,25 +23,6 @@ class AnswerChoiceWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ...answerChoices.map(
-          (choice) => ListTile(
-            title: Text(choice),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Radio<String>(
-                  value: choice,
-                  groupValue: selectedAnswer,
-                  onChanged: onSelectAnswer,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => onDeleteChoice(choice),
-                ),
-              ],
-            ),
-          ),
-        ),
         Row(
           children: [
             Expanded(
@@ -61,6 +42,25 @@ class AnswerChoiceWidget extends StatelessWidget {
               child: const Text('Add'),
             ),
           ],
+        ),
+        ...answerChoices.map(
+          (choice) => ListTile(
+            title: Text(choice),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Radio<String>(
+                  value: choice,
+                  groupValue: selectedAnswer,
+                  onChanged: onSelectAnswer,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => onDeleteChoice(choice),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );

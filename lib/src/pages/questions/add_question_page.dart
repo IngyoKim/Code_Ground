@@ -46,10 +46,11 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
   Future<void> _submitQuestion() async {
     final user = Provider.of<UserViewModel>(context, listen: false).userData;
     if (user == null) {
-      Fluttertoast.showToast(msg: 'User information is missing.');
+      Fluttertoast.showToast(msg: 'Please log in to continue.');
       return;
     }
 
+    // 필드 검증
     if (!validateFields(
       context: context,
       title: _titleController.text,
@@ -61,9 +62,20 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
       subjectiveAnswer: _selectedType == 'Subjective'
           ? _subjectiveAnswerController.text
           : null,
+      sequencingSteps: _selectedCategory == 'Sequencing' ? _steps : null,
     )) return;
 
     try {
+      // Sequencing의 경우 steps를 codeSnippets로 변환
+      if (_selectedCategory == 'Sequencing') {
+        _codeSnippets.clear();
+        _steps.forEach((key, value) {
+          if (value.isNotEmpty) {
+            _codeSnippets[key.toString()] = value; // key를 문자열로 변환하여 저장
+          }
+        });
+      }
+
       final question = prepareAddQuestionData(
         questionId: DateTime.now().millisecondsSinceEpoch.toString(),
         writerUid: user.userId,
@@ -79,83 +91,15 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         subjectiveAnswer: _selectedType == 'Subjective'
             ? _subjectiveAnswerController.text
             : null,
-        sequencingSteps: _selectedCategory == 'Sequencing' ? _steps : null,
       );
       await Provider.of<QuestionViewModel>(context, listen: false)
           .addQuestion(question);
-      Fluttertoast.showToast(msg: 'Question submitted successfully!');
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context);
+      Fluttertoast.showToast(msg: 'Question added.');
+      if (mounted) Navigator.pop(context);
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error submitting question: $e');
+      Fluttertoast.showToast(msg: 'Error occurred: $e');
     }
   }
-
-  Widget _buildCategorySpecificWidgets() => _selectedCategory == 'Sequencing'
-      ? SequencingReorderWidget(
-          items: _steps,
-          onAddStep: () => setState(() {
-            _steps[_steps.isNotEmpty ? _steps.keys.last + 1 : 0] = '';
-          }),
-          onRemoveStep: (key) => setState(() => _steps.remove(key)),
-          onReorder: (oldIndex, newIndex) => setState(() {
-            final step = _steps.remove(oldIndex)!;
-            _steps[newIndex > oldIndex ? newIndex - 1 : newIndex] = step;
-          }),
-          onUpdateCode: (key, value) => setState(() => _steps[key] = value),
-        )
-      : Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (_selectedCategory != 'Blank' && _selectedCategory != 'Output')
-              DropdownWidget(
-                label: 'Question Type',
-                value: _selectedType,
-                items: const ['Subjective', 'Objective'],
-                onChanged: (value) => setState(() {
-                  _selectedType = value!;
-                  if (_selectedType == 'Objective') {
-                    _answerChoices.clear();
-                    _selectedAnswer = null;
-                  }
-                }),
-              ),
-            if (_selectedCategory == 'Blank') _setTypeToObjective(),
-            if (_selectedCategory == 'Output') _setTypeToSubjective(),
-            CodeSnippetWidget(
-              selectedCategory: _selectedCategory,
-              selectedLanguage: _selectedLanguage,
-              codeSnippets: _codeSnippets,
-              snippetController: _codeSnippetController,
-              onAddSnippet: (lang, snippet) =>
-                  setState(() => _codeSnippets[lang] = snippet),
-              onDeleteSnippet: (lang) =>
-                  setState(() => _codeSnippets.remove(lang)),
-              onLanguageChange: (lang) =>
-                  setState(() => _selectedLanguage = lang),
-              showAddButton: _selectedCategory != 'Syntax',
-              showDeleteButton: _selectedCategory != 'Syntax',
-            ),
-            if (_selectedType == 'Subjective')
-              TextFieldWidget(
-                label: 'Answer (Subjective)',
-                controller: _subjectiveAnswerController,
-              ),
-            if (_selectedType == 'Objective')
-              AnswerChoiceWidget(
-                answerChoices: _answerChoices,
-                selectedAnswer: _selectedAnswer,
-                onAddChoice: (choice) =>
-                    setState(() => _answerChoices.add(choice)),
-                onDeleteChoice: (choice) => setState(() {
-                  _answerChoices.remove(choice);
-                  if (_selectedAnswer == choice) _selectedAnswer = null;
-                }),
-                onSelectAnswer: (choice) =>
-                    setState(() => _selectedAnswer = choice),
-              ),
-          ],
-        );
 
   Widget _setTypeToObjective() {
     _selectedType = 'Objective';
@@ -198,8 +142,88 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
                 _selectedAnswer = null;
               }),
             ),
-            _buildCategorySpecificWidgets(),
-            TextFieldWidget(label: 'Hint', controller: _hintController),
+            if (_selectedCategory == 'Sequencing') ...[
+              DropdownButtonFormField<String>(
+                value: _selectedLanguage,
+                items: const [
+                  DropdownMenuItem(value: 'C', child: Text('C')),
+                  DropdownMenuItem(value: 'Python', child: Text('Python')),
+                  DropdownMenuItem(value: 'Java', child: Text('Java')),
+                  DropdownMenuItem(value: 'C++', child: Text('C++')),
+                  DropdownMenuItem(value: 'Dart', child: Text('Dart')),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() {
+                      _selectedLanguage = value;
+                    });
+                  }
+                },
+                decoration: const InputDecoration(labelText: 'Language'),
+              ),
+              SequencingReorderWidget(
+                items: _steps,
+                onAddStep: () => setState(() {
+                  _steps[_steps.isNotEmpty ? _steps.keys.last + 1 : 0] = '';
+                }),
+                onRemoveStep: (key) => setState(() => _steps.remove(key)),
+                onReorder: (oldIndex, newIndex) => setState(() {
+                  final step = _steps.remove(oldIndex)!;
+                  _steps[newIndex > oldIndex ? newIndex - 1 : newIndex] = step;
+                }),
+                onUpdateCode: (key, value) =>
+                    setState(() => _steps[key] = value),
+              ),
+            ] else ...[
+              if (_selectedCategory != 'Blank' && _selectedCategory != 'Output')
+                DropdownWidget(
+                  label: 'Question Type',
+                  value: _selectedType,
+                  items: const ['Subjective', 'Objective'],
+                  onChanged: (value) => setState(() {
+                    _selectedType = value!;
+                    if (_selectedType == 'Objective') {
+                      _answerChoices.clear();
+                      _selectedAnswer = null;
+                    }
+                  }),
+                ),
+              if (_selectedCategory == 'Blank') _setTypeToObjective(),
+              if (_selectedCategory == 'Output') _setTypeToSubjective(),
+              CodeSnippetWidget(
+                selectedCategory: _selectedCategory,
+                selectedLanguage: _selectedLanguage,
+                codeSnippets: _codeSnippets,
+                snippetController: _codeSnippetController,
+                onAddSnippet: (lang, snippet) =>
+                    setState(() => _codeSnippets[lang] = snippet),
+                onDeleteSnippet: (lang) =>
+                    setState(() => _codeSnippets.remove(lang)),
+                onLanguageChange: (lang) =>
+                    setState(() => _selectedLanguage = lang),
+                showAddButton: _selectedCategory != 'Syntax',
+                showDeleteButton: _selectedCategory != 'Syntax',
+              ),
+              TextFieldWidget(label: 'Hint', controller: _hintController),
+              if (_selectedType == 'Subjective')
+                TextFieldWidget(
+                  label: 'Answer (Subjective)',
+                  controller: _subjectiveAnswerController,
+                ),
+              if (_selectedType == 'Objective')
+                AnswerChoiceWidget(
+                  answerChoices: _answerChoices,
+                  selectedAnswer: _selectedAnswer,
+                  onAddChoice: (choice) =>
+                      setState(() => _answerChoices.add(choice)),
+                  onDeleteChoice: (choice) => setState(() {
+                    _answerChoices.remove(choice);
+                    if (_selectedAnswer == choice) _selectedAnswer = null;
+                  }),
+                  onSelectAnswer: (choice) =>
+                      setState(() => _selectedAnswer = choice),
+                ),
+            ],
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: _submitQuestion,

@@ -41,56 +41,60 @@ class CodeSnippetWidget extends StatelessWidget {
           onChanged: (value) {
             if (value != null) {
               onLanguageChange(value);
-              snippetController.clear();
-              if (selectedCategory == 'Syntax') {
-                codeSnippets.clear(); // Syntax 카테고리일 경우 기존 스니펫 초기화
+              if (selectedCategory != 'Sequencing') {
+                snippetController.clear();
+                if (selectedCategory == 'Syntax') {
+                  codeSnippets.clear();
+                }
               }
             }
           },
           decoration: const InputDecoration(labelText: 'Language'),
         ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: snippetController,
-          decoration: const InputDecoration(labelText: 'Code Snippet'),
-          onChanged: (value) {
-            if (value.isEmpty) {
-              onDeleteSnippet(selectedLanguage); // 빈 값일 경우 스니펫 삭제
-            } else if (selectedCategory == 'Syntax') {
-              onAddSnippet(selectedLanguage, value); // Syntax는 즉시 반영
-            }
-          },
-        ),
-        if (showAddButton && selectedCategory != 'Syntax') ...[
+        if (selectedCategory != 'Sequencing') ...[
           const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () {
-              if (snippetController.text.isNotEmpty) {
-                onAddSnippet(selectedLanguage, snippetController.text);
-                snippetController.clear();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Code Snippet cannot be empty!'),
-                ));
+          TextField(
+            controller: snippetController,
+            decoration: const InputDecoration(labelText: 'Code Snippet'),
+            onChanged: (value) {
+              if (value.isEmpty) {
+                onDeleteSnippet(selectedLanguage);
+              } else if (selectedCategory == 'Syntax') {
+                onAddSnippet(selectedLanguage, value);
               }
             },
-            child: const Text('Add Snippet'),
           ),
-        ],
-        const SizedBox(height: 16),
-        if (codeSnippets.isNotEmpty)
-          ...codeSnippets.entries.map(
-            (entry) => ListTile(
-              title: Text('Language: ${entry.key}'),
-              subtitle: Text(entry.value),
-              trailing: showDeleteButton
-                  ? IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => onDeleteSnippet(entry.key),
-                    )
-                  : null,
+          if (showAddButton) ...[
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () {
+                if (snippetController.text.isNotEmpty) {
+                  onAddSnippet(selectedLanguage, snippetController.text);
+                  snippetController.clear();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Code Snippet cannot be empty!'),
+                  ));
+                }
+              },
+              child: const Text('Add Snippet'),
             ),
-          ),
+          ],
+          const SizedBox(height: 16),
+          if (codeSnippets.isNotEmpty)
+            ...codeSnippets.entries.map(
+              (entry) => ListTile(
+                title: Text('Language: ${entry.key}'),
+                subtitle: Text(entry.value),
+                trailing: showDeleteButton
+                    ? IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => onDeleteSnippet(entry.key),
+                      )
+                    : null,
+              ),
+            ),
+        ],
       ],
     );
   }
