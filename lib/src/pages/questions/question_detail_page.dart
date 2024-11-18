@@ -17,6 +17,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
   Widget build(BuildContext context) {
     final questionViewModel = Provider.of<QuestionViewModel>(context);
     final question = questionViewModel.selectedQuestion;
+    final TextEditingController _answerController = TextEditingController();
 
     if (question == null) {
       return Scaffold(
@@ -27,17 +28,8 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
         body: const Center(child: Text('No question selected.')),
       );
     }
+
     final questiontype = question.questionType;
-    // Check if the question type is Objective(여기 수정부분 확인하기)
-    if (questiontype != 'Objective') {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Question Details'),
-          backgroundColor: Colors.black,
-        ),
-        body: const Center(child: Text('This question type is not supported.')),
-      );
-    }
 
     // 문제 내용 및 코드 스니펫들
     final codeSnippets = question.codeSnippets.entries;
@@ -149,68 +141,140 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
 
             const SizedBox(height: 20),
             // 각 상자를 생성
-            ...List.generate(boxNames.length, (index) {
-              final selectedBox = boxNames[index];
-              String boxText = selectedBox.key; // 기본값은 boxNames의 key (language)
-
-              // "printf"인 경우 code 값을 넣기
-              if (selectedBox.key == '정답') {
-                boxText = selectedBox.value; // "printf" 박스는 code 값으로 변경
-              }
-
-              return GestureDetector(
-                onTap: () {
-                  bool isCorrect = false;
-
-                  // selectedBox는 MapEntry 형태로 (language, code) 값을 포함하고 있음
-                  final selectedLanguage = selectedBox.key;
-                  final selectedCode = selectedBox.value;
-
-                  // codeSnippets와 비교해서 일치하는지 확인
-                  for (var entry in codeSnippets) {
-                    final language = entry.key;
-                    final code = entry.value;
-
-                    if (selectedCode == code) {
-                      isCorrect = true;
-                      break;
-                    }
-                  }
-
-                  // 정답 여부에 따른 페이지 이동
-                  if (isCorrect) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CorrectPage(),
-                      ),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const WrongPage(),
-                      ),
-                    );
-                  }
-                },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0),
-                  height: 30,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.blueGrey.shade700,
-                    borderRadius: BorderRadius.circular(10),
+            if (questiontype != 'Objective') ...[
+              const SizedBox(height: 20), // 상단 여백
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Center(
-                    child: Text(
-                      boxText, // 수정된 boxText를 표시
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Write your Answer',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          child: TextField(
+                            controller: _answerController,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none, // 상자 안의 기본 경계선 없애기
+                              hintText:
+                                  'Enter your answer here...', // 텍스트 필드의 힌트 텍스트
+                            ),
+                            maxLines: 5, // 여러 줄을 입력할 수 있게 설정
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'monospace',
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16), // 버튼과 텍스트 필드 사이 여백
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // 사용자가 입력한 답을 가져와 비교
+                              bool isCorrect = false;
+                              String userAnswer = _answerController.text.trim();
+                              setState(() {
+                                isCorrect = userAnswer == codeSnippets;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white, // 텍스트 색상
+                            ),
+                            child: const Text('Enter'),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              );
-            }),
+              )
+            ] else ...[
+              const SizedBox(height: 20),
+              // 각 상자를 생성
+              ...List.generate(boxNames.length, (index) {
+                final selectedBox = boxNames[index];
+                String boxText = selectedBox.key;
+
+                // "printf"인 경우 code 값을 넣기
+                if (selectedBox.key == '정답') {
+                  boxText = selectedBox.value;
+                }
+
+                return GestureDetector(
+                  onTap: () {
+                    bool isCorrect = false;
+
+                    // selectedBox는 MapEntry 형태로 (language, code) 값을 포함하고 있음
+                    final selectedLanguage = selectedBox.key;
+                    final selectedCode = selectedBox.value;
+
+                    // codeSnippets와 비교해서 일치하는지 확인
+                    for (var entry in codeSnippets) {
+                      final language = entry.key;
+                      final code = entry.value;
+
+                      if (selectedCode == code) {
+                        isCorrect = true;
+                        break;
+                      }
+                    }
+
+                    // 정답 여부에 따른 페이지 이동
+                    if (isCorrect) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CorrectPage(),
+                        ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const WrongPage(),
+                        ),
+                      );
+                    }
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    height: 30,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.blueGrey.shade700,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: Text(
+                        boxText, // 수정된 boxText를 표시
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ],
           ],
         ),
       ),
