@@ -1,136 +1,118 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import 'package:code_ground/src/components/add_question_widgets/text_field_widget.dart';
+import 'package:code_ground/src/components/add_question_widgets/dropdown_widget.dart';
+import 'package:code_ground/src/components/add_question_widgets/answer_choice_widget.dart';
+import 'package:code_ground/src/components/add_question_widgets/code_snippet_widget.dart';
+
+import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
-import 'package:code_ground/src/services/database/datas/question_datas/syntax_question.dart';
-import 'package:code_ground/src/services/database/datas/question_datas/debugging_question.dart';
-import 'package:code_ground/src/services/database/datas/question_datas/output_question.dart';
-import 'package:code_ground/src/services/database/datas/question_datas/blank_question.dart';
-import 'package:code_ground/src/services/database/datas/question_datas/sequencing_question.dart';
 
-class AddQuestion extends StatefulWidget {
-  const AddQuestion({super.key});
+class AddQuestionPage extends StatefulWidget {
+  const AddQuestionPage({super.key});
 
   @override
-  State<AddQuestion> createState() => _AddQuestionState();
+  State<AddQuestionPage> createState() => _AddQuestionPageState();
 }
 
-class _AddQuestionState extends State<AddQuestion> {
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _hintController = TextEditingController();
-  final _codeSnippetController = TextEditingController();
-  final _answerChoiceController = TextEditingController();
+class _AddQuestionPageState extends State<AddQuestionPage> {
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _hintController = TextEditingController();
+  final TextEditingController _subjectiveAnswerController =
+      TextEditingController();
+  final TextEditingController _codeSnippetController = TextEditingController();
 
   String _selectedCategory = 'Syntax';
+  String _selectedType = 'Subjective';
   String _selectedLanguage = 'C';
-  String _questionType = 'Subjective';
-  String? _selectedAnswer; // 객관식 정답
   final Map<String, String> _codeSnippets = {};
   final List<String> _answerChoices = [];
+  String? _selectedAnswer;
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
     _hintController.dispose();
+    _subjectiveAnswerController.dispose();
     _codeSnippetController.dispose();
-    _answerChoiceController.dispose();
     super.dispose();
   }
 
-  QuestionData _createQuestionData(String uid) {
-    final baseData = {
-      'questionId': '',
-      'writer': uid,
+  /// 필드 검증
+  bool _validateFields() {
+    if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
+      Fluttertoast.showToast(msg: 'Please fill in all required fields!');
+      return false;
+    }
+    if (_selectedType == 'Objective' &&
+        (_answerChoices.isEmpty || _selectedAnswer == null)) {
+      Fluttertoast.showToast(
+          msg: 'Add answer choices and select a correct answer!');
+      return false;
+    }
+    if (_selectedType == 'Subjective' &&
+        _subjectiveAnswerController.text.isEmpty) {
+      Fluttertoast.showToast(msg: 'Please provide the answer for Subjective!');
+      return false;
+    }
+    return true;
+  }
+
+  /// 질문 데이터 준비
+  QuestionData _prepareQuestionData(String questionId, String writerUid) {
+    // Add 버튼 누르지 않아도 Syntax 스니펫 저장
+    if (_selectedCategory == 'Syntax') {
+      _codeSnippets.clear();
+      _codeSnippets[_selectedLanguage] = _codeSnippetController.text;
+    }
+    return QuestionData.fromMap({
+      'questionId': questionId,
+      'writer': writerUid,
       'category': _selectedCategory,
-      'questionType': _questionType,
+      'questionType': _selectedType,
       'updatedAt': DateTime.now().toIso8601String(),
       'title': _titleController.text,
       'description': _descriptionController.text,
-      'codeSnippets': _selectedCategory == 'Syntax'
-          ? {_selectedLanguage: _codeSnippetController.text}
-          : _codeSnippets,
-      'languages': _selectedCategory == 'Syntax'
-          ? [_selectedLanguage]
-          : _codeSnippets.keys.toList(),
+      'codeSnippets': _codeSnippets,
+      'languages': _codeSnippets.keys.toList(),
       'hint': _hintController.text.isEmpty
           ? 'No hint provided'
           : _hintController.text,
-      // 주관식: 단일 정답, 객관식: 선택된 정답
-      'answer': _questionType == 'Subjective'
-          ? (_answerChoiceController.text.isNotEmpty
-              ? _answerChoiceController.text
-              : null)
+      'answer': _selectedType == 'Subjective'
+          ? _subjectiveAnswerController.text
           : _selectedAnswer,
-      'answerChoices': _questionType == 'Objective' && _answerChoices.isNotEmpty
-          ? _answerChoices
-          : null,
-    };
-
-    switch (_selectedCategory) {
-      case 'Debugging':
-        return DebuggingQuestion.fromMap(baseData);
-      case 'Output':
-        return OutputQuestion.fromMap(baseData);
-      case 'Blank':
-        return BlankQuestion.fromMap(baseData);
-      case 'Sequencing':
-        return SequencingQuestion.fromMap(baseData);
-      default:
-        return SyntaxQuestion.fromMap(baseData);
-    }
-  }
-
-  void _submitQuestion() async {
-    if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
-      Fluttertoast.showToast(
-          msg: "Fill in all required fields", gravity: ToastGravity.BOTTOM);
-      return;
-    }
-
-    if (_questionType == 'Objective' &&
-        (_answerChoices.isEmpty || _selectedAnswer == null)) {
-      Fluttertoast.showToast(
-          msg: "Add answer choices and select a correct answer!",
-          gravity: ToastGravity.BOTTOM);
-      return;
-    }
-
-    final currentUser = FirebaseAuth.instance.currentUser;
-    final uid = currentUser?.uid ?? 'Anonymous';
-
-    final questionData = _createQuestionData(uid);
-
-    await Provider.of<QuestionViewModel>(context, listen: false)
-        .addQuestion(questionData);
-
-    Fluttertoast.showToast(
-        msg: "Question added successfully!", gravity: ToastGravity.BOTTOM);
-    Navigator.pop(context);
-  }
-
-  void _addAnswerChoice() {
-    if (_answerChoiceController.text.isEmpty) {
-      Fluttertoast.showToast(
-          msg: "Answer choice cannot be empty!", gravity: ToastGravity.BOTTOM);
-      return;
-    }
-    setState(() {
-      _answerChoices.add(_answerChoiceController.text);
-      _answerChoiceController.clear();
+      'answerChoices': _selectedType == 'Objective' ? _answerChoices : null,
     });
   }
 
-  void _deleteAnswerChoice(String choice) {
-    setState(() {
-      _answerChoices.remove(choice);
-      if (_selectedAnswer == choice) {
-        _selectedAnswer = null;
-      }
-    });
+  /// 질문 제출
+  Future<void> _submitQuestion() async {
+    if (!_validateFields()) return;
+
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    if (userViewModel.userData == null) {
+      Fluttertoast.showToast(msg: 'User information is missing.');
+      return;
+    }
+
+    final questionId = DateTime.now().millisecondsSinceEpoch.toString();
+    final writerUid = userViewModel.userData!.userId;
+
+    try {
+      final question = _prepareQuestionData(questionId, writerUid);
+      await Provider.of<QuestionViewModel>(context, listen: false)
+          .addQuestion(question);
+
+      Fluttertoast.showToast(msg: 'Question submitted successfully!');
+      Navigator.pop(context);
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'Error submitting question: $e');
+    }
   }
 
   @override
@@ -141,42 +123,75 @@ class _AddQuestionState extends State<AddQuestion> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            _buildTextField('Title', _titleController),
-            _buildDropdown(
-              'Category',
-              _selectedCategory,
-              ['Syntax', 'Debugging', 'Output', 'Blank', 'Sequencing'],
-              (value) {
+            TextFieldWidget(label: 'Title', controller: _titleController),
+            DropdownWidget(
+              label: 'Category',
+              value: _selectedCategory,
+              items: const [
+                'Syntax',
+                'Debugging',
+                'Output',
+                'Blank',
+                'Sequencing'
+              ],
+              onChanged: (value) {
                 setState(() {
                   _selectedCategory = value!;
                   _codeSnippets.clear();
+                  _codeSnippetController.clear();
                 });
               },
             ),
-            _buildDropdown(
-              'Question Type',
-              _questionType,
-              ['Subjective', 'Objective'],
-              (value) => setState(() {
-                _questionType = value!;
-                _answerChoices.clear();
-                _selectedAnswer = null;
-              }),
+            DropdownWidget(
+              label: 'Question Type',
+              value: _selectedType,
+              items: const ['Subjective', 'Objective'],
+              onChanged: (value) => setState(() => _selectedType = value!),
             ),
-            _buildDropdown(
-              'Language',
-              _selectedLanguage,
-              ['C', 'Python', 'Java', 'C++', 'Dart'],
-              (value) => setState(() => _selectedLanguage = value!),
+            TextFieldWidget(
+                label: 'Description', controller: _descriptionController),
+            CodeSnippetWidget(
+              selectedCategory: _selectedCategory,
+              selectedLanguage: _selectedLanguage,
+              codeSnippets: _codeSnippets,
+              onAddSnippet: (lang, snippet) {
+                if (_selectedCategory != 'Syntax') {
+                  setState(() {
+                    _codeSnippets[lang] = snippet;
+                  });
+                }
+              },
+              onDeleteSnippet: (lang) {
+                setState(() {
+                  _codeSnippets.remove(lang);
+                });
+              },
+              onLanguageChange: (lang) {
+                setState(() {
+                  _selectedLanguage = lang;
+                });
+              },
+              snippetController: _codeSnippetController,
+              showAddButton: _selectedCategory != 'Syntax',
             ),
-            _buildMultilineTextField('Description', _descriptionController),
-            if (_selectedCategory == 'Syntax')
-              _buildMultilineTextField('Code Snippet', _codeSnippetController),
-            if (_selectedCategory != 'Syntax') _buildCodeSnippetControls(),
-            _buildTextField('Hint (Optional)', _hintController),
-            if (_questionType == 'Objective') _buildAnswerChoiceControls(),
-            if (_questionType == 'Subjective')
-              _buildTextField('Answer (Subjective)', _answerChoiceController),
+            TextFieldWidget(
+                label: 'Hint (Optional)', controller: _hintController),
+            if (_selectedType == 'Objective')
+              AnswerChoiceWidget(
+                answerChoices: _answerChoices,
+                selectedAnswer: _selectedAnswer,
+                onAddChoice: (choice) =>
+                    setState(() => _answerChoices.add(choice)),
+                onDeleteChoice: (choice) =>
+                    setState(() => _answerChoices.remove(choice)),
+                onSelectAnswer: (choice) =>
+                    setState(() => _selectedAnswer = choice),
+              ),
+            if (_selectedType == 'Subjective')
+              TextFieldWidget(
+                label: 'Answer (Subjective)',
+                controller: _subjectiveAnswerController,
+              ),
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: _submitQuestion,
@@ -185,97 +200,6 @@ class _AddQuestionState extends State<AddQuestion> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildTextField(String label, TextEditingController controller,
-      {TextInputType keyboardType = TextInputType.text}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(labelText: label),
-        keyboardType: keyboardType,
-      ),
-    );
-  }
-
-  Widget _buildMultilineTextField(
-      String label, TextEditingController controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(labelText: label),
-        keyboardType: TextInputType.multiline,
-        maxLines: null,
-      ),
-    );
-  }
-
-  Widget _buildDropdown(String label, String value, List<String> items,
-      void Function(String?) onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: DropdownButtonFormField<String>(
-        value: value,
-        decoration: InputDecoration(labelText: label),
-        items: items
-            .map((item) => DropdownMenuItem(value: item, child: Text(item)))
-            .toList(),
-        onChanged: onChanged,
-      ),
-    );
-  }
-
-  Widget _buildCodeSnippetControls() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildMultilineTextField('Code Snippet', _codeSnippetController),
-      ],
-    );
-  }
-
-  Widget _buildAnswerChoiceControls() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Answer Choices:',
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        ..._answerChoices.map((choice) => ListTile(
-              title: Text(choice),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Radio<String>(
-                    value: choice,
-                    groupValue: _selectedAnswer,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedAnswer = value;
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _deleteAnswerChoice(choice),
-                  ),
-                ],
-              ),
-            )),
-        Row(
-          children: [
-            Expanded(
-              child: _buildTextField('Answer Choice', _answerChoiceController),
-            ),
-            ElevatedButton(
-              onPressed: _addAnswerChoice,
-              child: const Text('Add'),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
