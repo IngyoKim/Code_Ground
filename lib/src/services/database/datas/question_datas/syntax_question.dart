@@ -17,18 +17,15 @@ class SyntaxQuestion extends QuestionData {
   });
 
   @override
-  Map<String, dynamic> toMap() {
-    return super.toBaseMap();
-  }
+  Map<String, dynamic> toMap() => super.toBaseMap();
 
-  static SyntaxQuestion fromMap(Map<String, dynamic> data) {
+  factory SyntaxQuestion.fromMap(Map<String, dynamic> data) {
     return SyntaxQuestion(
       questionId: data['questionId'] ?? 'unknown_id',
       writer: data['writer'] ?? 'unknown_writer',
       category: data['category'] ?? 'Syntax',
       questionType: data['questionType'] ?? '주관식',
-      updatedAt:
-          DateTime.parse(data['updatedAt'] ?? DateTime.now().toIso8601String()),
+      updatedAt: DateTime.parse(data['updatedAt']),
       title: data['title'] ?? 'No Title',
       description: data['description'] ?? 'No Description',
       codeSnippets: Map<String, String>.from(data['codeSnippets'] ?? {}),

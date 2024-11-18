@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:code_ground/src/utils/login_uitils.dart';
 import 'package:code_ground/src/services/logins/google_login.dart';
 import 'package:code_ground/src/services/logins/kakao_login.dart';
 import 'package:code_ground/src/view_models/login_view_model.dart';
@@ -15,26 +16,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
-  Future<void> _tryLogin(LoginViewModel loginViewModel) async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      await loginViewModel.login();
-    } catch (error) {
-      debugPrint("로그인에 실패했습니다: $error");
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     debugPrint(context.toString());
     final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
+
     return Scaffold(
       body: Center(
         child: _isLoading
@@ -45,7 +31,13 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: () async {
                       loginViewModel.setLoginType(KakaoLogin());
-                      await _tryLogin(loginViewModel);
+                      await tryLogin(
+                        context: context,
+                        loginAction: loginViewModel.login,
+                        setLoading: (loading) => setState(() {
+                          _isLoading = loading;
+                        }),
+                      );
                     },
                     child: const Text("Kakao"),
                   ),
@@ -53,7 +45,13 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: () async {
                       loginViewModel.setLoginType(GoogleLogin());
-                      await _tryLogin(loginViewModel);
+                      await tryLogin(
+                        context: context,
+                        loginAction: loginViewModel.login,
+                        setLoading: (loading) => setState(() {
+                          _isLoading = loading;
+                        }),
+                      );
                     },
                     child: const Text("Google"),
                   ),
