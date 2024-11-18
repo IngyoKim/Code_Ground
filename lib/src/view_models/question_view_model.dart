@@ -13,12 +13,13 @@ class QuestionViewModel extends ChangeNotifier {
   QuestionData? get selectedQuestion => _selectedQuestion;
   bool get isLoading => _isLoading;
 
+  /// 로딩 상태 설정
   void _setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();
   }
 
-  /// 질문 가져오기
+  /// 질문 목록 가져오기
   Future<void> fetchQuestions(String category, {int limit = 10}) async {
     if (_isLoading) return;
 
@@ -34,8 +35,6 @@ class QuestionViewModel extends ChangeNotifier {
         _lastFetchedKey = newQuestions.last.questionId; // 마지막 키 업데이트
         _questions.addAll(newQuestions);
         notifyListeners();
-      } else {
-        debugPrint('No more questions available for category: $category');
       }
     } catch (e) {
       debugPrint('Error fetching questions: $e');
@@ -55,48 +54,47 @@ class QuestionViewModel extends ChangeNotifier {
   Future<void> addQuestion(QuestionData questionData) async {
     try {
       await _operation.writeQuestionData(questionData);
-
-      // 새 질문 추가 시 codeSnippets 필드 확인
-      final updatedQuestionData = QuestionData.fromMap({
-        ...questionData.toMap(),
-        'codeSnippets': questionData.codeSnippets,
-      });
-
-      _questions.insert(0, updatedQuestionData); // 새 질문을 목록 맨 앞에 추가
+      _questions.insert(0, questionData);
       notifyListeners();
     } catch (e) {
       debugPrint('Error adding question: $e');
     }
   }
 
-  /// 선택된 질문 설정
+  /// 질문 선택
   void selectQuestion(QuestionData question) {
     _selectedQuestion = question;
     notifyListeners();
   }
 
-  /// codeSnippets 필드 업데이트
-  Future<void> updateCodeSnippets(
-      String category, String questionId, Map<String, String> snippets) async {
+  /// solvers 업데이트
+  Future<void> addSolver(String category, String questionId) async {
     try {
-      await _operation.updateQuestionData(
-        category,
-        questionId,
-        {'codeSnippets': snippets},
-      );
-
       final questionIndex =
           _questions.indexWhere((q) => q.questionId == questionId);
+
       if (questionIndex != -1) {
+        final question = _questions[questionIndex];
+        final currentSolvers = question.solvers ?? 0; // solvers 기본값 0 처리
+        final updatedSolvers = currentSolvers + 1;
+
+        await _operation.updateQuestionData(
+          category,
+          questionId,
+          {'solvers': updatedSolvers},
+        );
+
+        // 기존 QuestionData를 업데이트된 solvers로 교체
         final updatedQuestion = QuestionData.fromMap({
-          ..._questions[questionIndex].toMap(),
-          'codeSnippets': snippets,
+          ...question.toMap(),
+          'solvers': updatedSolvers,
         });
+
         _questions[questionIndex] = updatedQuestion;
         notifyListeners();
       }
     } catch (e) {
-      debugPrint('Error updating code snippets: $e');
+      debugPrint('Error updating solvers: $e');
     }
   }
 }

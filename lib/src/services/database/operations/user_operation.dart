@@ -21,7 +21,7 @@ class UserOperation {
         'email': user?.email ?? '',
         'profileImageUrl': user?.photoURL ?? '',
         'nickname': '', // Default empty or assign a default value
-        'isadmin': false, // Default value, modify if needed
+        'isAdmin': false, // Default value, modify if needed
       },
     );
   }
@@ -42,7 +42,7 @@ class UserOperation {
         email: data['email'] ?? '',
         profileImageUrl: data['profileImageUrl'] ?? '',
         nickname: data['nickname'] ?? '',
-        isAdmin: data['isadmin'] ?? false,
+        isAdmin: data['isAdmin'] ?? false,
       );
     }
     debugPrint("No data found for user.");

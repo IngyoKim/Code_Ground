@@ -20,13 +20,12 @@ class AddQuestion extends StatefulWidget {
 class _AddQuestionState extends State<AddQuestion> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _difficultyController = TextEditingController();
   final _hintController = TextEditingController();
   final _answerController = TextEditingController();
   final _codeSnippetController = TextEditingController();
 
   String _selectedCategory = 'Syntax';
-  String _selectedLanguage = 'C';
+  String _selectedLanguage = 'C'; // 기본 언어
   String _questionType = 'Subjective'; // 주관식/객관식 구분
   final Map<String, String> _codeSnippets = {};
   final List<String> _answers = [];
@@ -35,7 +34,6 @@ class _AddQuestionState extends State<AddQuestion> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
-    _difficultyController.dispose();
     _hintController.dispose();
     _answerController.dispose();
     _codeSnippetController.dispose();
@@ -48,16 +46,19 @@ class _AddQuestionState extends State<AddQuestion> {
       'writer': uid,
       'category': _selectedCategory,
       'questionType': _questionType,
-      'difficulty': _difficultyController.text,
       'updatedAt': DateTime.now().toIso8601String(),
       'title': _titleController.text,
       'description': _descriptionController.text,
-      'codeSnippets': _codeSnippets,
-      'languages': _codeSnippets.keys.toList(),
+      'codeSnippets': _selectedCategory == 'Syntax'
+          ? {_selectedLanguage: _codeSnippetController.text}
+          : _codeSnippets,
+      'languages': _selectedCategory == 'Syntax'
+          ? [_selectedLanguage]
+          : _codeSnippets.keys.toList(),
       'hint': _hintController.text.isEmpty
           ? 'No hint provided'
           : _hintController.text,
-      'answers':
+      'answer':
           _questionType == 'Objective' ? _answers : [_answerController.text],
     };
 
@@ -76,11 +77,16 @@ class _AddQuestionState extends State<AddQuestion> {
   }
 
   void _submitQuestion() async {
-    if (_titleController.text.isEmpty ||
-        _descriptionController.text.isEmpty ||
-        _difficultyController.text.isEmpty) {
+    if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
       Fluttertoast.showToast(
           msg: "Fill in all required fields", gravity: ToastGravity.BOTTOM);
+      return;
+    }
+
+    if (_selectedCategory == 'Syntax' && _codeSnippetController.text.isEmpty) {
+      Fluttertoast.showToast(
+          msg: "Code snippet cannot be empty for Syntax questions!",
+          gravity: ToastGravity.BOTTOM);
       return;
     }
 
@@ -146,8 +152,6 @@ class _AddQuestionState extends State<AddQuestion> {
                 });
               },
             ),
-            _buildTextField('Difficulty (Numeric)', _difficultyController,
-                keyboardType: TextInputType.number),
             _buildDropdown(
               'Question Type',
               _questionType,
@@ -164,13 +168,15 @@ class _AddQuestionState extends State<AddQuestion> {
               (value) => setState(() => _selectedLanguage = value!),
             ),
             _buildMultilineTextField('Description', _descriptionController),
-            _buildMultilineTextField('Code Snippet', _codeSnippetController),
+            if (_selectedCategory == 'Syntax')
+              _buildMultilineTextField('Code Snippet', _codeSnippetController),
             if (_selectedCategory != 'Syntax')
               ElevatedButton(
                 onPressed: _addCodeSnippet,
                 child: const Text('Add Code Snippet'),
               ),
-            if (_codeSnippets.isNotEmpty) _buildCodeSnippetsList(),
+            if (_selectedCategory != 'Syntax' && _codeSnippets.isNotEmpty)
+              _buildCodeSnippetsList(),
             _buildTextField('Hint (Optional)', _hintController),
             const SizedBox(height: 20),
             _buildAnswerInput(),

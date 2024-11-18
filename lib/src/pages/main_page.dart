@@ -20,8 +20,7 @@ class _MainPageState extends State<MainPage>
   @override
   void initState() {
     super.initState();
-    _tabController =
-        TabController(length: 3, vsync: this, initialIndex: 1); // 두 번째 탭에서 시작
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserViewModel>(context, listen: false).fetchUserData();
     });
