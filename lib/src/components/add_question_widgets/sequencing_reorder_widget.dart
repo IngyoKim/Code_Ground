@@ -34,9 +34,10 @@ class SequencingReorderWidget extends StatelessWidget {
               ListTile(
                 key: ValueKey(entry.key),
                 title: TextField(
-                  decoration:
-                      InputDecoration(labelText: 'Step ${entry.key + 1}'),
+                  decoration: InputDecoration(labelText: '${entry.key + 1}'),
                   onChanged: (value) => onUpdateCode(entry.key, value),
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
                 ),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),

@@ -17,6 +17,8 @@ class TextFieldWidget extends StatelessWidget {
       child: TextField(
         controller: controller,
         decoration: InputDecoration(labelText: label),
+        maxLines: null,
+        keyboardType: TextInputType.multiline,
       ),
     );
   }

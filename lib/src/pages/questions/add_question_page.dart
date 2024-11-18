@@ -119,9 +119,11 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            TextFieldWidget(label: 'Title', controller: _titleController),
-            TextFieldWidget(
-                label: 'Description', controller: _descriptionController),
+            TextField(
+              controller: _descriptionController,
+              decoration: const InputDecoration(labelText: 'Title'),
+            ),
+            TextFieldWidget(label: 'Description', controller: _titleController),
             DropdownWidget(
               label: 'Category',
               value: _selectedCategory,

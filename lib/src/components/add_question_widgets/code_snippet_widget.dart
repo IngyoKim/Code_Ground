@@ -55,7 +55,11 @@ class CodeSnippetWidget extends StatelessWidget {
           const SizedBox(height: 8),
           TextField(
             controller: snippetController,
-            decoration: const InputDecoration(labelText: 'Code Snippet'),
+            decoration: const InputDecoration(
+              labelText: 'Code Snippet',
+            ),
+            maxLines: null,
+            keyboardType: TextInputType.multiline,
             onChanged: (value) {
               if (value.isEmpty) {
                 onDeleteSnippet(selectedLanguage);
