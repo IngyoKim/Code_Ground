@@ -16,6 +16,7 @@ class ProfilePage extends StatelessWidget {
     final userViewModel = Provider.of<UserViewModel>(context);
     final progressViewModel = Provider.of<ProgressViewModel>(context);
 
+    /// Menu items for the profile page
     final List<Map<String, dynamic>> menuItems = [
       {
         'icon': Icons.settings,
@@ -64,7 +65,7 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
           child: Column(
             children: [
-              // 사용자 프로필 정보 및 로그아웃
+              /// User profile card with logout button
               Card(
                 elevation: 2,
                 child: Padding(
@@ -99,7 +100,8 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              // 진행 상태 카드 (레벨, 경험치, 티어, 등급, 점수)
+
+              /// Progress card showing level, experience, tier, and score
               Card(
                 elevation: 2,
                 child: Padding(
@@ -117,14 +119,24 @@ class ProfilePage extends StatelessWidget {
                       const SizedBox(height: 8.0),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20.0),
-                        child: LinearProgressIndicator(
-                          value: progressViewModel.progressData?.exp != null
-                              ? (progressViewModel.progressData!.exp / 100)
-                              : 0.0,
-                          backgroundColor: Colors.grey[300],
-                          valueColor:
-                              const AlwaysStoppedAnimation<Color>(Colors.blue),
-                          minHeight: 8.0,
+                        child: TweenAnimationBuilder<double>(
+                          tween: Tween<double>(
+                            begin: 0.0,
+                            end: progressViewModel.progressData?.exp != null
+                                ? (progressViewModel.progressData!.exp / 100)
+                                : 0.0,
+                          ),
+                          duration:
+                              const Duration(milliseconds: 500), // 애니메이션 지속 시간
+                          builder: (context, value, child) {
+                            return LinearProgressIndicator(
+                              value: value, // 애니메이션 적용된 값
+                              backgroundColor: Colors.grey[300],
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Colors.blue),
+                              minHeight: 8.0,
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(height: 8.0),

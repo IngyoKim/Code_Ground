@@ -6,6 +6,7 @@ import 'package:code_ground/src/pages/questions/question_list_page.dart';
 class HomePage extends StatelessWidget {
   HomePage({super.key});
 
+  /// List of categories for the user to select
   final List<String> categories = [
     'Syntax',
     'Debugging',
@@ -30,6 +31,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            /// Select title
             const Text(
               'Select a Category',
               style: TextStyle(
@@ -41,10 +43,15 @@ class HomePage extends StatelessWidget {
             Expanded(
               child: ListView.builder(
                 itemCount: categories.length,
+
+                /// Total categories
                 itemBuilder: (context, index) {
                   final category = categories[index];
+
+                  /// Current category
                   return GestureDetector(
                     onTap: () {
+                      /// Update selected category and navigate
                       Provider.of<CategoryViewModel>(context, listen: false)
                           .selectCategory(category);
                       Navigator.push(
@@ -71,12 +78,15 @@ class HomePage extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
+                          /// Category icon
                           Icon(
                             Icons.category,
                             color: Colors.white,
                             size: 40,
                           ),
                           const SizedBox(width: 16),
+
+                          /// Category name
                           Expanded(
                             child: Text(
                               category,

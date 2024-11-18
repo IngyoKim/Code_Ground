@@ -5,6 +5,7 @@ class QuizPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /// List of programming languages with name, image path, and button color
     final List<Map<String, dynamic>> languages = [
       {
         'name': 'C/C++',
@@ -60,6 +61,8 @@ class QuizPage extends StatelessWidget {
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
+
+            /// Items per row
             mainAxisSpacing: 10,
             crossAxisSpacing: 10,
           ),
@@ -68,6 +71,8 @@ class QuizPage extends StatelessWidget {
             final language = languages[index];
             return ElevatedButton(
               onPressed: () {},
+
+              /// Button action
               style: ElevatedButton.styleFrom(
                 backgroundColor: language['color'],
                 shape: RoundedRectangleBorder(

@@ -9,7 +9,9 @@ void showLogoutDialog(BuildContext context) {
 
   showDialog(
     context: context,
-    barrierDismissible: false, // 바깥 클릭으로 팝업 닫히지 않게
+    barrierDismissible: false,
+
+    /// Prevent the popup from closing by clicking outside
     builder: (BuildContext context) {
       return AlertDialog(
         title: const Text(
@@ -26,7 +28,9 @@ void showLogoutDialog(BuildContext context) {
         actions: <Widget>[
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(false); // 취소
+              Navigator.of(context).pop(false);
+
+              /// Close dialog on "Cancel"
             },
             child: const Text(
               '취소',
@@ -39,9 +43,14 @@ void showLogoutDialog(BuildContext context) {
           TextButton(
             onPressed: () async {
               await loginViewModel.logout();
-              // ignore: use_build_context_synchronously
-              Navigator.of(context).pop(true); // "확인" 클릭 시 팝업 닫기
-              SystemNavigator.pop(); // 앱 종료
+
+              /// ignore: use_build_context_synchronously
+              Navigator.of(context).pop(true);
+
+              /// Close dialog on "Confirm"
+              SystemNavigator.pop();
+
+              /// Close the app
             },
             child: const Text(
               '확인',
