@@ -18,21 +18,26 @@ class AddQuestion extends StatefulWidget {
 }
 
 class _AddQuestionState extends State<AddQuestion> {
+  /// Text editing controllers for user input fields
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _hintController = TextEditingController();
   final _codeSnippetController = TextEditingController();
   final _answerChoiceController = TextEditingController();
 
+  /// State variables for dropdowns and input
   String _selectedCategory = 'Syntax';
   String _selectedLanguage = 'C';
   String _questionType = 'Subjective';
-  String? _selectedAnswer; // 객관식 정답
+  String? _selectedAnswer;
+
+  /// Selected correct answer for objective questions
   final Map<String, String> _codeSnippets = {};
   final List<String> _answerChoices = [];
 
   @override
   void dispose() {
+    /// Dispose controllers to prevent memory leaks
     _titleController.dispose();
     _descriptionController.dispose();
     _hintController.dispose();
@@ -41,6 +46,7 @@ class _AddQuestionState extends State<AddQuestion> {
     super.dispose();
   }
 
+  /// Creates a QuestionData object based on the input fields
   QuestionData _createQuestionData(String uid) {
     final baseData = {
       'questionId': '',
@@ -59,7 +65,8 @@ class _AddQuestionState extends State<AddQuestion> {
       'hint': _hintController.text.isEmpty
           ? 'No hint provided'
           : _hintController.text,
-      // 주관식: 단일 정답, 객관식: 선택된 정답
+
+      /// Subjective: Single answer, Objective: Selected answer
       'answer': _questionType == 'Subjective'
           ? (_answerChoiceController.text.isNotEmpty
               ? _answerChoiceController.text
@@ -70,6 +77,7 @@ class _AddQuestionState extends State<AddQuestion> {
           : null,
     };
 
+    /// Return appropriate QuestionData subtype based on selected category
     switch (_selectedCategory) {
       case 'Debugging':
         return DebuggingQuestion.fromMap(baseData);
@@ -84,6 +92,7 @@ class _AddQuestionState extends State<AddQuestion> {
     }
   }
 
+  /// Submits the question to the database
   void _submitQuestion() async {
     if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
       Fluttertoast.showToast(
@@ -112,6 +121,7 @@ class _AddQuestionState extends State<AddQuestion> {
     Navigator.pop(context);
   }
 
+  /// Adds an answer choice to the list
   void _addAnswerChoice() {
     if (_answerChoiceController.text.isEmpty) {
       Fluttertoast.showToast(
@@ -124,6 +134,7 @@ class _AddQuestionState extends State<AddQuestion> {
     });
   }
 
+  /// Deletes a selected answer choice
   void _deleteAnswerChoice(String choice) {
     setState(() {
       _answerChoices.remove(choice);
@@ -188,6 +199,7 @@ class _AddQuestionState extends State<AddQuestion> {
     );
   }
 
+  /// Builds a text field with a label
   Widget _buildTextField(String label, TextEditingController controller,
       {TextInputType keyboardType = TextInputType.text}) {
     return Padding(
@@ -200,6 +212,7 @@ class _AddQuestionState extends State<AddQuestion> {
     );
   }
 
+  /// Builds a multi-line text field
   Widget _buildMultilineTextField(
       String label, TextEditingController controller) {
     return Padding(
@@ -213,6 +226,7 @@ class _AddQuestionState extends State<AddQuestion> {
     );
   }
 
+  /// Builds a dropdown menu for selecting a value
   Widget _buildDropdown(String label, String value, List<String> items,
       void Function(String?) onChanged) {
     return Padding(
@@ -228,6 +242,7 @@ class _AddQuestionState extends State<AddQuestion> {
     );
   }
 
+  /// Controls for code snippets
   Widget _buildCodeSnippetControls() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,6 +252,7 @@ class _AddQuestionState extends State<AddQuestion> {
     );
   }
 
+  /// Controls for adding and managing answer choices
   Widget _buildAnswerChoiceControls() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
