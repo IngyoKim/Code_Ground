@@ -24,7 +24,7 @@ class SyntaxQuestion extends QuestionData {
       questionId: data['questionId'] ?? 'unknown_id',
       writer: data['writer'] ?? 'unknown_writer',
       category: data['category'] ?? 'Syntax',
-      questionType: data['questionType'] ?? '주관식',
+      questionType: data['questionType'] ?? 'subjective',
       updatedAt: DateTime.parse(data['updatedAt']),
       title: data['title'] ?? 'No Title',
       description: data['description'] ?? 'No Description',

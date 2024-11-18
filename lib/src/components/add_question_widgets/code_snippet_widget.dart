@@ -4,22 +4,24 @@ class CodeSnippetWidget extends StatelessWidget {
   final String selectedCategory;
   final String selectedLanguage;
   final Map<String, String> codeSnippets;
-  final Function(String, String) onAddSnippet;
-  final Function(String) onDeleteSnippet;
-  final Function(String) onLanguageChange;
   final TextEditingController snippetController;
+  final void Function(String, String) onAddSnippet;
+  final void Function(String) onDeleteSnippet;
+  final void Function(String) onLanguageChange;
   final bool showAddButton;
+  final bool showDeleteButton;
 
   const CodeSnippetWidget({
     super.key,
     required this.selectedCategory,
     required this.selectedLanguage,
     required this.codeSnippets,
+    required this.snippetController,
     required this.onAddSnippet,
     required this.onDeleteSnippet,
     required this.onLanguageChange,
-    required this.snippetController,
     this.showAddButton = true,
+    this.showDeleteButton = true,
   });
 
   @override
@@ -39,6 +41,10 @@ class CodeSnippetWidget extends StatelessWidget {
           onChanged: (value) {
             if (value != null) {
               onLanguageChange(value);
+              snippetController.clear();
+              if (selectedCategory == 'Syntax') {
+                codeSnippets.clear(); // Syntax 카테고리일 경우 기존 스니펫 초기화
+              }
             }
           },
           decoration: const InputDecoration(labelText: 'Language'),
@@ -48,13 +54,14 @@ class CodeSnippetWidget extends StatelessWidget {
           controller: snippetController,
           decoration: const InputDecoration(labelText: 'Code Snippet'),
           onChanged: (value) {
-            // Syntax 카테고리일 경우 즉시 반영
-            if (selectedCategory == 'Syntax') {
-              onAddSnippet(selectedLanguage, value);
+            if (value.isEmpty) {
+              onDeleteSnippet(selectedLanguage); // 빈 값일 경우 스니펫 삭제
+            } else if (selectedCategory == 'Syntax') {
+              onAddSnippet(selectedLanguage, value); // Syntax는 즉시 반영
             }
           },
         ),
-        if (showAddButton) ...[
+        if (showAddButton && selectedCategory != 'Syntax') ...[
           const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () {
@@ -72,14 +79,18 @@ class CodeSnippetWidget extends StatelessWidget {
         ],
         const SizedBox(height: 16),
         if (codeSnippets.isNotEmpty)
-          ...codeSnippets.entries.map((entry) => ListTile(
-                title: Text('Language: ${entry.key}'),
-                subtitle: Text(entry.value),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => onDeleteSnippet(entry.key),
-                ),
-              )),
+          ...codeSnippets.entries.map(
+            (entry) => ListTile(
+              title: Text('Language: ${entry.key}'),
+              subtitle: Text(entry.value),
+              trailing: showDeleteButton
+                  ? IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => onDeleteSnippet(entry.key),
+                    )
+                  : null,
+            ),
+          ),
       ],
     );
   }
