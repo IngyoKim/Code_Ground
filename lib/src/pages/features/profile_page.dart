@@ -117,14 +117,24 @@ class ProfilePage extends StatelessWidget {
                       const SizedBox(height: 8.0),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20.0),
-                        child: LinearProgressIndicator(
-                          value: progressViewModel.progressData?.exp != null
-                              ? (progressViewModel.progressData!.exp / 100)
-                              : 0.0,
-                          backgroundColor: Colors.grey[300],
-                          valueColor:
-                              const AlwaysStoppedAnimation<Color>(Colors.blue),
-                          minHeight: 8.0,
+                        child: TweenAnimationBuilder<double>(
+                          tween: Tween<double>(
+                            begin: 0.0,
+                            end: progressViewModel.progressData?.exp != null
+                                ? (progressViewModel.progressData!.exp / 100)
+                                : 0.0,
+                          ),
+                          duration:
+                              const Duration(milliseconds: 500), // 애니메이션 지속 시간
+                          builder: (context, value, child) {
+                            return LinearProgressIndicator(
+                              value: value, // 애니메이션 적용된 값
+                              backgroundColor: Colors.grey[300],
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Colors.blue),
+                              minHeight: 8.0,
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(height: 8.0),
