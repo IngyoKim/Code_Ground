@@ -16,6 +16,7 @@ class ProfilePage extends StatelessWidget {
     final userViewModel = Provider.of<UserViewModel>(context);
     final progressViewModel = Provider.of<ProgressViewModel>(context);
 
+    /// Menu items for the profile page
     final List<Map<String, dynamic>> menuItems = [
       {
         'icon': Icons.settings,
@@ -64,7 +65,7 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
           child: Column(
             children: [
-              // 사용자 프로필 정보 및 로그아웃
+              /// User profile card with logout button
               Card(
                 elevation: 2,
                 child: Padding(
@@ -99,7 +100,8 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              // 진행 상태 카드 (레벨, 경험치, 티어, 등급, 점수)
+
+              /// Progress card showing level, experience, tier, and score
               Card(
                 elevation: 2,
                 child: Padding(
