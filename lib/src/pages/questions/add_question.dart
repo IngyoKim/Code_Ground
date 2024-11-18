@@ -29,7 +29,9 @@ class _AddQuestionState extends State<AddQuestion> {
   String _selectedCategory = 'Syntax';
   String _selectedLanguage = 'C';
   String _questionType = 'Subjective';
-  String? _selectedAnswer; // 객관식 정답
+  String? _selectedAnswer;
+
+  /// Selected correct answer for objective questions
   final Map<String, String> _codeSnippets = {};
   final List<String> _answerChoices = [];
 
@@ -63,7 +65,8 @@ class _AddQuestionState extends State<AddQuestion> {
       'hint': _hintController.text.isEmpty
           ? 'No hint provided'
           : _hintController.text,
-      // 주관식: 단일 정답, 객관식: 선택된 정답
+
+      /// Subjective: Single answer, Objective: Selected answer
       'answer': _questionType == 'Subjective'
           ? (_answerChoiceController.text.isNotEmpty
               ? _answerChoiceController.text
