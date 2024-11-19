@@ -1,14 +1,13 @@
-import 'package:code_ground/src/components/add_question_widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 
-class AnswerChoiceWidget extends StatelessWidget {
+class ObjectiveAnswerInput extends StatelessWidget {
   final List<String> answerChoices;
   final String? selectedAnswer;
   final ValueChanged<String> onAddChoice;
   final ValueChanged<String> onDeleteChoice;
   final ValueChanged<String?> onSelectAnswer;
 
-  const AnswerChoiceWidget({
+  const ObjectiveAnswerInput({
     super.key,
     required this.answerChoices,
     required this.selectedAnswer,
@@ -22,14 +21,15 @@ class AnswerChoiceWidget extends StatelessWidget {
     final TextEditingController choiceController = TextEditingController();
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Expanded(
-              child: TextFieldWidget(
-                label: 'Add Answer Choices',
+              child: TextField(
                 controller: choiceController,
+                decoration: const InputDecoration(
+                  labelText: 'Add Answer Choices',
+                ),
               ),
             ),
             ElevatedButton(
@@ -46,19 +46,9 @@ class AnswerChoiceWidget extends StatelessWidget {
         ...answerChoices.map(
           (choice) => ListTile(
             title: Text(choice),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Radio<String>(
-                  value: choice,
-                  groupValue: selectedAnswer,
-                  onChanged: onSelectAnswer,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => onDeleteChoice(choice),
-                ),
-              ],
+            trailing: IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () => onDeleteChoice(choice),
             ),
           ),
         ),

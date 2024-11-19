@@ -1,52 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
-
-/// 필수 필드 검증
-bool validateFields({
-  required BuildContext context,
-  required String title,
-  required String description,
-  required String selectedCategory,
-  required String selectedType,
-  List<String>? answerChoices,
-  String? selectedAnswer,
-  String? subjectiveAnswer,
-  Map<int, String>? sequencingSteps, // 추가
-}) {
-  if (title.isEmpty || description.isEmpty) {
-    Fluttertoast.showToast(msg: 'Please fill in all required fields!');
-    return false;
-  }
-
-  if (selectedCategory == 'Sequencing') {
-    if (sequencingSteps == null || sequencingSteps.isEmpty) {
-      Fluttertoast.showToast(
-          msg: 'Please add steps for the sequencing question!');
-      return false;
-    }
-    return true;
-  }
-
-  if (selectedType == 'Objective') {
-    if (answerChoices == null ||
-        answerChoices.isEmpty ||
-        selectedAnswer == null) {
-      Fluttertoast.showToast(
-          msg: 'Please provide choices and select an answer!');
-      return false;
-    }
-  }
-
-  if (selectedType == 'Subjective' &&
-      (subjectiveAnswer == null || subjectiveAnswer.isEmpty)) {
-    Fluttertoast.showToast(
-        msg: 'Please provide an answer for subjective type!');
-    return false;
-  }
-
-  return true; // 모든 검증 통과
-}
 
 /// 질문 데이터 준비
 QuestionData prepareAddQuestionData({
@@ -83,7 +35,6 @@ QuestionData prepareAddQuestionData({
     'codeSnippets': codeSnippets,
     'languages': [selectedLanguage],
     'answerChoices': answerChoices,
-    'selectedAnswer': selectedAnswer,
-    'subjectiveAnswer': subjectiveAnswer,
+    'answer': subjectiveAnswer ?? selectedAnswer, // answer는 주관식 또는 객관식
   });
 }

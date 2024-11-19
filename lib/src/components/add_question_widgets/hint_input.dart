@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
-class TextFieldWidget extends StatelessWidget {
-  final String label;
-  final TextEditingController controller;
+class HintInput extends StatelessWidget {
+  final TextEditingController hintController;
 
-  const TextFieldWidget({
+  const HintInput({
     super.key,
-    required this.label,
-    required this.controller,
+    required this.hintController,
   });
 
   @override
@@ -15,8 +13,10 @@ class TextFieldWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
-        controller: controller,
-        decoration: InputDecoration(labelText: label),
+        controller: hintController,
+        decoration: const InputDecoration(
+          labelText: 'Hint',
+        ),
         maxLines: null,
         keyboardType: TextInputType.multiline,
       ),
