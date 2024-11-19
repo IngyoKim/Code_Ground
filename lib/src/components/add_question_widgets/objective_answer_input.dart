@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class ObjectiveAnswerInput extends StatelessWidget {
-  final List<String> answerChoices;
-  final String? selectedAnswer;
-  final ValueChanged<String> onAddChoice;
-  final ValueChanged<String> onDeleteChoice;
-  final ValueChanged<String?> onSelectAnswer;
+  final List<String> answerChoices; // 객관식 답안 리스트
+  final String? selectedAnswer; // 선택된 답안
+  final ValueChanged<String> onAddChoice; // 답안 추가 콜백
+  final ValueChanged<String> onDeleteChoice; // 답안 삭제 콜백
+  final ValueChanged<String?> onSelectAnswer; // 답안 선택 콜백
 
   const ObjectiveAnswerInput({
     super.key,
@@ -21,6 +21,7 @@ class ObjectiveAnswerInput extends StatelessWidget {
     final TextEditingController choiceController = TextEditingController();
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
@@ -28,7 +29,7 @@ class ObjectiveAnswerInput extends StatelessWidget {
               child: TextField(
                 controller: choiceController,
                 decoration: const InputDecoration(
-                  labelText: 'Add Answer Choices',
+                  labelText: 'Add Answer Choice',
                 ),
               ),
             ),
@@ -43,9 +44,22 @@ class ObjectiveAnswerInput extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: 16),
+        const Text(
+          'Answer Choices:',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
         ...answerChoices.map(
           (choice) => ListTile(
             title: Text(choice),
+            leading: Radio<String>(
+              value: choice,
+              groupValue: selectedAnswer,
+              onChanged: (value) {
+                onSelectAnswer(value);
+              },
+            ),
             trailing: IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
               onPressed: () => onDeleteChoice(choice),

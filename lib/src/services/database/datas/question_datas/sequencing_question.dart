@@ -11,7 +11,6 @@ class SequencingQuestion extends QuestionData {
     required super.title,
     required super.description,
     required super.codeSnippets, // Code snippets가 정답 역할
-    required super.languages,
     required super.hint,
     required super.tier,
     required super.grade,
@@ -47,13 +46,12 @@ class SequencingQuestion extends QuestionData {
       questionId: data['questionId'] ?? 'unknown_id',
       writer: data['writer'] ?? 'unknown_writer',
       category: data['category'] ?? 'Sequencing',
-      questionType: data['questionType'] ?? '순서 맞추기',
+      questionType: data['questionType'] ?? 'Sequencing',
       updatedAt:
           DateTime.parse(data['updatedAt'] ?? DateTime.now().toIso8601String()),
       title: data['title'] ?? 'No Title',
       description: data['description'] ?? 'No Description',
       codeSnippets: codeSnippets,
-      languages: List<String>.from(data['languages'] ?? []),
       hint: data['hint'] ?? 'No Hint',
       tier: tier,
       grade: grade,

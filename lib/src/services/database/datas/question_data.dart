@@ -14,7 +14,6 @@ abstract class QuestionData {
   final String title;
   final String description;
   final Map<String, String> codeSnippets;
-  final List<String> languages;
   final String hint;
   final dynamic answer; // 모든 서브클래스에 공통이 아니므로 `SequencingQuestion`에서 사용하지 않음
   final List<String>? answerChoices;
@@ -31,7 +30,6 @@ abstract class QuestionData {
     required this.title,
     required this.description,
     required this.codeSnippets,
-    required this.languages,
     required this.hint,
     this.answer, // `SequencingQuestion`에서는 `null`로 사용 가능
     this.answerChoices,
@@ -51,7 +49,6 @@ abstract class QuestionData {
       'title': title,
       'description': description,
       'codeSnippets': codeSnippets, // Sequencing에서 이 필드를 통해 정답 관리
-      'languages': languages,
       'hint': hint,
       if (answer != null) 'answer': answer, // SequencingQuestion에서는 사용되지 않음
       if (answerChoices != null) 'answerChoices': answerChoices,

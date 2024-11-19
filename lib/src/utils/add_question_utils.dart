@@ -7,7 +7,6 @@ QuestionData prepareAddQuestionData({
   required String selectedCategory,
   required String selectedType, // Question type 추가
   required Map<String, String> codeSnippets,
-  required String selectedLanguage,
   required String title,
   required String description,
   required String hint,
@@ -33,7 +32,6 @@ QuestionData prepareAddQuestionData({
     'description': description,
     'hint': hint.isEmpty ? 'No hint provided' : hint,
     'codeSnippets': codeSnippets,
-    'languages': [selectedLanguage],
     'answerChoices': answerChoices,
     'answer': subjectiveAnswer ?? selectedAnswer, // answer는 주관식 또는 객관식
   });

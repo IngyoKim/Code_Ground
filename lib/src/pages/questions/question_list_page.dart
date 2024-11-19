@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:code_ground/src/pages/questions/question_detail_page.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
@@ -38,12 +39,14 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
     Future.microtask(() {
       final selectedCategory =
+          // ignore: use_build_context_synchronously
           Provider.of<CategoryViewModel>(context, listen: false)
               .selectedCategory;
 
       debugPrint('Selected category: $selectedCategory');
 
       final questionViewModel =
+          // ignore: use_build_context_synchronously
           Provider.of<QuestionViewModel>(context, listen: false);
 
       debugPrint('Fetching questions from initState.');

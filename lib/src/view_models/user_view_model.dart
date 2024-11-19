@@ -8,8 +8,8 @@ class UserViewModel extends ChangeNotifier {
 
   UserData? get userData => _userData;
 
-  Future<void> fetchUserData() async {
-    _userData = await _userOperation.readUserData();
+  Future<UserData?> fetchUserData({String? uid}) async {
+    _userData = await _userOperation.readUserData(uid: uid);
 
     // 데이터가 없을 경우 초기 데이터를 쓰는 로직 추가
     if (_userData == null) {
@@ -18,6 +18,7 @@ class UserViewModel extends ChangeNotifier {
     }
 
     notifyListeners();
+    return _userData;
   }
 
   Future<void> updateNickname(String data) async {
