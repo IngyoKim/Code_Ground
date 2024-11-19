@@ -30,7 +30,7 @@ class ProfilePage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => QuestionListPage(),
+              builder: (context) => const QuestionListPage(),
             ),
           );
         },
@@ -42,7 +42,7 @@ class ProfilePage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddQuestionPage(),
+              builder: (context) => const AddQuestionPage(),
             ),
           );
         },
@@ -50,7 +50,7 @@ class ProfilePage extends StatelessWidget {
       {
         'icon': Icons.question_answer,
         'text': 'FAQ',
-        'onTap': () => debugPrint('FAQ is clicked'),
+        'onTap': () => progressViewModel.addScore(100),
       },
     ];
 
@@ -65,11 +65,11 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
           child: Column(
             children: [
-              // 기존 UI의 프로필 정보 및 로그아웃 버튼
+              /// User profile card with logout button
               Card(
                 elevation: 2,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: ListTile(
                     leading: ClipOval(
                       child: userViewModel.userData?.profileImageUrl != null
@@ -85,29 +85,33 @@ class ProfilePage extends StatelessWidget {
                               size: 50,
                             ),
                     ),
-                    title: Text(userViewModel.userData?.name ?? ''),
-                    subtitle: userViewModel.userData?.email != null &&
-                            userViewModel.userData?.email != ''
-                        ? Text(userViewModel.userData!.email)
-                        : null,
+                    title: Text(
+                      userViewModel.userData?.nickname != ''
+                          ? userViewModel.userData!.nickname
+                          : userViewModel.userData!.name,
+                    ),
+                    subtitle: Text(userViewModel.userData?.name ?? ''),
                     trailing: ElevatedButton(
                       onPressed: () {
                         showLogoutDialog(context);
                       },
-                      child: const Text("로그아웃"),
+                      child: const Text("Logout"),
                     ),
                   ),
                 ),
               ),
+
+              /// Progress card showing level, experience, tier, and score
               Card(
                 elevation: 2,
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "${progressViewModel.progressData?.level ?? 0}",
-                        style: TextStyle(
+                        "Level: ${progressViewModel.progressData?.level ?? 0}",
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -138,11 +142,27 @@ class ProfilePage extends StatelessWidget {
                       const SizedBox(height: 8.0),
                       Text(
                         progressViewModel.progressData?.exp != null
-                            ? "${((progressViewModel.progressData!.exp / 100) * 100).toInt()}%"
-                            : "0%",
+                            ? "EXP: ${progressViewModel.progressData!.exp}/100"
+                            : "EXP: 0/100",
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text(
+                        "Tier: ${progressViewModel.progressData?.tier ?? 'Bronze'} ${progressViewModel.progressData?.grade ?? 'V'}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text(
+                        "Score: ${progressViewModel.progressData?.score ?? 0}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
@@ -155,6 +175,7 @@ class ProfilePage extends StatelessWidget {
                 thickness: 0.5,
                 endIndent: 20.0,
               ),
+              // 메뉴 아이템
               ...menuItems.map(
                 (item) => Column(
                   children: [
