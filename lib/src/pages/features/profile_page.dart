@@ -17,6 +17,19 @@ class ProfilePage extends StatelessWidget {
     final userViewModel = Provider.of<UserViewModel>(context);
     final progressViewModel = Provider.of<ProgressViewModel>(context);
 
+    if (userViewModel.userData == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          title: const Text('My Page'),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(), // 로딩 중 표시
+        ),
+      );
+    }
+
     final List<Map<String, dynamic>> learningMenuItems = [
       {
         'icon': Icons.check_circle,
