@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'dart:math';
-import 'package:code_ground/src/pages/correct_page.dart';
-import 'package:code_ground/src/pages/wrong_page.dart';
 
 class QuestionDetailPage extends StatefulWidget {
   const QuestionDetailPage({super.key});
@@ -31,6 +30,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
 
     final questionType = question.questionType;
     final codeSnippets = question.codeSnippets.entries;
+    final selectedLanguages = question.languages;
 
     // boxNames를 초기화하고 정답을 추가
     List<MapEntry<String, String>> boxNames = [
@@ -62,7 +62,8 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
             _buildLanguages(question),
 
             // Code Snippets 표시
-            if (question.codeSnippets.isNotEmpty) _buildCodeSnippets(question),
+            if (question.codeSnippets.isNotEmpty)
+              _buildFilteredCodeSnippets(question, selectedLanguages),
 
             const SizedBox(height: 20),
 
@@ -111,7 +112,10 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
     );
   }
 
-  Widget _buildCodeSnippets(question) {
+  Widget _buildFilteredCodeSnippets(
+    question,
+    List<String> selectedLanguages,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -120,9 +124,18 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        ...question.codeSnippets.entries.map(
-          (entry) => _buildCodeSnippet(entry),
-        ),
+        ...selectedLanguages.map((language) {
+          // 필터링된 스니펫 리스트
+          final filteredSnippets = question.codeSnippets.entries
+              .where((entry) => entry.key == language)
+              .map<Widget>((entry) => _buildCodeSnippet(entry))
+              .toList();
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: filteredSnippets,
+          );
+        }).toList(),
       ],
     );
   }
@@ -224,14 +237,20 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
     bool isCorrect = userAnswer == question.answer;
 
     if (isCorrect) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const CorrectPage()),
+      Fluttertoast.showToast(
+        msg: "Correct!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
       );
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const WrongPage()),
+      Fluttertoast.showToast(
+        msg: "Wrong! Try Again.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
       );
     }
   }
@@ -239,7 +258,10 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
   Widget _buildAnswerChoices(List<MapEntry<String, String>> boxNames,
       Iterable<MapEntry<String, String>> codeSnippets) {
     return Column(
-      children: boxNames.map((selectedBox) {
+      children: boxNames.map<Widget>((selectedBox) {
+        if (selectedBox.key.isEmpty || selectedBox.value.isEmpty) {
+          return const SizedBox();
+        }
         return GestureDetector(
           onTap: () => _handleAnswerChoice(selectedBox, codeSnippets),
           child: _buildAnswerChoiceBox(selectedBox),
@@ -250,18 +272,21 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
 
   void _handleAnswerChoice(MapEntry<String, String> selectedBox,
       Iterable<MapEntry<String, String>> codeSnippets) {
-    bool isCorrect =
-        codeSnippets.any((entry) => entry.value == selectedBox.value);
-
-    if (isCorrect) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const CorrectPage()),
+    if (selectedBox.key == '정답') {
+      Fluttertoast.showToast(
+        msg: "Correct!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
       );
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const WrongPage()),
+      Fluttertoast.showToast(
+        msg: "Wrong! Try Again.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
       );
     }
   }
@@ -272,15 +297,11 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       height: 30,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.blueGrey.shade700,
-        borderRadius: BorderRadius.circular(10),
+        color: Colors.grey,
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Center(
-        child: Text(
-          selectedBox.key == '정답' ? selectedBox.value : selectedBox.key,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
-        ),
-      ),
+      alignment: Alignment.center,
+      child: Text(selectedBox.value),
     );
   }
 }

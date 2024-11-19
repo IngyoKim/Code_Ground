@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-<<<<<<< HEAD
-//문제 선택이 되도록 하기
-
-class AddQuestion extends StatefulWidget {
-  const AddQuestion({super.key});
-=======
+import 'package:provider/provider.dart';
 import 'package:code_ground/src/utils/add_question_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
@@ -17,9 +10,10 @@ import 'package:code_ground/src/components/add_question_widgets/dropdown_widget.
 import 'package:code_ground/src/components/add_question_widgets/answer_choice_widget.dart';
 import 'package:code_ground/src/components/add_question_widgets/code_snippet_widget.dart';
 
+//문제 선택이 되도록 하기
+
 class AddQuestionPage extends StatefulWidget {
   const AddQuestionPage({super.key});
->>>>>>> a978cfe89678048bf2409b8784d1c033476181aa
 
   @override
   State<AddQuestionPage> createState() => _AddQuestionPageState();

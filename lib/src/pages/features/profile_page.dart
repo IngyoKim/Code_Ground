@@ -42,11 +42,7 @@ class ProfilePage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-<<<<<<< HEAD
-              builder: (context) => AddQuestion(),
-=======
-              builder: (context) => const AddQuestionPage(),
->>>>>>> a978cfe89678048bf2409b8784d1c033476181aa
+              builder: (context) => AddQuestionPage(),
             ),
           );
         },
@@ -69,11 +65,7 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
           child: Column(
             children: [
-<<<<<<< HEAD
               // 기존 UI의 프로필 정보 및 로그아웃 버튼
-=======
-              /// User profile card with logout button
->>>>>>> a978cfe89678048bf2409b8784d1c033476181aa
               Card(
                 elevation: 2,
                 child: Padding(
@@ -107,11 +99,6 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-<<<<<<< HEAD
-=======
-
-              /// Progress card showing level, experience, tier, and score
->>>>>>> a978cfe89678048bf2409b8784d1c033476181aa
               Card(
                 elevation: 2,
                 child: Padding(
