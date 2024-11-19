@@ -1,3 +1,4 @@
+import 'package:code_ground/src/components/add_question_widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 
 class AnswerChoiceWidget extends StatelessWidget {
@@ -23,6 +24,25 @@ class AnswerChoiceWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextFieldWidget(
+                label: 'Add Answer Choices',
+                controller: choiceController,
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (choiceController.text.isNotEmpty) {
+                  onAddChoice(choiceController.text);
+                  choiceController.clear();
+                }
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        ),
         ...answerChoices.map(
           (choice) => ListTile(
             title: Text(choice),
@@ -41,26 +61,6 @@ class AnswerChoiceWidget extends StatelessWidget {
               ],
             ),
           ),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: choiceController,
-                decoration:
-                    const InputDecoration(labelText: 'Add Answer Choice'),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (choiceController.text.isNotEmpty) {
-                  onAddChoice(choiceController.text);
-                  choiceController.clear();
-                }
-              },
-              child: const Text('Add'),
-            ),
-          ],
         ),
       ],
     );

@@ -4,22 +4,24 @@ class CodeSnippetWidget extends StatelessWidget {
   final String selectedCategory;
   final String selectedLanguage;
   final Map<String, String> codeSnippets;
-  final Function(String, String) onAddSnippet;
-  final Function(String) onDeleteSnippet;
-  final Function(String) onLanguageChange;
   final TextEditingController snippetController;
+  final void Function(String, String) onAddSnippet;
+  final void Function(String) onDeleteSnippet;
+  final void Function(String) onLanguageChange;
   final bool showAddButton;
+  final bool showDeleteButton;
 
   const CodeSnippetWidget({
     super.key,
     required this.selectedCategory,
     required this.selectedLanguage,
     required this.codeSnippets,
+    required this.snippetController,
     required this.onAddSnippet,
     required this.onDeleteSnippet,
     required this.onLanguageChange,
-    required this.snippetController,
     this.showAddButton = true,
+    this.showDeleteButton = true,
   });
 
   @override
@@ -39,47 +41,64 @@ class CodeSnippetWidget extends StatelessWidget {
           onChanged: (value) {
             if (value != null) {
               onLanguageChange(value);
+              if (selectedCategory != 'Sequencing') {
+                snippetController.clear();
+                if (selectedCategory == 'Syntax') {
+                  codeSnippets.clear();
+                }
+              }
             }
           },
           decoration: const InputDecoration(labelText: 'Language'),
         ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: snippetController,
-          decoration: const InputDecoration(labelText: 'Code Snippet'),
-          onChanged: (value) {
-            // Syntax 카테고리일 경우 즉시 반영
-            if (selectedCategory == 'Syntax') {
-              onAddSnippet(selectedLanguage, value);
-            }
-          },
-        ),
-        if (showAddButton) ...[
+        if (selectedCategory != 'Sequencing') ...[
           const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () {
-              if (snippetController.text.isNotEmpty) {
-                onAddSnippet(selectedLanguage, snippetController.text);
-                snippetController.clear();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Code Snippet cannot be empty!'),
-                ));
+          TextField(
+            controller: snippetController,
+            decoration: const InputDecoration(
+              labelText: 'Code Snippet',
+            ),
+            maxLines: null,
+            keyboardType: TextInputType.multiline,
+            onChanged: (value) {
+              if (value.isEmpty) {
+                onDeleteSnippet(selectedLanguage);
+              } else if (selectedCategory == 'Syntax') {
+                onAddSnippet(selectedLanguage, value);
               }
             },
-            child: const Text('Add Snippet'),
           ),
-        ],
-        const SizedBox(height: 16),
-        if (codeSnippets.isNotEmpty)
-          ...codeSnippets.entries.map((entry) => ListTile(
+          if (showAddButton) ...[
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () {
+                if (snippetController.text.isNotEmpty) {
+                  onAddSnippet(selectedLanguage, snippetController.text);
+                  snippetController.clear();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Code Snippet cannot be empty!'),
+                  ));
+                }
+              },
+              child: const Text('Add Snippet'),
+            ),
+          ],
+          const SizedBox(height: 16),
+          if (codeSnippets.isNotEmpty)
+            ...codeSnippets.entries.map(
+              (entry) => ListTile(
                 title: Text('Language: ${entry.key}'),
                 subtitle: Text(entry.value),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => onDeleteSnippet(entry.key),
-                ),
-              )),
+                trailing: showDeleteButton
+                    ? IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => onDeleteSnippet(entry.key),
+                      )
+                    : null,
+              ),
+            ),
+        ],
       ],
     );
   }

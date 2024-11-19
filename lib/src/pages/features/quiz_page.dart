@@ -61,8 +61,7 @@ class QuizPage extends StatelessWidget {
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-
-            /// Items per row
+            // Items per row
             mainAxisSpacing: 10,
             crossAxisSpacing: 10,
           ),
