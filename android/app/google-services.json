@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "278986162898-4fs0hb1hcdpuh21f0pl5aoj77o5b9r8h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.oss.code_ground",
+            "certificate_hash": "cee6375bca74d1c9ae4959a634eabb0d4f598952"
+          }
+        },
+        {
+          "client_id": "278986162898-97qj1ipavpcjdp3q91lse98o1lf2hgki.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.oss.code_ground",
+            "certificate_hash": "ce7b908d49b72ca17fbbcf61858ac5d402d5d921"
+          }
+        },
+        {
           "client_id": "278986162898-t847lamucsh286i9t7t75vbqur5i8h74.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -30,6 +46,42 @@
             "certificate_hash": "39ca392e978704174dacc63442d5acdd9601d81e"
           }
         },
+        {
+          "client_id": "278986162898-q8v3f7c2l2386k5ns4t24hi94tljpdvo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUFXtHOp0H3-aEkG7AILjlmZiWf-RVvic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "278986162898-q8v3f7c2l2386k5ns4t24hi94tljpdvo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "278986162898-bnu2t7anpspj8421ca03jn7hgb716lj5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.oss.codeGround"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278986162898:android:d043f0704d596096f7a30b",
+        "android_client_info": {
+          "package_name": "com.osscode_ground"
+        }
+      },
+      "oauth_client": [
         {
           "client_id": "278986162898-q8v3f7c2l2386k5ns4t24hi94tljpdvo.apps.googleusercontent.com",
           "client_type": 3
