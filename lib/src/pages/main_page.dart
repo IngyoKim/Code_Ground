@@ -43,13 +43,37 @@ class _MainPageState extends State<MainPage>
           const ProfilePage(),
         ],
       ),
-      bottomNavigationBar: TabBar(
-        controller: _tabController,
-        tabs: const [
-          Tab(text: "Tab 1"),
-          Tab(text: "Tab 2"),
-          Tab(text: "Profile"),
-        ],
+      bottomNavigationBar: Container(
+        color: Colors.white,
+        child: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.black,
+          labelColor: Colors.black,
+          unselectedLabelColor: Colors.grey,
+          tabs: [
+            Tab(
+              icon: Image.asset(
+                'assets/logo/friend_logo.png',
+                width: 24,
+                height: 24,
+              ),
+            ),
+            Tab(
+              icon: Image.asset(
+                'assets/logo/home_logo.png',
+                width: 24,
+                height: 24,
+              ),
+            ),
+            Tab(
+              icon: Image.asset(
+                'assets/logo/user_logo.png',
+                width: 24,
+                height: 24,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
