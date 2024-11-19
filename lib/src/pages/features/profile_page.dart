@@ -1,3 +1,4 @@
+import 'package:code_ground/src/pages/questions/question_state_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,8 +17,35 @@ class ProfilePage extends StatelessWidget {
     final userViewModel = Provider.of<UserViewModel>(context);
     final progressViewModel = Provider.of<ProgressViewModel>(context);
 
+    final List<Map<String, dynamic>> learningMenuItems = [
+      {
+        'icon': Icons.check_circle,
+        'text': 'Solved Questions',
+        'onTap': () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const QuestionStatePage(),
+            ),
+          );
+        },
+      },
+      {
+        'icon': Icons.error,
+        'text': 'Failed Questions',
+        'onTap': () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const QuestionStatePage(),
+            ),
+          );
+        },
+      },
+    ];
+
     /// Menu items for the profile page
-    final List<Map<String, dynamic>> menuItems = [
+    final List<Map<String, dynamic>> appMenuItems = [
       {
         'icon': Icons.settings,
         'text': 'Setting',
@@ -169,14 +197,59 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
+
               const Divider(
                 height: 50.0,
                 color: Colors.grey,
                 thickness: 0.5,
                 endIndent: 20.0,
               ),
-              // 메뉴 아이템
-              ...menuItems.map(
+              Align(
+                alignment: Alignment.centerLeft,
+                child: const Text("Learning Data",
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+              const SizedBox(height: 10),
+              ...learningMenuItems.map(
+                (item) => Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(
+                        item['icon'],
+                        color: Colors.black,
+                      ),
+                      title: Text(item['text']),
+                      onTap: item['onTap'],
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const Divider(
+                      height: 10.0,
+                      color: Colors.grey,
+                      thickness: 0.5,
+                      endIndent: 20.0,
+                    ),
+                  ],
+                ),
+              ),
+
+              const Divider(
+                height: 50.0,
+                color: Colors.grey,
+                thickness: 0.5,
+                endIndent: 20.0,
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: const Text("Application Data",
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+              const SizedBox(height: 10),
+              ...appMenuItems.map(
                 (item) => Column(
                   children: [
                     ListTile(
