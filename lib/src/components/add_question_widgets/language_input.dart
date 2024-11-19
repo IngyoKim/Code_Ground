@@ -12,23 +12,22 @@ class LanguageInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: DropdownButtonFormField<String>(
-        value: selectedLanguage,
-        items: const [
-          DropdownMenuItem(value: 'C', child: Text('C')),
-          DropdownMenuItem(value: 'Python', child: Text('Python')),
-          DropdownMenuItem(value: 'Java', child: Text('Java')),
-          DropdownMenuItem(value: 'C++', child: Text('C++')),
-          DropdownMenuItem(value: 'Dart', child: Text('Dart')),
-        ],
-        onChanged: onLanguageChanged,
-        decoration: const InputDecoration(
-          labelText: 'Language',
-          border: OutlineInputBorder(),
-        ),
+    // 프로그래밍 언어 리스트
+    final List<String> languages = ['C', 'C++', 'Java', 'Python', 'Dart'];
+
+    return DropdownButtonFormField<String>(
+      value: selectedLanguage,
+      decoration: const InputDecoration(
+        labelText: 'Language',
+        border: OutlineInputBorder(),
       ),
+      items: languages
+          .map((language) => DropdownMenuItem(
+                value: language,
+                child: Text(language),
+              ))
+          .toList(),
+      onChanged: onLanguageChanged,
     );
   }
 }

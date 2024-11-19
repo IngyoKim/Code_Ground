@@ -145,12 +145,13 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
               });
             },
           ),
-          QuestionTypeInput(
-            selectedType: _selectedType,
-            onTypeChanged: (value) => setState(() {
-              _selectedType = value!;
-            }),
-          ),
+          if (_selectedCategory != 'Sequencing')
+            QuestionTypeInput(
+              selectedType: _selectedType,
+              onTypeChanged: (value) => setState(() {
+                _selectedType = value!;
+              }),
+            ),
           LanguageInput(
             selectedLanguage: _selectedLanguage,
             onLanguageChanged: (value) {
