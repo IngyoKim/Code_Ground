@@ -2,9 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-//import 'package:fluttertoast/fluttertoast.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
-//import 'dart:math';
 
 class QuestionDetailPage extends StatefulWidget {
   const QuestionDetailPage({super.key});
@@ -18,7 +16,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
   Widget build(BuildContext context) {
     final questionViewModel = Provider.of<QuestionViewModel>(context);
     final question = questionViewModel.selectedQuestion;
-    final TextEditingController _answerController = TextEditingController();
+    final TextEditingController answerController = TextEditingController();
 
     if (question == null) {
       return Scaffold(
@@ -29,10 +27,6 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
         body: const Center(child: Text('No question selected.')),
       );
     }
-
-    final questionType = question.questionType;
-    final codeSnippets = question.codeSnippets.entries;
-    final selectedLanguages = question.languages;
 
     // boxNames를 초기화하고 정답을 추가
     List<MapEntry<String, String>> boxNames = [
@@ -65,15 +59,14 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
 
             // Code Snippets 표시
             if (question.codeSnippets.isNotEmpty)
-              _buildFilteredCodeSnippets(question, selectedLanguages),
-
+              _buildFilteredCodeSnippets(question, question.languages),
             const SizedBox(height: 20),
 
             // 문제 유형에 따른 상자 생성
-            if (questionType != 'Objective') ...[
-              _buildAnswerInputField(_answerController, question),
+            if (question.questionType != 'Objective') ...[
+              _buildAnswerInputField(answerController, question),
             ] else ...[
-              _buildAnswerChoices(boxNames, codeSnippets),
+              _buildAnswerChoices(boxNames, question.codeSnippets.entries),
             ],
           ],
         ),
@@ -126,18 +119,20 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        ...selectedLanguages.map((language) {
-          // 필터링된 스니펫 리스트
-          final filteredSnippets = question.codeSnippets.entries
-              .where((entry) => entry.key == language)
-              .map<Widget>((entry) => _buildCodeSnippet(entry))
-              .toList();
+        ...selectedLanguages.map(
+          (language) {
+            // 필터링된 스니펫 리스트
+            final filteredSnippets = question.codeSnippets.entries
+                .where((entry) => entry.key == language)
+                .map<Widget>((entry) => _buildCodeSnippet(entry))
+                .toList();
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: filteredSnippets,
-          );
-        }).toList(),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: filteredSnippets,
+            );
+          },
+        )
       ],
     );
   }
