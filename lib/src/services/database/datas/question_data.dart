@@ -16,7 +16,7 @@ abstract class QuestionData {
   final Map<String, String> codeSnippets;
   final List<String> languages;
   final String hint;
-  final dynamic answer;
+  final dynamic answer; // 모든 서브클래스에 공통이 아니므로 `SequencingQuestion`에서 사용하지 않음
   final List<String>? answerChoices;
   final Tier? tier;
   final Grade? grade;
@@ -33,7 +33,7 @@ abstract class QuestionData {
     required this.codeSnippets,
     required this.languages,
     required this.hint,
-    required this.answer,
+    this.answer, // `SequencingQuestion`에서는 `null`로 사용 가능
     this.answerChoices,
     this.tier,
     this.grade,
@@ -50,10 +50,10 @@ abstract class QuestionData {
       'updatedAt': updatedAt.toIso8601String(),
       'title': title,
       'description': description,
-      'codeSnippets': codeSnippets,
+      'codeSnippets': codeSnippets, // Sequencing에서 이 필드를 통해 정답 관리
       'languages': languages,
       'hint': hint,
-      'answer': answer,
+      if (answer != null) 'answer': answer, // SequencingQuestion에서는 사용되지 않음
       if (answerChoices != null) 'answerChoices': answerChoices,
       if (tier != null) 'tier': tier!.name,
       if (grade != null) 'grade': grade!.name,
@@ -75,7 +75,7 @@ abstract class QuestionData {
       case 'Blank':
         return BlankQuestion.fromMap(data);
       case 'Sequencing':
-        return SequencingQuestion.fromMap(data);
+        return SequencingQuestion.fromMap(data); // SequencingQuestion로 매핑
       default:
         throw Exception('Unknown or missing category: $category');
     }

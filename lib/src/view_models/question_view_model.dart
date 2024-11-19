@@ -5,24 +5,29 @@ import 'package:code_ground/src/services/database/operations/question_operation.
 class QuestionViewModel extends ChangeNotifier {
   final QuestionOperation _operation = QuestionOperation();
   final List<QuestionData> _questions = [];
-  QuestionData? _selectedQuestion; // 선택된 질문
   bool _isLoading = false;
-  String? _lastFetchedKey; // 마지막으로 가져온 질문의 키 (startAfter에 사용)
+  String? _lastFetchedKey;
+  QuestionData? _selectedQuestion;
 
   List<QuestionData> get questions => _questions;
-  QuestionData? get selectedQuestion => _selectedQuestion;
   bool get isLoading => _isLoading;
+  QuestionData? get selectedQuestion => _selectedQuestion;
 
-  /// 로딩 상태 설정
+  /// 로딩 상태 업데이트
   void _setLoading(bool loading) {
     _isLoading = loading;
+    debugPrint('Loading state updated: $_isLoading');
     notifyListeners();
   }
 
   /// 질문 목록 가져오기
   Future<void> fetchQuestions(String category, {int limit = 10}) async {
-    if (_isLoading) return;
+    if (_isLoading) {
+      debugPrint('Already loading. Skipping fetchQuestions.');
+      return;
+    }
 
+    debugPrint('Fetching questions for category: $category');
     _setLoading(true);
     try {
       final newQuestions = await _operation.fetchRecentQuestions(
@@ -31,10 +36,14 @@ class QuestionViewModel extends ChangeNotifier {
         startAfter: _lastFetchedKey,
       );
 
+      debugPrint('Fetched ${newQuestions.length} questions.');
       if (newQuestions.isNotEmpty) {
-        _lastFetchedKey = newQuestions.last.questionId; // 마지막 키 업데이트
+        _lastFetchedKey = newQuestions.last.questionId;
+        debugPrint('Last fetched key updated: $_lastFetchedKey');
         _questions.addAll(newQuestions);
         notifyListeners();
+      } else {
+        debugPrint('No new questions fetched.');
       }
     } catch (e) {
       debugPrint('Error fetching questions: $e');
@@ -43,55 +52,60 @@ class QuestionViewModel extends ChangeNotifier {
     }
   }
 
-  /// 질문 초기화
+  /// 질문 목록 초기화
   void clearQuestions() {
+    debugPrint('Clearing questions and resetting last fetched key.');
     _questions.clear();
     _lastFetchedKey = null;
     notifyListeners();
   }
 
-  /// 질문 추가
+  /// 선택된 질문 업데이트
+  void selectQuestion(QuestionData question) {
+    _selectedQuestion = question;
+    debugPrint('Selected question updated: ${question.questionId}');
+    notifyListeners();
+  }
+
   Future<void> addQuestion(QuestionData questionData) async {
+    debugPrint('Adding question: ${questionData.questionId}');
     try {
       await _operation.writeQuestionData(questionData);
       _questions.insert(0, questionData);
+      debugPrint('Question added successfully.');
       notifyListeners();
     } catch (e) {
       debugPrint('Error adding question: $e');
     }
   }
 
-  /// 질문 선택
-  void selectQuestion(QuestionData question) {
-    _selectedQuestion = question;
-    notifyListeners();
-  }
-
   /// solvers 업데이트
   Future<void> addSolver(String category, String questionId) async {
+    debugPrint('Updating solvers for question: $questionId');
     try {
       final questionIndex =
           _questions.indexWhere((q) => q.questionId == questionId);
 
       if (questionIndex != -1) {
         final question = _questions[questionIndex];
-        final currentSolvers = question.solvers ?? 0; // solvers 기본값 0 처리
-        final updatedSolvers = currentSolvers + 1;
+        final updatedSolvers = (question.solvers ?? 0) + 1;
 
-        await _operation.updateQuestionData(
-          category,
-          questionId,
-          {'solvers': updatedSolvers},
-        );
+        debugPrint(
+            'Current solvers: ${question.solvers}, updated solvers: $updatedSolvers');
+        await _operation.updateQuestionData(category, questionId, {
+          'solvers': updatedSolvers,
+        });
 
-        // 기존 QuestionData를 업데이트된 solvers로 교체
         final updatedQuestion = QuestionData.fromMap({
           ...question.toMap(),
           'solvers': updatedSolvers,
         });
 
         _questions[questionIndex] = updatedQuestion;
+        debugPrint('Solvers updated successfully for question: $questionId');
         notifyListeners();
+      } else {
+        debugPrint('Question not found in the list: $questionId');
       }
     } catch (e) {
       debugPrint('Error updating solvers: $e');

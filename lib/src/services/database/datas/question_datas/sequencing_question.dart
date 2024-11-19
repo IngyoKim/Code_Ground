@@ -10,10 +10,9 @@ class SequencingQuestion extends QuestionData {
     required super.updatedAt,
     required super.title,
     required super.description,
-    required super.codeSnippets,
+    required super.codeSnippets, // Code snippets가 정답 역할
     required super.languages,
     required super.hint,
-    required List<String> super.answer, // 정답 순서 배열
     required super.tier,
     required super.grade,
     required super.solvers,
@@ -32,6 +31,18 @@ class SequencingQuestion extends QuestionData {
         ? tier.grades.firstWhere((g) => g.name == data['grade'])
         : null;
 
+    // codeSnippets 처리
+    Map<String, String> codeSnippets = {};
+    if (data['codeSnippets'] is List) {
+      // List<String>을 Map<String, String>으로 변환
+      codeSnippets = (data['codeSnippets'] as List)
+          .asMap()
+          .map((index, value) => MapEntry(index.toString(), value.toString()));
+    } else if (data['codeSnippets'] is Map) {
+      // Map<String, String> 형태
+      codeSnippets = Map<String, String>.from(data['codeSnippets']);
+    }
+
     return SequencingQuestion(
       questionId: data['questionId'] ?? 'unknown_id',
       writer: data['writer'] ?? 'unknown_writer',
@@ -41,10 +52,9 @@ class SequencingQuestion extends QuestionData {
           DateTime.parse(data['updatedAt'] ?? DateTime.now().toIso8601String()),
       title: data['title'] ?? 'No Title',
       description: data['description'] ?? 'No Description',
-      codeSnippets: Map<String, String>.from(data['codeSnippets'] ?? {}),
+      codeSnippets: codeSnippets,
       languages: List<String>.from(data['languages'] ?? []),
       hint: data['hint'] ?? 'No Hint',
-      answer: List<String>.from(data['answer'] ?? []),
       tier: tier,
       grade: grade,
       solvers: data['solvers'] ?? 0,

@@ -136,6 +136,7 @@ class QuestionOperation {
       final data = snapshot.value as Map<dynamic, dynamic>;
       return data.entries.map((entry) {
         final questionMap = Map<String, dynamic>.from(entry.value as Map);
+        debugPrint(questionMap.toString());
         return QuestionData.fromMap(questionMap); // factory 사용
       }).toList();
     }
