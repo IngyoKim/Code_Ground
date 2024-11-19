@@ -56,13 +56,18 @@ class _LoginPageState extends State<LoginPage> {
                     label: 'Continue with Google',
                     logoPath: 'assets/logo/Google_logo.png',
                     onTap: () async {
-                      loginViewModel.setLoginType(GoogleLogin());
+                      Provider.of<LoginViewModel>(context, listen: false)
+                          .setLoginType(GoogleLogin());
                       await tryLogin(
                         context: context,
                         loginAction: loginViewModel.login,
-                        setLoading: (loading) => setState(() {
-                          _isLoading = loading;
-                        }),
+                        setLoading: (loading) {
+                          if (mounted) {
+                            setState(() {
+                              _isLoading = loading;
+                            });
+                          }
+                        },
                       );
                     },
                   ),
@@ -72,13 +77,18 @@ class _LoginPageState extends State<LoginPage> {
                     label: 'Continue with KAKAO',
                     logoPath: 'assets/logo/KakaoTalk_logo.png',
                     onTap: () async {
-                      loginViewModel.setLoginType(KakaoLogin());
+                      Provider.of<LoginViewModel>(context, listen: false)
+                          .setLoginType(KakaoLogin());
                       await tryLogin(
                         context: context,
                         loginAction: loginViewModel.login,
-                        setLoading: (loading) => setState(() {
-                          _isLoading = loading;
-                        }),
+                        setLoading: (loading) {
+                          if (mounted) {
+                            setState(() {
+                              _isLoading = loading;
+                            });
+                          }
+                        },
                       );
                     },
                   ),

@@ -114,7 +114,7 @@ class ProfilePage extends StatelessWidget {
                             ),
                     ),
                     title: Text(
-                      userViewModel.userData?.nickname != ''
+                      userViewModel.userData?.nickname != null
                           ? userViewModel.userData!.nickname
                           : userViewModel.userData!.name,
                     ),
