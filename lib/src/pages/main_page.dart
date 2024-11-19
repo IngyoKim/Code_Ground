@@ -52,24 +52,21 @@ class _MainPageState extends State<MainPage>
           unselectedLabelColor: Colors.grey,
           tabs: [
             Tab(
-              icon: Image.asset(
-                'assets/logo/friend_logo.png',
-                width: 24,
-                height: 24,
+              icon: Icon(
+                Icons.group,
+                size: 24,
               ),
             ),
             Tab(
-              icon: Image.asset(
-                'assets/logo/home_logo.png',
-                width: 24,
-                height: 24,
+              icon: Icon(
+                Icons.home,
+                size: 24,
               ),
             ),
             Tab(
-              icon: Image.asset(
-                'assets/logo/user_logo.png',
-                width: 24,
-                height: 24,
+              icon: Icon(
+                Icons.person,
+                size: 24,
               ),
             ),
           ],
