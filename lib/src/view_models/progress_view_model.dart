@@ -36,6 +36,11 @@ class ProgressViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setProgressData(ProgressData progressData) {
+    _progressData = progressData;
+    notifyListeners();
+  }
+
   /// 경험치 추가 및 레벨 업 처리
   Future<void> addExp(int data) async {
     if (_progressData == null) await fetchProgressData();

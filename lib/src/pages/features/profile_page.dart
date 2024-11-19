@@ -9,13 +9,61 @@ import 'package:code_ground/src/components/logout_dialog.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
 
-class ProfilePage extends StatelessWidget {
+import 'package:code_ground/src/services/database/operations/progress_operation.dart';
+
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  bool _isLoading = true; // 로딩 상태 관리
+  ProgressOperation progressOperation = ProgressOperation();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProgressData();
+  }
+
+  /// Progress 데이터를 불러오는 함수
+  Future<void> _loadProgressData() async {
+    final progressViewModel =
+        Provider.of<ProgressViewModel>(context, listen: false);
+
+    try {
+      final progressData = await progressOperation.readProgressData();
+      if (progressData != null) {
+        progressViewModel.setProgressData(progressData); // ViewModel에 데이터 설정
+      }
+    } catch (e) {
+      debugPrint("Error loading progress data: $e");
+    } finally {
+      setState(() {
+        _isLoading = false; // 로딩 완료
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context);
     final progressViewModel = Provider.of<ProgressViewModel>(context);
+
+    if (userViewModel.userData == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          title: const Text('My Page'),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(), // 로딩 중 표시
+        ),
+      );
+    }
 
     final List<Map<String, dynamic>> learningMenuItems = [
       {
@@ -114,7 +162,7 @@ class ProfilePage extends StatelessWidget {
                             ),
                     ),
                     title: Text(
-                      userViewModel.userData?.nickname != ''
+                      userViewModel.userData?.nickname != null
                           ? userViewModel.userData!.nickname
                           : userViewModel.userData!.name,
                     ),
