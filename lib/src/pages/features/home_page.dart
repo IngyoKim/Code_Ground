@@ -10,7 +10,7 @@ class HomePage extends StatelessWidget {
     {'name': 'Syntax', 'icon': Icons.code},
     {'name': 'Debugging', 'icon': Icons.bug_report},
     {'name': 'Output', 'icon': Icons.print},
-    {'name': 'Blank', 'icon': Icons.pending_actions},
+    {'name': 'Blank', 'icon': Icons.edit},
     {'name': 'Sequencing', 'icon': Icons.format_list_numbered},
   ];
 
@@ -34,9 +34,9 @@ class HomePage extends StatelessWidget {
                     height: 80,
                     fit: BoxFit.contain,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 20),
                   const Text(
-                    'CODEGROUND',
+                    'CODE GROUND',
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
