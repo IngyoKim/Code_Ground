@@ -12,6 +12,7 @@ class SyntaxQuestion extends QuestionData {
     required super.codeSnippets,
     required super.hint,
     required super.answer,
+    required super.tier,
     super.answerChoices,
   });
 
@@ -30,6 +31,7 @@ class SyntaxQuestion extends QuestionData {
       codeSnippets: Map<String, String>.from(data['codeSnippets'] ?? {}),
       hint: data['hint'] ?? 'No Hint',
       answer: data['answer'],
+      tier: data['tier'],
       answerChoices: data['answerChoices'] != null
           ? List<String>.from(data['answerChoices'])
           : null,

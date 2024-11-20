@@ -13,7 +13,6 @@ class OutputQuestion extends QuestionData {
     required super.hint,
     required super.answer,
     super.tier,
-    super.grade,
     super.solvers,
   });
 
@@ -33,7 +32,6 @@ class OutputQuestion extends QuestionData {
       hint: data['hint'] ?? 'No Hint',
       answer: data['answer'],
       tier: data['tier'],
-      grade: data['grade'],
       solvers: data['solvers'] ?? 0,
     );
   }

@@ -14,7 +14,6 @@ class BlankQuestion extends QuestionData {
     required super.answer,
     required super.answerChoices,
     super.tier,
-    super.grade,
     super.solvers,
   });
 
@@ -35,7 +34,6 @@ class BlankQuestion extends QuestionData {
       answer: data['answer'],
       answerChoices: List<String>.from(data['answerChoices'] ?? []),
       tier: data['tier'],
-      grade: data['grade'],
       solvers: data['solvers'] ?? 0,
     );
   }

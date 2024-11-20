@@ -5,15 +5,17 @@ import 'package:code_ground/src/utils/add_question_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 
+import 'package:code_ground/src/services/database/datas/tier_data.dart'; // Tier 데이터 import
 import 'package:code_ground/src/components/add_question_widgets/header/title_input.dart';
 import 'package:code_ground/src/components/add_question_widgets/header/description_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/category_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/question_type_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/language_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/code_snippet_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/subjective_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/objective_answer_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/hint_input.dart';
+import 'package:code_ground/src/components/add_question_widgets/body/category_input.dart';
+import 'package:code_ground/src/components/add_question_widgets/body/tier_input.dart'; // TierInput 추가
+import 'package:code_ground/src/components/add_question_widgets/footer/question_type_input.dart';
+import 'package:code_ground/src/components/add_question_widgets/body/language_input.dart';
+import 'package:code_ground/src/components/add_question_widgets/body/code_snippet_input.dart';
+import 'package:code_ground/src/components/add_question_widgets/footer/subjective_input.dart';
+import 'package:code_ground/src/components/add_question_widgets/footer/objective_answer_input.dart';
+import 'package:code_ground/src/components/add_question_widgets/body/hint_input.dart';
 
 class AddQuestionPage extends StatefulWidget {
   const AddQuestionPage({super.key});
@@ -32,6 +34,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
   String _selectedCategory = 'Syntax';
   String _selectedType = 'Subjective';
   String _selectedLanguage = 'C';
+  Tier _selectedTier = tiers.first; // Tier 초기값
   final _codeSnippets = <String, String>{};
   final _answerChoices = <String>[]; // 객관식 답변 선택지
   String? _selectedAnswer; // 선택된 답변 저장
@@ -88,9 +91,6 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         _codeSnippets.addAll(newCodeSnippets);
       }
 
-      // ignore: unused_local_variable
-      final selectedLanguage = _codeSnippets.keys.first;
-
       final question = prepareAddQuestionData(
         questionId: DateTime.now().millisecondsSinceEpoch.toString(),
         writerUid: user.userId,
@@ -99,6 +99,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         codeSnippets: _codeSnippets,
         title: _titleController.text,
         description: _descriptionController.text,
+        tier: _selectedTier, // Tier 이름 전달
         hint: _hintController.text,
         answerChoices: _selectedType == 'Objective' ? _answerChoices : null,
         selectedAnswer: _selectedType == 'Objective' ? _selectedAnswer : null,
@@ -148,6 +149,14 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
                 } else if (_selectedCategory == 'Sequencing') {
                   _selectedType = 'Sequencing';
                 }
+              });
+            },
+          ),
+          TierInput(
+            selectedTier: _selectedTier,
+            onTierChanged: (value) {
+              setState(() {
+                _selectedTier = value!;
               });
             },
           ),

@@ -39,8 +39,8 @@ class QuestionOperation {
           return lastId;
         }
       }
-    } catch (e) {
-      debugPrint('Error fetching last question ID: $e');
+    } catch (error) {
+      debugPrint('Error fetching last question ID: $error');
     }
     return 0; // 기본값: 데이터가 없으면 0 반환
   }

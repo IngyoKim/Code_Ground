@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-Widget buildObjectiveAnswerInput({
+Widget objectiveSubmit({
   required BuildContext context,
   required List<String> answerChoices,
   required ValueChanged<String?> onAnswerSelected, // String?로 변경

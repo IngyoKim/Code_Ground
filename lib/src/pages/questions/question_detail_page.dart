@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:code_ground/src/utils/question_detail_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
-import 'package:code_ground/src/services/database/datas/question_data.dart';
 
 import 'package:code_ground/src/components/question_detail_widget/question_header.dart';
 import 'package:code_ground/src/components/question_detail_widget/language_selector.dart';
 import 'package:code_ground/src/components/question_detail_widget/code_snippet.dart';
-import 'package:code_ground/src/components/question_detail_widget/subjective_answer.dart';
-import 'package:code_ground/src/components/question_detail_widget/objective_answer.dart';
-import 'package:code_ground/src/components/question_detail_widget/sequencing_answer.dart';
+import 'package:code_ground/src/components/question_detail_widget/subjective_submit.dart';
+import 'package:code_ground/src/components/question_detail_widget/objective_submit.dart';
+import 'package:code_ground/src/components/question_detail_widget/sequencing_submit.dart';
 
 class QuestionDetailPage extends StatefulWidget {
   const QuestionDetailPage({super.key});
@@ -23,9 +20,10 @@ class QuestionDetailPage extends StatefulWidget {
 }
 
 class _QuestionDetailPageState extends State<QuestionDetailPage> {
+  final TextEditingController _answerController = TextEditingController();
   String? _selectedLanguage;
   String? _selectedAnswer;
-  final TextEditingController _answerController = TextEditingController();
+  bool _isUserDataFetched = false; // 데이터 fetch 상태
 
   @override
   void initState() {
@@ -38,11 +36,14 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       final userViewModel = Provider.of<UserViewModel>(context, listen: false);
       final question = questionViewModel.selectedQuestion;
 
-      if (question != null) {
+      if (question != null && !_isUserDataFetched) {
+        _selectedLanguage = question.codeSnippets.keys.isNotEmpty
+            ? question.codeSnippets.keys.first
+            : null; // 코드 스니펫의 첫 번째 언어로 초기화
         await userViewModel.fetchUserData(uid: question.writer);
         if (mounted) {
           setState(() {
-            _selectedLanguage ??= question.codeSnippets.keys.first;
+            _isUserDataFetched = true;
           });
         }
       }
@@ -94,7 +95,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
               ),
               const SizedBox(height: 16),
               if (_selectedLanguage != null)
-                buildFilteredCodeSnippets(
+                filterdCodeSnippets(
                   codeSnippets: question.codeSnippets,
                   selectedLanguage: _selectedLanguage!,
                 ),
@@ -102,7 +103,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
             const SizedBox(height: 20),
             // 답 입력 위젯
             if (question.questionType == 'Subjective')
-              buildSubjectiveAnswerInput(
+              subjectiveSubmit(
                 context: context,
                 controller: _answerController,
                 onAnswerSubmitted: (answer) {
@@ -111,7 +112,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                 },
               )
             else if (question.questionType == 'Objective')
-              buildObjectiveAnswerInput(
+              objectiveSubmit(
                 context: context,
                 answerChoices: question.answerChoices ?? [],
                 selectedAnswer: _selectedAnswer,
@@ -132,7 +133,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                 },
               )
             else if (question.questionType == 'Sequencing')
-              buildSequencingAnswerInput(
+              sequencingSubmit(
                 codeSnippets: question.codeSnippets,
                 onSubmit: (orderedKeys) {
                   final isCorrect = verifyAnswer(orderedKeys, question);
@@ -142,27 +143,6 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
           ],
         ),
       ),
-    );
-  }
-
-  bool verifyAnswer(dynamic userAnswer, QuestionData question) {
-    if (question.questionType != 'Sequencing') {
-      return userAnswer.toString().trim() == question.answer.toString().trim();
-    }
-    // Sequencing의 경우 배열 비교
-    final userAnswerList = userAnswer as List<int>;
-    final correctAnswerList =
-        question.codeSnippets.keys.map((key) => int.parse(key)).toList();
-    return ListEquality().equals(userAnswerList, correctAnswerList);
-  }
-
-  void showAnswerResult(BuildContext context, bool isCorrect) {
-    Fluttertoast.showToast(
-      msg: isCorrect ? "Correct!" : "Wrong! Try Again.",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: isCorrect ? Colors.green : Colors.red,
-      textColor: Colors.white,
     );
   }
 }

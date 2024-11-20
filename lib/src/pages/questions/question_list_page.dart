@@ -73,8 +73,8 @@ class _QuestionListPageState extends State<QuestionListPage> {
         itemCount: questionViewModel.questions.length,
         itemBuilder: (context, index) {
           final question = questionViewModel.questions[index];
-          final questionState =
-              progressViewModel.progressData?.quizState[question.questionId];
+          final questionState = progressViewModel
+              .progressData?.questionState[question.questionId];
 
           return _listUtils.buildQuestionTile(
             question: question,

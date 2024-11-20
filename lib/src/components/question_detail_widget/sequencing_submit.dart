@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-Widget buildSequencingAnswerInput({
+Widget sequencingSubmit({
   required Map<String, String> codeSnippets,
   required ValueChanged<List<int>> onSubmit,
 }) {

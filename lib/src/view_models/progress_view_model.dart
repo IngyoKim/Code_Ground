@@ -22,13 +22,7 @@ class ProgressViewModel extends ChangeNotifier {
         tier: 'Bronze', // 초기 티어는 Bronze로 설정
         grade: 'V', // 초기 등급은 V로 설정
         score: 0, // 점수는 0으로 시작
-        quizState: {
-          'Syntax': false, // 각 카테고리의 문제 상태를 false로 초기화
-          'Debugging': false,
-          'Output': false,
-          'Blank': false,
-          'Sequencing': false,
-        },
+        questionState: {},
       );
       await _progressOperation.writeProgressData(_progressData!);
     }
@@ -94,5 +88,15 @@ class ProgressViewModel extends ChangeNotifier {
       }
     }
     return {'tier': 'Bronze', 'grade': 'V'}; // 기본값
+  }
+
+  /// 문제 상태 업데이트
+  Future<void> updateQuestionState(String questionId, bool state) async {
+    if (_progressData == null) await fetchProgressData();
+    _progressData!.questionState[questionId] = state;
+    await _progressOperation.updateProgressData(_progressData!.userId, {
+      'questionState': _progressData!.questionState,
+    });
+    notifyListeners();
   }
 }

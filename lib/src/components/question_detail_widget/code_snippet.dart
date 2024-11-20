@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // 코드 스니펫 카드 위젯
-Widget buildCodeSnippet(MapEntry<String, String> entry) {
+Widget codeSnippet(MapEntry<String, String> entry) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8.0),
     child: Card(
@@ -39,13 +39,13 @@ Widget buildCodeSnippet(MapEntry<String, String> entry) {
 }
 
 // 필터링된 코드 스니펫 표시
-Widget buildFilteredCodeSnippets({
+Widget filterdCodeSnippets({
   required Map<String, String> codeSnippets,
   required String selectedLanguage,
 }) {
   final filteredSnippets = codeSnippets.entries
       .where((entry) => entry.key == selectedLanguage)
-      .map<Widget>((entry) => buildCodeSnippet(entry))
+      .map<Widget>((entry) => codeSnippet(entry))
       .toList();
 
   return Column(

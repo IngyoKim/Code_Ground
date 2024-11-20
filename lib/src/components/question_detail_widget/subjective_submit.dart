@@ -1,7 +1,7 @@
 // 답 입력을 위한 함수형 위젯
 import 'package:flutter/material.dart';
 
-Widget buildSubjectiveAnswerInput({
+Widget subjectiveSubmit({
   required BuildContext context,
   required TextEditingController controller,
   required ValueChanged<String> onAnswerSubmitted,

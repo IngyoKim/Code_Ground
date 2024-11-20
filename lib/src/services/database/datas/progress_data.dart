@@ -5,7 +5,7 @@ class ProgressData {
   String tier; // 티어 이름
   String grade; // 등급 이름
   int score;
-  final Map<String, bool> quizState;
+  final Map<String, bool> questionState;
 
   ProgressData({
     required this.userId,
@@ -14,6 +14,6 @@ class ProgressData {
     required this.tier,
     required this.grade,
     required this.score,
-    required this.quizState,
+    required this.questionState,
   });
 }

@@ -14,7 +14,6 @@ class DebuggingQuestion extends QuestionData {
     required super.answer,
     super.answerChoices,
     super.tier,
-    super.grade,
     super.solvers,
   });
 
@@ -37,7 +36,6 @@ class DebuggingQuestion extends QuestionData {
           ? List<String>.from(data['answerChoices'])
           : null,
       tier: data['tier'],
-      grade: data['grade'],
       solvers: data['solvers'] ?? 0,
     );
   }

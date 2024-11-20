@@ -1,4 +1,3 @@
-import 'package:code_ground/src/services/database/datas/tier_data.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/syntax_question.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/debugging_question.dart';
 import 'package:code_ground/src/services/database/datas/question_datas/output_question.dart';
@@ -17,8 +16,7 @@ abstract class QuestionData {
   final String hint;
   final dynamic answer; // 모든 서브클래스에 공통이 아니므로 `SequencingQuestion`에서 사용하지 않음
   final List<String>? answerChoices;
-  final Tier? tier;
-  final Grade? grade;
+  final String? tier;
   final int? solvers;
 
   QuestionData({
@@ -34,7 +32,6 @@ abstract class QuestionData {
     this.answer, // `SequencingQuestion`에서는 `null`로 사용 가능
     this.answerChoices,
     this.tier,
-    this.grade,
     this.solvers,
   });
 
@@ -50,10 +47,11 @@ abstract class QuestionData {
       'description': description,
       'codeSnippets': codeSnippets, // Sequencing에서 이 필드를 통해 정답 관리
       'hint': hint,
+      'tier': tier,
+
       if (answer != null) 'answer': answer, // SequencingQuestion에서는 사용되지 않음
       if (answerChoices != null) 'answerChoices': answerChoices,
-      if (tier != null) 'tier': tier!.name,
-      if (grade != null) 'grade': grade!.name,
+
       if (solvers != null) 'solvers': solvers,
     };
   }

@@ -30,10 +30,10 @@ class ProgressOperation {
         'tier': progressData.tier,
         'grade': progressData.grade,
         'score': progressData.score,
-        'quizState': progressData.quizState,
+        'questionState': progressData.questionState,
       });
-    } catch (e) {
-      debugPrint("Failed to write ProgressData: $e");
+    } catch (error) {
+      debugPrint("Failed to write ProgressData: $error");
     }
   }
 
@@ -55,14 +55,14 @@ class ProgressOperation {
           tier: data['tier'] ?? 'Bronze',
           grade: data['grade'] ?? 'V',
           score: data['score'] ?? 0,
-          quizState: Map<String, bool>.from(data['quizState'] ?? {}),
+          questionState: Map<String, bool>.from(data['questionState'] ?? {}),
         );
       }
 
       debugPrint("No ProgressData found for userId: $currentUserId");
       return null;
-    } catch (e) {
-      debugPrint("Failed to read ProgressData: $e");
+    } catch (error) {
+      debugPrint("Failed to read ProgressData: $error");
       return null;
     }
   }
@@ -80,8 +80,8 @@ class ProgressOperation {
 
       debugPrint("Updating ProgressData at $path with $updates");
       await _databaseService.updateDB(path, updates);
-    } catch (e) {
-      debugPrint("Failed to update ProgressData: $e");
+    } catch (error) {
+      debugPrint("Failed to update ProgressData: $error");
     }
   }
 }

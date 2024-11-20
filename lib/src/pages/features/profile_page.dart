@@ -19,7 +19,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  bool _isLoading = true; // 로딩 상태 관리
+// 로딩 상태 관리
   ProgressOperation progressOperation = ProgressOperation();
 
   @override
@@ -42,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
       debugPrint("Error loading progress data: $e");
     } finally {
       setState(() {
-        _isLoading = false; // 로딩 완료
+// 로딩 완료
       });
     }
   }
