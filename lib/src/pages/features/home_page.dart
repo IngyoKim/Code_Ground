@@ -1,3 +1,4 @@
+import 'package:code_ground/src/pages/questions/add_question_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
@@ -49,14 +50,36 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 20),
 
             // "Select a Category" - Fixed position
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'Select a Category',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w600,
-                ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: <Widget>[
+                  const Text(
+                    'Select a Category',
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.add_rounded,
+                      fill: 1,
+                      size: 35,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddQuestionPage(),
+                        ),
+                      );
+                    },
+                  )
+                ],
               ),
             ),
             const SizedBox(height: 25),
