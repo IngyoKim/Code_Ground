@@ -1,8 +1,9 @@
-import 'package:code_ground/src/pages/questions/add_question_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
 import 'package:code_ground/src/pages/questions/question_list_page.dart';
+import 'package:code_ground/src/pages/questions/add_question_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -17,6 +18,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -64,21 +67,22 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: Container(),
                   ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.add_rounded,
-                      fill: 1,
-                      size: 35,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AddQuestionPage(),
-                        ),
-                      );
-                    },
-                  )
+                  if (userViewModel.userData!.isAdmin)
+                    IconButton(
+                      icon: const Icon(
+                        Icons.add_rounded,
+                        fill: 1,
+                        size: 35,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AddQuestionPage(),
+                          ),
+                        );
+                      },
+                    )
                 ],
               ),
             ),
