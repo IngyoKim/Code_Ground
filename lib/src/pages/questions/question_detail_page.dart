@@ -5,12 +5,12 @@ import 'package:code_ground/src/utils/question_detail_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 
-import 'package:code_ground/src/components/question_detail_widget/question_header.dart';
-import 'package:code_ground/src/components/question_detail_widget/language_selector.dart';
-import 'package:code_ground/src/components/question_detail_widget/code_snippet.dart';
-import 'package:code_ground/src/components/question_detail_widget/subjective_submit.dart';
-import 'package:code_ground/src/components/question_detail_widget/objective_submit.dart';
-import 'package:code_ground/src/components/question_detail_widget/sequencing_submit.dart';
+import 'package:code_ground/src/components/question_detail_widget/contents/question_header.dart';
+import 'package:code_ground/src/components/question_detail_widget/contents/language_selector.dart';
+import 'package:code_ground/src/components/question_detail_widget/contents/code_snippet.dart';
+import 'package:code_ground/src/components/question_detail_widget/submit/subjective_submit.dart';
+import 'package:code_ground/src/components/question_detail_widget/submit/objective_submit.dart';
+import 'package:code_ground/src/components/question_detail_widget/submit/sequencing_submit.dart';
 
 class QuestionDetailPage extends StatefulWidget {
   const QuestionDetailPage({super.key});

@@ -58,7 +58,7 @@ class HomePage extends StatelessWidget {
                   const Text(
                     'Select a Category',
                     style: TextStyle(
-                      fontSize: 26,
+                      fontSize: 25,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -72,7 +72,7 @@ class HomePage extends StatelessWidget {
                           icon: const Icon(
                             Icons.add_rounded,
                             fill: 1,
-                            size: 35,
+                            size: 25,
                           ),
                           onPressed: () {
                             Navigator.push(
