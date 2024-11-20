@@ -20,8 +20,12 @@ class UserOperation {
         'name': user?.displayName ?? '',
         'email': user?.email ?? '',
         'profileImageUrl': user?.photoURL ?? '',
-        'nickname': '', // Default empty or assign a default value
-        'isAdmin': false, // Default value, modify if needed
+
+        /// Default empty or assign a default value
+        'nickname': '',
+
+        /// Default value, modify if needed
+        'isAdmin': false,
       },
     );
   }
