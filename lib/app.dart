@@ -32,6 +32,9 @@ class App extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
 
+        /// Removes the debug banner.
+        debugShowCheckedModeBanner: false,
+
         /// Sets the default home screen.
         home: const BasePage(),
       ),

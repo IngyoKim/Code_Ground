@@ -13,14 +13,14 @@ class QuestionViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   QuestionData? get selectedQuestion => _selectedQuestion;
 
-  /// 로딩 상태 업데이트
+  /// Updates the loading state.
   void _setLoading(bool loading) {
     _isLoading = loading;
     debugPrint('Loading state updated: $_isLoading');
     notifyListeners();
   }
 
-  /// 질문 목록 가져오기
+  /// Fetches the list of questions.
   Future<void> fetchQuestions(String category, {int limit = 10}) async {
     if (_isLoading) {
       debugPrint('Already loading. Skipping fetchQuestions.');
@@ -52,7 +52,7 @@ class QuestionViewModel extends ChangeNotifier {
     }
   }
 
-  /// 질문 목록 초기화
+  /// Clears the list of questions and resets the last fetched key.
   void clearQuestions() {
     debugPrint('Clearing questions and resetting last fetched key.');
     _questions.clear();
@@ -60,7 +60,7 @@ class QuestionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 선택된 질문 업데이트
+  /// Updates the selected question.
   void selectQuestion(QuestionData question) {
     _selectedQuestion = question;
     debugPrint('Selected question updated: ${question.questionId}');
@@ -79,7 +79,7 @@ class QuestionViewModel extends ChangeNotifier {
     }
   }
 
-  /// solvers 업데이트
+  /// Updates the solvers for a question.
   Future<void> addSolver(String category, String questionId) async {
     debugPrint('Updating solvers for question: $questionId');
     try {

@@ -9,19 +9,31 @@ class ProgressViewModel extends ChangeNotifier {
 
   ProgressData? get progressData => _progressData;
 
-  /// 진행 상황 불러오기
+  /// Fetch progress data from the database.
   Future<void> fetchProgressData() async {
     _progressData = await _progressOperation.readProgressData();
 
-    // 데이터가 없을 경우 초기 데이터를 쓰는 로직 추가
+    /// If no data exists, initialize with default values and save.
     if (_progressData == null) {
       _progressData = ProgressData(
-        userId: '', // 현재 로그인된 사용자 ID를 설정
-        level: 1, // 초기 레벨은 1로 시작
-        exp: 0, // 경험치는 0으로 초기화
-        tier: 'Bronze', // 초기 티어는 Bronze로 설정
-        grade: 'V', // 초기 등급은 V로 설정
-        score: 0, // 점수는 0으로 시작
+        userId: '',
+
+        /// Set the current user's ID.
+        level: 1,
+
+        /// Start with level 1.
+        exp: 0,
+
+        /// Initialize experience to 0.
+        tier: 'Bronze',
+
+        /// Set the initial tier to Bronze.
+        grade: 'V',
+
+        /// Set the initial grade to V.
+        score: 0,
+
+        /// Start score at 0.
         questionState: {},
       );
       await _progressOperation.writeProgressData(_progressData!);
@@ -30,24 +42,25 @@ class ProgressViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Set progress data directly.
   void setProgressData(ProgressData progressData) {
     _progressData = progressData;
     notifyListeners();
   }
 
-  /// 경험치 추가 및 레벨 업 처리
+  /// Add experience points and handle level-ups.
   Future<void> addExp(int data) async {
     if (_progressData == null) await fetchProgressData();
 
     _progressData!.exp += data;
 
-    // 레벨 업 처리
+    /// Handle level-up logic.
     while (_progressData!.exp >= 100) {
       _progressData!.exp -= 100;
       _progressData!.level++;
     }
 
-    // 업데이트된 데이터 저장
+    /// Save updated data to the database.
     await _progressOperation.updateProgressData(_progressData!.userId, {
       'exp': _progressData!.exp,
       'level': _progressData!.level,
@@ -56,19 +69,19 @@ class ProgressViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 점수 추가 및 티어 업데이트
+  /// Add score and update tier/grade.
   Future<void> addScore(int score) async {
     if (_progressData == null) await fetchProgressData();
 
     _progressData!.score += score;
 
-    // 티어와 등급 결정
+    /// Determine tier and grade based on the score.
     final newTier = _determineTierAndGrade(_progressData!.score);
     _progressData!
       ..tier = newTier['tier']!
       ..grade = newTier['grade']!;
 
-    // 업데이트된 데이터 저장
+    /// Save updated data to the database.
     await _progressOperation.updateProgressData(_progressData!.userId, {
       'score': _progressData!.score,
       'tier': _progressData!.tier,
@@ -78,7 +91,7 @@ class ProgressViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 점수 기반 티어와 등급 결정
+  /// Determine tier and grade based on score.
   Map<String, String> _determineTierAndGrade(int score) {
     for (final tier in tiers.reversed) {
       for (final grade in tier.grades.reversed) {
@@ -87,10 +100,12 @@ class ProgressViewModel extends ChangeNotifier {
         }
       }
     }
-    return {'tier': 'Bronze', 'grade': 'V'}; // 기본값
+
+    /// Default values.
+    return {'tier': 'Bronze', 'grade': 'V'};
   }
 
-  /// 문제 상태 업데이트
+  /// Update the state of a question.
   Future<void> updateQuestionState(String questionId, bool state) async {
     if (_progressData == null) await fetchProgressData();
     _progressData!.questionState[questionId] = state;

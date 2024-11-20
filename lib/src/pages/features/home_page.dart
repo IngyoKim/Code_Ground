@@ -6,54 +6,79 @@ import 'package:code_ground/src/pages/questions/question_list_page.dart';
 class HomePage extends StatelessWidget {
   HomePage({super.key});
 
-  /// List of categories for the user to select
-  final List<String> categories = [
-    'Syntax',
-    'Debugging',
-    'Output',
-    'Blank',
-    'Sequencing',
+  final List<Map<String, dynamic>> categories = [
+    {'name': 'Syntax', 'icon': Icons.code},
+    {'name': 'Debugging', 'icon': Icons.bug_report},
+    {'name': 'Output', 'icon': Icons.print},
+    {'name': 'Blank', 'icon': Icons.pending_actions},
+    {'name': 'Sequencing', 'icon': Icons.format_list_numbered},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Code Ground',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-        ),
-        backgroundColor: Colors.black,
-        elevation: 4,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+      backgroundColor: Colors.white,
+      body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// Select title
-            const Text(
-              'Select a Category',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
+            // Logo and title
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/logo/code_ground_logo.png',
+                    height: 80,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'CODEGROUND',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 20),
+
+            // "Select a Category" - Fixed position
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                'Select a Category',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(height: 25),
+
+            // Scrollable menu list
             Expanded(
               child: ListView.builder(
                 itemCount: categories.length,
-
-                /// Total categories
                 itemBuilder: (context, index) {
                   final category = categories[index];
+                  final colors = [
+                    Colors.orange.shade400,
+                    Colors.pink.shade300,
+                    Colors.red.shade400,
+                    Colors.green.shade300,
+                    Colors.blue.shade400,
+                  ];
 
-                  /// Current category
                   return GestureDetector(
                     onTap: () {
-                      /// Update selected category and navigate
                       Provider.of<CategoryViewModel>(context, listen: false)
-                          .selectCategory(category);
+                          .selectCategory(category['name']);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -62,11 +87,12 @@ class HomePage extends StatelessWidget {
                       );
                     },
                     child: Container(
-                      margin: const EdgeInsets.only(bottom: 16.0),
+                      margin: const EdgeInsets.only(
+                          bottom: 16.0, left: 16.0, right: 16.0),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 20.0),
                       decoration: BoxDecoration(
-                        color: Colors.blueGrey.shade900,
+                        color: colors[index % colors.length],
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
@@ -78,18 +104,15 @@ class HomePage extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          /// Category icon
                           Icon(
-                            Icons.category,
+                            category['icon'],
                             color: Colors.white,
                             size: 40,
                           ),
                           const SizedBox(width: 16),
-
-                          /// Category name
                           Expanded(
                             child: Text(
-                              category,
+                              category['name'],
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,

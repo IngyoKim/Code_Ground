@@ -1,17 +1,23 @@
 import 'package:code_ground/src/services/database/datas/question_data.dart';
-import 'package:code_ground/src/services/database/datas/tier_data.dart'; // Tier 데이터 import
+import 'package:code_ground/src/services/database/datas/tier_data.dart';
 
-/// 질문 데이터 준비
+/// Import Tier data
+
+/// Prepare question data
 QuestionData prepareAddQuestionData({
   required String questionId,
   required String writerUid,
   required String selectedCategory,
-  required String selectedType, // Question type 추가
+  required String selectedType,
+
+  /// Add question type
   required Map<String, String> codeSnippets,
   required String title,
   required String description,
   required String hint,
-  required Tier tier, // Tier 객체로 변경
+  required Tier tier,
+
+  /// Change to Tier object
   List<String>? answerChoices,
   String? selectedAnswer,
   String? subjectiveAnswer,
@@ -20,7 +26,9 @@ QuestionData prepareAddQuestionData({
     'questionId': questionId,
     'writer': writerUid,
     'category': selectedCategory,
-    'questionType': selectedType, // 추가: 주관식/객관식 저장
+    'questionType': selectedType,
+
+    /// Added: Save subjective/objective type
     'updatedAt': DateTime.now().toIso8601String(),
     'title': title,
     'description': description,

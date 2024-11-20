@@ -12,16 +12,20 @@ class LoginViewModel extends ChangeNotifier {
   User? user;
 
   LoginViewModel() {
+    /// Initialize login type during ViewModel creation.
     _initialize();
   }
 
   Future<void> _initialize() async {
+    /// Fetch the previously saved login type.
     _socialLogin = await _loginPreference.getLoginType();
     notifyListeners();
   }
 
   Future<void> setLoginType(SocialLogin socialLogin) async {
     _socialLogin = socialLogin;
+
+    /// Save the selected login type to preferences.
     await _loginPreference.setLoginType(socialLogin);
     notifyListeners();
   }
