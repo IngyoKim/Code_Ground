@@ -21,27 +21,30 @@ void showLoading(BuildContext context) {
   );
 }
 
-/// 로딩 스피너를 숨기는 유틸리티 함수
+/// Utility function to hide the loading spinner
 void hideLoading(BuildContext context) {
   Navigator.of(context, rootNavigator: true).pop();
 }
 
+/// Verify the user's answer against the correct answer
 bool verifyAnswer(dynamic userAnswer, QuestionData question) {
   if (question.questionType != 'Sequencing') {
     return userAnswer.toString().trim() == question.answer.toString().trim();
   }
-  // Sequencing의 경우 배열 비교
+
+  /// Compare arrays for Sequencing type
   final userAnswerList = userAnswer as List<int>;
   final correctAnswerList =
       question.codeSnippets.keys.map((key) => int.parse(key)).toList();
 
-  // 디버깅용 출력
+  /// Debugging outputs
   debugPrint("User Answer: $userAnswerList");
   debugPrint("Correct Answer: $correctAnswerList");
 
   return ListEquality().equals(userAnswerList, correctAnswerList);
 }
 
+/// Show the result of the user's answer
 void showAnswerResult(BuildContext context, bool isCorrect) async {
   final progressViewModel =
       Provider.of<ProgressViewModel>(context, listen: false);
