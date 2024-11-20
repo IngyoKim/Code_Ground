@@ -11,7 +11,7 @@ class UserViewModel extends ChangeNotifier {
   Future<UserData?> fetchUserData({String? uid}) async {
     _userData = await _userOperation.readUserData(uid: uid);
 
-    // 데이터가 없을 경우 초기 데이터를 쓰는 로직 추가
+    /// Adds logic to write initial data if no data exists.
     if (_userData == null) {
       await _userOperation.writeUserData();
       _userData = await _userOperation.readUserData();
