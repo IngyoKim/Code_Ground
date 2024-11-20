@@ -68,7 +68,7 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: Container(),
                   ),
-                  if (userViewModel.userData!.isAdmin)
+                  if (userViewModel.userData?.isAdmin ?? false)
                     IconButton(
                       icon: const Icon(
                         Icons.add_rounded,
