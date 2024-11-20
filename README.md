@@ -5,7 +5,7 @@
 
 ## Team Introduction
 - [**Ingyo Kim**](https://github.com/IngyoKim): Responsible for project coordination and developing the problem selection page
-- [**Jian Shin**](https://github.com/sinjian11): Design and widget setup, app beta testing
+- [**Jian Sin**](https://github.com/sinjian11): Design and widget setup, app beta testing
 - [**Heejin Choi**](https://github.com/HJ1263532): Core app functionalities and user data page development
 - [**Yunho Jang**](https://github.com/YunhoJangg): Design and widget setup, login feature development
 - [**Sangmin Jeon**](https://github.com/A-X-Y-S-T): Login functionality, database management, and code integration
