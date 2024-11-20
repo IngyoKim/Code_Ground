@@ -23,28 +23,37 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
   final TextEditingController _answerController = TextEditingController();
   String? _selectedLanguage;
   String? _selectedAnswer;
-  bool _isUserDataFetched = false; // 데이터 fetch 상태
+  bool _isLoading = true; // 로딩 상태 추가
 
   @override
   void initState() {
     super.initState();
 
-    // 사용자 데이터 fetch를 한 번만 호출
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final questionViewModel =
           Provider.of<QuestionViewModel>(context, listen: false);
       final userViewModel = Provider.of<UserViewModel>(context, listen: false);
       final question = questionViewModel.selectedQuestion;
 
-      if (question != null && !_isUserDataFetched) {
-        _selectedLanguage = question.codeSnippets.keys.isNotEmpty
-            ? question.codeSnippets.keys.first
-            : null; // 코드 스니펫의 첫 번째 언어로 초기화
-        await userViewModel.fetchUserData(uid: question.writer);
-        if (mounted) {
+      if (question != null) {
+        try {
+          // 로딩 시작
           setState(() {
-            _isUserDataFetched = true;
+            _isLoading = true;
           });
+
+          // 데이터 로드
+          _selectedLanguage = question.codeSnippets.keys.isNotEmpty
+              ? question.codeSnippets.keys.first
+              : null; // 코드 스니펫의 첫 번째 언어로 초기화
+          await userViewModel.fetchUserData(uid: question.writer);
+        } finally {
+          // 로딩 종료
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
         }
       }
     });
@@ -62,6 +71,16 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
     final userViewModel = Provider.of<UserViewModel>(context);
     final question = questionViewModel.selectedQuestion;
 
+    // 로딩 중인 경우 로딩 화면 표시
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    // 질문 데이터가 없는 경우
     if (question == null) {
       return Scaffold(
         appBar: AppBar(
@@ -71,6 +90,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       );
     }
 
+    // 질문 데이터가 준비된 경우
     return Scaffold(
       appBar: AppBar(
         title: Text(question.title),
@@ -79,21 +99,26 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // 제목, 설명, 언어 정보 표시
-            _buildTitle(question),
-            _buildDescription(question),
-            _buildLanguages(question),
-
-            // Code Snippets 표시
-            if (question.codeSnippets.isNotEmpty)
-              _buildFilteredCodeSnippets(question, question.languages),
-            const SizedBox(height: 20),
-
-            // 문제 유형에 따른 상자 생성
-            if (question.questionType != 'Objective') ...[
-              _buildAnswerInputField(answerController, question),
-            ] else ...[
-              _buildAnswerChoices(boxNames, question.codeSnippets.entries),
+            // 제목 및 설명
+            if (userViewModel.userData != null)
+              questionHeader(question, userViewModel.userData!),
+            // 언어 선택 및 코드 스니펫 표시
+            if (question.category != 'Sequencing') ...[
+              languageSelector(
+                languages: question.codeSnippets.keys.toList(),
+                selectedLanguage: _selectedLanguage!,
+                onLanguageSelected: (language) {
+                  setState(() {
+                    _selectedLanguage = language;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              if (_selectedLanguage != null)
+                filterdCodeSnippets(
+                  codeSnippets: question.codeSnippets,
+                  selectedLanguage: _selectedLanguage!,
+                ),
             ],
             const SizedBox(height: 20),
             // 답 입력 위젯

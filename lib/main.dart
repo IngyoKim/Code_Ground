@@ -7,10 +7,13 @@ import 'package:code_ground/app.dart';
 import 'package:code_ground/firebase_options.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // flutter 코어엔진 초기화
+  /// Initializes the Flutter core engine.
+  WidgetsFlutterBinding.ensureInitialized();
 
-  // Kakao SDK와 Firebase도 초기화
+  /// Initializes Kakao SDK and Firebase.
   KakaoSdk.init(nativeAppKey: 'adee6c4e15930c7a0270ee23244fb085');
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const App()); // 앱 실행
+
+  /// Initializes the Flutter core engine.
+  runApp(const App());
 }
