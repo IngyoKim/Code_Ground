@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
 
 class QuestionListUtils {
-  /// 질문 상태별 아이콘 반환
+  /// Returns an icon based on the question state.
   IconData? getLeadingIcon(bool? questionState) {
     if (questionState == true) return Icons.check_circle;
     if (questionState == false) return Icons.cancel;
     return null;
   }
 
-  /// 질문 상태별 아이콘 색상 반환
+  /// Returns a color based on the question state.
   Color? getIconColor(bool? questionState) {
     if (questionState == true) return Colors.green;
     if (questionState == false) return Colors.red;
     return null;
   }
 
-  /// 스크롤 이벤트 처리
+  /// Handles scroll events and triggers fetching the next page when at the bottom.
   void handleScroll({
     required ScrollController scrollController,
     required VoidCallback fetchNextPage,
@@ -29,7 +29,7 @@ class QuestionListUtils {
     }
   }
 
-  /// 질문 타일 빌드
+  /// Builds a question tile widget with state-specific styling.
   Widget buildQuestionTile({
     required QuestionData question,
     required bool? questionState,
