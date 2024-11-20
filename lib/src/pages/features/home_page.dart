@@ -18,9 +18,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    userViewModel.fetchUserData();
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -68,22 +65,28 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: Container(),
                   ),
-                  if (userViewModel.userData?.isAdmin ?? false)
-                    IconButton(
-                      icon: const Icon(
-                        Icons.add_rounded,
-                        fill: 1,
-                        size: 35,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AddQuestionPage(),
+                  Consumer<UserViewModel>(
+                    builder: (context, userViewModel, child) {
+                      if (userViewModel.userData?.isAdmin ?? false) {
+                        return IconButton(
+                          icon: const Icon(
+                            Icons.add_rounded,
+                            fill: 1,
+                            size: 35,
                           ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AddQuestionPage(),
+                              ),
+                            );
+                          },
                         );
-                      },
-                    )
+                      }
+                      return Container();
+                    },
+                  ),
                 ],
               ),
             ),
