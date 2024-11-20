@@ -1,5 +1,4 @@
 import 'package:code_ground/src/services/database/datas/question_data.dart';
-import 'package:code_ground/src/services/database/datas/tier_data.dart';
 
 class SequencingQuestion extends QuestionData {
   SequencingQuestion({
@@ -11,10 +10,8 @@ class SequencingQuestion extends QuestionData {
     required super.title,
     required super.description,
     required super.codeSnippets, // Code snippets가 정답 역할
-    required super.languages,
     required super.hint,
     required super.tier,
-    required super.grade,
     required super.solvers,
   });
 
@@ -24,13 +21,6 @@ class SequencingQuestion extends QuestionData {
   }
 
   static SequencingQuestion fromMap(Map<String, dynamic> data) {
-    final tier = data['tier'] != null
-        ? tiers.firstWhere((t) => t.name == data['tier'])
-        : null;
-    final grade = (tier != null && data['grade'] != null)
-        ? tier.grades.firstWhere((g) => g.name == data['grade'])
-        : null;
-
     // codeSnippets 처리
     Map<String, String> codeSnippets = {};
     if (data['codeSnippets'] is List) {
@@ -47,16 +37,14 @@ class SequencingQuestion extends QuestionData {
       questionId: data['questionId'] ?? 'unknown_id',
       writer: data['writer'] ?? 'unknown_writer',
       category: data['category'] ?? 'Sequencing',
-      questionType: data['questionType'] ?? '순서 맞추기',
+      questionType: data['questionType'] ?? 'Sequencing',
       updatedAt:
           DateTime.parse(data['updatedAt'] ?? DateTime.now().toIso8601String()),
       title: data['title'] ?? 'No Title',
       description: data['description'] ?? 'No Description',
       codeSnippets: codeSnippets,
-      languages: List<String>.from(data['languages'] ?? []),
       hint: data['hint'] ?? 'No Hint',
-      tier: tier,
-      grade: grade,
+      tier: data['tier'],
       solvers: data['solvers'] ?? 0,
     );
   }

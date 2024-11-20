@@ -10,9 +10,9 @@ class SyntaxQuestion extends QuestionData {
     required super.title,
     required super.description,
     required super.codeSnippets,
-    required super.languages,
     required super.hint,
     required super.answer,
+    required super.tier,
     super.answerChoices,
   });
 
@@ -29,9 +29,9 @@ class SyntaxQuestion extends QuestionData {
       title: data['title'] ?? 'No Title',
       description: data['description'] ?? 'No Description',
       codeSnippets: Map<String, String>.from(data['codeSnippets'] ?? {}),
-      languages: List<String>.from(data['languages'] ?? []),
       hint: data['hint'] ?? 'No Hint',
       answer: data['answer'],
+      tier: data['tier'],
       answerChoices: data['answerChoices'] != null
           ? List<String>.from(data['answerChoices'])
           : null,

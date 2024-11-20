@@ -60,7 +60,7 @@ class QuestionListWidget extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          question.languages.join(', '),
+          question.codeSnippets.keys.join(', '),
           style: const TextStyle(
             color: Colors.white70,
             fontSize: 14,

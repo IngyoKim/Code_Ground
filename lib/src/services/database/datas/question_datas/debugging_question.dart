@@ -10,12 +10,10 @@ class DebuggingQuestion extends QuestionData {
     required super.title,
     required super.description,
     required super.codeSnippets,
-    required super.languages,
     required super.hint,
     required super.answer,
     super.answerChoices,
     super.tier,
-    super.grade,
     super.solvers,
   });
 
@@ -32,14 +30,12 @@ class DebuggingQuestion extends QuestionData {
       title: data['title'] ?? 'No Title',
       description: data['description'] ?? 'No Description',
       codeSnippets: Map<String, String>.from(data['codeSnippets'] ?? {}),
-      languages: List<String>.from(data['languages'] ?? []),
       hint: data['hint'] ?? 'No Hint',
       answer: data['answer'],
       answerChoices: data['answerChoices'] != null
           ? List<String>.from(data['answerChoices'])
           : null,
       tier: data['tier'],
-      grade: data['grade'],
       solvers: data['solvers'] ?? 0,
     );
   }

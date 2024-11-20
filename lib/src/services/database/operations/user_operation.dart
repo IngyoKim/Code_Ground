@@ -26,18 +26,23 @@ class UserOperation {
     );
   }
 
-  Future<UserData?> readUserData() async {
-    if (user == null) {
-      debugPrint("User not logged in.");
+  Future<UserData?> readUserData({String? uid}) async {
+    final userId = uid ?? user?.uid;
+
+    if (userId == null) {
+      debugPrint("User not logged in and no UID provided.");
       return null;
     }
-    String path = 'users/${user!.uid}';
+
+    String path = 'users/$userId';
     debugPrint("Reading user data from $path");
+
     final data = await _databaseService.readDB(path);
+
     if (data != null) {
       debugPrint("User data retrieved: $data");
       return UserData(
-        userId: user!.uid,
+        userId: userId,
         name: data['name'] ?? '',
         email: data['email'] ?? '',
         profileImageUrl: data['profileImageUrl'] ?? '',
@@ -45,7 +50,8 @@ class UserOperation {
         isAdmin: data['isAdmin'] ?? false,
       );
     }
-    debugPrint("No data found for user.");
+
+    debugPrint("No data found for user with UID $userId.");
     return null;
   }
 

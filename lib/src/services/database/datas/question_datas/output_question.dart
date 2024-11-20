@@ -10,11 +10,9 @@ class OutputQuestion extends QuestionData {
     required super.title,
     required super.description,
     required super.codeSnippets,
-    required super.languages,
     required super.hint,
     required super.answer,
     super.tier,
-    super.grade,
     super.solvers,
   });
 
@@ -31,11 +29,9 @@ class OutputQuestion extends QuestionData {
       title: data['title'] ?? 'No Title',
       description: data['description'] ?? 'No Description',
       codeSnippets: Map<String, String>.from(data['codeSnippets'] ?? {}),
-      languages: List<String>.from(data['languages'] ?? []),
       hint: data['hint'] ?? 'No Hint',
       answer: data['answer'],
       tier: data['tier'],
-      grade: data['grade'],
       solvers: data['solvers'] ?? 0,
     );
   }

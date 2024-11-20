@@ -1,8 +1,16 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+
+import 'package:code_ground/src/utils/question_detail_utils.dart';
+import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
+
+import 'package:code_ground/src/components/question_detail_widget/question_header.dart';
+import 'package:code_ground/src/components/question_detail_widget/language_selector.dart';
+import 'package:code_ground/src/components/question_detail_widget/code_snippet.dart';
+import 'package:code_ground/src/components/question_detail_widget/subjective_submit.dart';
+import 'package:code_ground/src/components/question_detail_widget/objective_submit.dart';
+import 'package:code_ground/src/components/question_detail_widget/sequencing_submit.dart';
 
 class QuestionDetailPage extends StatefulWidget {
   const QuestionDetailPage({super.key});
@@ -12,41 +20,60 @@ class QuestionDetailPage extends StatefulWidget {
 }
 
 class _QuestionDetailPageState extends State<QuestionDetailPage> {
+  final TextEditingController _answerController = TextEditingController();
+  String? _selectedLanguage;
+  String? _selectedAnswer;
+  bool _isUserDataFetched = false; // 데이터 fetch 상태
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 사용자 데이터 fetch를 한 번만 호출
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final questionViewModel =
+          Provider.of<QuestionViewModel>(context, listen: false);
+      final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+      final question = questionViewModel.selectedQuestion;
+
+      if (question != null && !_isUserDataFetched) {
+        _selectedLanguage = question.codeSnippets.keys.isNotEmpty
+            ? question.codeSnippets.keys.first
+            : null; // 코드 스니펫의 첫 번째 언어로 초기화
+        await userViewModel.fetchUserData(uid: question.writer);
+        if (mounted) {
+          setState(() {
+            _isUserDataFetched = true;
+          });
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _answerController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final questionViewModel = Provider.of<QuestionViewModel>(context);
+    final userViewModel = Provider.of<UserViewModel>(context);
     final question = questionViewModel.selectedQuestion;
-    final TextEditingController answerController = TextEditingController();
 
     if (question == null) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Question Details'),
-          backgroundColor: Colors.black,
         ),
         body: const Center(child: Text('No question selected.')),
       );
     }
 
-    // boxNames를 초기화하고 정답을 추가
-    List<MapEntry<String, String>> boxNames = [
-      MapEntry('정답', question.answer ?? 'No Answer'),
-    ];
-
-    // answerChoices를 boxNames에 추가 (오답 항목)
-    if (question.answerChoices?.isNotEmpty ?? false) {
-      boxNames.addAll(List.generate(question.answerChoices!.length, (i) {
-        return MapEntry('오답${i + 1}', question.answerChoices![i]);
-      }));
-    }
-
-    // boxNames를 랜덤하게 섞기
-    boxNames.shuffle(Random());
-
     return Scaffold(
       appBar: AppBar(
         title: Text(question.title),
-        backgroundColor: Colors.black,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -68,237 +95,49 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
             ] else ...[
               _buildAnswerChoices(boxNames, question.codeSnippets.entries),
             ],
+            const SizedBox(height: 20),
+            // 답 입력 위젯
+            if (question.questionType == 'Subjective')
+              subjectiveSubmit(
+                context: context,
+                controller: _answerController,
+                onAnswerSubmitted: (answer) {
+                  final isCorrect = verifyAnswer(answer, question);
+                  showAnswerResult(context, isCorrect);
+                },
+              )
+            else if (question.questionType == 'Objective')
+              objectiveSubmit(
+                context: context,
+                answerChoices: question.answerChoices ?? [],
+                selectedAnswer: _selectedAnswer,
+                onAnswerSelected: (answer) {
+                  setState(() {
+                    _selectedAnswer = answer;
+                  });
+                },
+                onSubmit: () {
+                  if (_selectedAnswer == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please select an answer.')),
+                    );
+                    return;
+                  }
+                  final isCorrect = verifyAnswer(_selectedAnswer!, question);
+                  showAnswerResult(context, isCorrect);
+                },
+              )
+            else if (question.questionType == 'Sequencing')
+              sequencingSubmit(
+                codeSnippets: question.codeSnippets,
+                onSubmit: (orderedKeys) {
+                  final isCorrect = verifyAnswer(orderedKeys, question);
+                  showAnswerResult(context, isCorrect);
+                },
+              ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildTitle(question) {
-    return Text(
-      question.title,
-      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-    );
-  }
-
-  Widget _buildDescription(question) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 16),
-        Text(
-          question.description,
-          style: const TextStyle(fontSize: 16),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLanguages(question) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 16),
-        Text(
-          'Languages: ${question.languages.join(', ')}',
-          style: const TextStyle(fontSize: 14, color: Colors.grey),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFilteredCodeSnippets(
-    question,
-    List<String> selectedLanguages,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Code Snippets:',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        ...selectedLanguages.map(
-          (language) {
-            // 필터링된 스니펫 리스트
-            final filteredSnippets = question.codeSnippets.entries
-                .where((entry) => entry.key == language)
-                .map<Widget>((entry) => _buildCodeSnippet(entry))
-                .toList();
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: filteredSnippets,
-            );
-          },
-        )
-      ],
-    );
-  }
-
-  Widget _buildCodeSnippet(MapEntry<String, String> entry) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Card(
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                entry.key,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: Text(
-                  entry.value,
-                  style: const TextStyle(fontSize: 14, fontFamily: 'monospace'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAnswerInputField(TextEditingController controller, question) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Card(
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Write your Answer',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: TextField(
-                  controller: controller,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Enter your answer here...',
-                  ),
-                  maxLines: 5,
-                  style: const TextStyle(fontSize: 14, fontFamily: 'monospace'),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: ElevatedButton(
-                  onPressed: () =>
-                      _checkAnswer(controller.text.trim(), question),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: const Text('Enter'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _checkAnswer(String userAnswer, question) {
-    bool isCorrect = userAnswer == question.answer;
-
-    if (isCorrect) {
-      Fluttertoast.showToast(
-        msg: "Correct!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-      );
-    } else {
-      Fluttertoast.showToast(
-        msg: "Wrong! Try Again.",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-    }
-  }
-
-  Widget _buildAnswerChoices(List<MapEntry<String, String>> boxNames,
-      Iterable<MapEntry<String, String>> codeSnippets) {
-    return Column(
-      children: boxNames.map<Widget>((selectedBox) {
-        if (selectedBox.key.isEmpty || selectedBox.value.isEmpty) {
-          return const SizedBox();
-        }
-        return GestureDetector(
-          onTap: () => _handleAnswerChoice(selectedBox, codeSnippets),
-          child: _buildAnswerChoiceBox(selectedBox),
-        );
-      }).toList(),
-    );
-  }
-
-  void _handleAnswerChoice(MapEntry<String, String> selectedBox,
-      Iterable<MapEntry<String, String>> codeSnippets) {
-    if (selectedBox.key == '정답') {
-      Fluttertoast.showToast(
-        msg: "Correct!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-      );
-    } else {
-      Fluttertoast.showToast(
-        msg: "Wrong! Try Again.",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-    }
-  }
-
-  Widget _buildAnswerChoiceBox(MapEntry<String, String> selectedBox) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      height: 30,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.grey,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      alignment: Alignment.center,
-      child: Text(selectedBox.value),
     );
   }
 }
