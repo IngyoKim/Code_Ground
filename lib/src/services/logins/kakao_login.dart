@@ -17,7 +17,7 @@ class KakaoLogin implements SocialLogin {
   @override
   Future<User?> login() async {
     try {
-      // 카카오톡 설치 여부에 따라 로그인 방식 선택
+      /// Choose login method depending on KakaoTalk installation
       if (await kakao.isKakaoTalkInstalled()) {
         debugPrint("KakaoTalk is installed.");
         try {
@@ -36,10 +36,10 @@ class KakaoLogin implements SocialLogin {
         }
       }
 
-      // 카카오 사용자 정보 가져오기
+      /// Retrieve Kakao user information
       final user = await kakao.UserApi.instance.me();
 
-      // Firebase 커스텀 토큰 생성 요청
+      /// Request Firebase custom token creation
       final response = await _firebaseAuthData.createCustomToken({
         'uid': user.id.toString(),
         'displayName': user.kakaoAccount?.profile?.nickname ?? '',
@@ -55,10 +55,12 @@ class KakaoLogin implements SocialLogin {
         return null;
       }
 
-      // Firebase 로그인
+      /// Firebase login
       UserCredential userCredential =
           await _auth.signInWithCustomToken(customToken);
-      await _auth.currentUser?.reload(); // 사용자 정보 갱신
+      await _auth.currentUser?.reload();
+
+      /// Update user information
       return userCredential.user;
     } catch (error) {
       debugPrint("Kakao login failed. $error");
