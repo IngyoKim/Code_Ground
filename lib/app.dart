@@ -16,7 +16,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint(context.toString());
     return MultiProvider(
-      // MultiProvider를 사용하여 여러 Provider를 등록
+      /// Registers multiple providers using MultiProvider.
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => UserViewModel()),
@@ -25,11 +25,15 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CategoryViewModel()),
       ],
       child: MaterialApp(
-        title: 'Code Ground', // 앱 제목
+        /// App title.
+        title: 'Code Ground',
         theme: ThemeData(
-          primarySwatch: Colors.blue, // 기본 테마 색상
+          /// Default theme color.
+          primarySwatch: Colors.blue,
         ),
-        home: const BasePage(), // 기본 홈 화면 설정
+
+        /// Sets the default home screen.
+        home: const BasePage(),
       ),
     );
   }
