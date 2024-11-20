@@ -19,6 +19,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    userViewModel.fetchUserData();
 
     return Scaffold(
       backgroundColor: Colors.white,
