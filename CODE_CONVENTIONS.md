@@ -33,7 +33,8 @@
   - `design`: Modifying the UI design
   - `docs`: Document changes
   - `merge`: Merge branches
-  - Example: `feat: Add user profile page`
+  - Note: All commit messages should be written in lowercase.
+  - Example: `feat: add user profile page`
 
 ## Widget Development Guidelines
 - **Widget Lifecycle Management**:
