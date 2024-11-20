@@ -1,3 +1,4 @@
+import 'package:code_ground/src/view_models/category_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,18 +16,26 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint(context.toString());
     return MultiProvider(
-      // MultiProvider를 사용하여 여러 Provider를 등록
+      /// Registers multiple providers using MultiProvider.
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => UserViewModel()),
         ChangeNotifierProvider(create: (_) => ProgressViewModel()),
         ChangeNotifierProvider(create: (_) => QuestionViewModel()),
+        ChangeNotifierProvider(create: (_) => CategoryViewModel()),
       ],
       child: MaterialApp(
+        /// App title.
         title: 'Code Ground',
         theme: ThemeData(
+          /// Default theme color.
           primarySwatch: Colors.blue,
         ),
+
+        /// Removes the debug banner.
+        debugShowCheckedModeBanner: false,
+
+        /// Sets the default home screen.
         home: const BasePage(),
       ),
     );

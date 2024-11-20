@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:code_ground/src/services/database/datas/tier_data.dart';
 import 'package:code_ground/src/services/database/datas/progress_data.dart';
 import 'package:code_ground/src/services/database/operations/progress_operation.dart';
 
@@ -8,18 +9,32 @@ class ProgressViewModel extends ChangeNotifier {
 
   ProgressData? get progressData => _progressData;
 
-  // 진행 상황을 불러오는 메서드
+  /// Fetch progress data from the database.
   Future<void> fetchProgressData() async {
     _progressData = await _progressOperation.readProgressData();
 
-    // 데이터가 없을 경우 초기 데이터를 쓰는 로직 추가
+    /// If no data exists, initialize with default values and save.
     if (_progressData == null) {
       _progressData = ProgressData(
-        userId: '', // userId는 빈 값으로 두고, 실제 데이터는 유저 로그인 시에 적용
-        level: 0,
+        userId: '',
+
+        /// Set the current user's ID.
+        level: 1,
+
+        /// Start with level 1.
         exp: 0,
-        solvedQuestions: [],
-        questionStatus: {},
+
+        /// Initialize experience to 0.
+        tier: 'Bronze',
+
+        /// Set the initial tier to Bronze.
+        grade: 'V',
+
+        /// Set the initial grade to V.
+        score: 0,
+
+        /// Start score at 0.
+        questionState: {},
       );
       await _progressOperation.writeProgressData(_progressData!);
     }
@@ -27,33 +42,76 @@ class ProgressViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 진행 상황을 업데이트하는 메서드
+  /// Set progress data directly.
+  void setProgressData(ProgressData progressData) {
+    _progressData = progressData;
+    notifyListeners();
+  }
+
+  /// Add experience points and handle level-ups.
   Future<void> addExp(int data) async {
     if (_progressData == null) await fetchProgressData();
 
     _progressData!.exp += data;
-    await _progressOperation.updateProgressData({'exp': _progressData!.exp});
 
-    if (_progressData!.exp >= 100) await levelUp();
+    /// Handle level-up logic.
+    while (_progressData!.exp >= 100) {
+      _progressData!.exp -= 100;
+      _progressData!.level++;
+    }
 
-    // 업데이트된 데이터를 다시 불러와서 상태 반영
-    await fetchProgressData();
+    /// Save updated data to the database.
+    await _progressOperation.updateProgressData(_progressData!.userId, {
+      'exp': _progressData!.exp,
+      'level': _progressData!.level,
+    });
+
+    notifyListeners();
   }
 
-  Future<void> levelUp() async {
+  /// Add score and update tier/grade.
+  Future<void> addScore(int score) async {
     if (_progressData == null) await fetchProgressData();
 
-    // 경험치가 100 이상이면 레벨을 올리고 경험치를 차감
-    while (_progressData!.exp >= 100) {
-      _progressData!.level += 1;
-      _progressData!.exp -= 100;
+    _progressData!.score += score;
 
-      await _progressOperation.updateProgressData({
-        'level': _progressData!.level,
-        'exp': _progressData!.exp,
-      });
+    /// Determine tier and grade based on the score.
+    final newTier = _determineTierAndGrade(_progressData!.score);
+    _progressData!
+      ..tier = newTier['tier']!
+      ..grade = newTier['grade']!;
+
+    /// Save updated data to the database.
+    await _progressOperation.updateProgressData(_progressData!.userId, {
+      'score': _progressData!.score,
+      'tier': _progressData!.tier,
+      'grade': _progressData!.grade,
+    });
+
+    notifyListeners();
+  }
+
+  /// Determine tier and grade based on score.
+  Map<String, String> _determineTierAndGrade(int score) {
+    for (final tier in tiers.reversed) {
+      for (final grade in tier.grades.reversed) {
+        if (score >= grade.minScore) {
+          return {'tier': tier.name, 'grade': grade.name};
+        }
+      }
     }
-    // 상태 업데이트
-    await fetchProgressData();
+
+    /// Default values.
+    return {'tier': 'Bronze', 'grade': 'V'};
+  }
+
+  /// Update the state of a question.
+  Future<void> updateQuestionState(String questionId, bool state) async {
+    if (_progressData == null) await fetchProgressData();
+    _progressData!.questionState[questionId] = state;
+    await _progressOperation.updateProgressData(_progressData!.userId, {
+      'questionState': _progressData!.questionState,
+    });
+    notifyListeners();
   }
 }

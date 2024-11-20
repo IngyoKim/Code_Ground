@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:code_ground/src/services/database/database_service.dart';
+import 'package:code_ground/src/services/database/operations/database_service.dart';
 import 'package:code_ground/src/services/database/datas/user_data.dart';
 
 class UserOperation {
@@ -21,28 +20,42 @@ class UserOperation {
         'name': user?.displayName ?? '',
         'email': user?.email ?? '',
         'profileImageUrl': user?.photoURL ?? '',
+
+        /// Default empty or assign a default value
+        'nickname': '',
+
+        /// Default value, modify if needed
+        'isAdmin': false,
       },
     );
   }
 
-  Future<UserData?> readUserData() async {
-    if (user == null) {
-      debugPrint("User not logged in.");
+  Future<UserData?> readUserData({String? uid}) async {
+    final userId = uid ?? user?.uid;
+
+    if (userId == null) {
+      debugPrint("User not logged in and no UID provided.");
       return null;
     }
-    String path = 'users/${user!.uid}';
+
+    String path = 'users/$userId';
     debugPrint("Reading user data from $path");
+
     final data = await _databaseService.readDB(path);
+
     if (data != null) {
       debugPrint("User data retrieved: $data");
       return UserData(
-        userId: user!.uid,
+        userId: userId,
         name: data['name'] ?? '',
         email: data['email'] ?? '',
         profileImageUrl: data['profileImageUrl'] ?? '',
+        nickname: data['nickname'] ?? '',
+        isAdmin: data['isAdmin'] ?? false,
       );
     }
-    debugPrint("No data found for user.");
+
+    debugPrint("No data found for user with UID $userId.");
     return null;
   }
 

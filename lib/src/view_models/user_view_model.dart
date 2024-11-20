@@ -8,20 +8,28 @@ class UserViewModel extends ChangeNotifier {
 
   UserData? get userData => _userData;
 
-  Future<void> fetchUserData() async {
-    _userData = await _userOperation.readUserData();
+  Future<UserData?> fetchUserData({String? uid}) async {
+    _userData = await _userOperation.readUserData(uid: uid);
 
-    // 데이터가 없을 경우 초기 데이터를 쓰는 로직 추가
+    /// Adds logic to write initial data if no data exists.
     if (_userData == null) {
       await _userOperation.writeUserData();
       _userData = await _userOperation.readUserData();
     }
 
     notifyListeners();
+    return _userData;
   }
 
-  Future<void> updateUserData(Map<String, dynamic> updates) async {
-    await _userOperation.updateUserData(updates);
+  Future<void> updateNickname(String data) async {
+    if (_userData == null) fetchUserData();
+    await _userOperation.updateUserData({'nickname': data});
+    await fetchUserData();
+  }
+
+  Future<void> grantAdmin(bool data) async {
+    if (_userData == null) fetchUserData();
+    await _userOperation.updateUserData({'isAdmin': data});
     await fetchUserData();
   }
 }

@@ -1,12 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     
+    <!-- 인터넷 권한 -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:label="code_ground"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true"> <!-- 뒤로가기 콜백 활성화 -->
 
         <!-- Main Activity 설정 -->
         <activity
@@ -27,7 +29,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Kakao 로그인 Activity 추가, 테마 충돌 해결을 위한 tools:replace 속성 추가 -->
+        <!-- Kakao 로그인 Activity 추가 -->
         <activity
             android:name="com.kakao.sdk.flutter.TalkAuthCodeActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
@@ -38,6 +40,20 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="kakaoadee6c4e15930c7a0270ee23244fb085"/>
+            </intent-filter>
+        </activity>
+
+        <!-- Naver 로그인 설정 -->
+        <activity
+            android:name="com.nhn.android.naverlogin.ui.OAuthLoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:launchMode="singleTask"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="naverlogin" android:host="oauth" />
             </intent-filter>
         </activity>
         

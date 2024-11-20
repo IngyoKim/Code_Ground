@@ -1,74 +1,87 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:code_ground/src/services/database/database_service.dart';
+import 'package:code_ground/src/services/database/operations/database_service.dart';
 import 'package:code_ground/src/services/database/datas/progress_data.dart';
+import 'package:flutter/material.dart';
 
 class ProgressOperation {
   final DatabaseService _databaseService = DatabaseService();
-  final User? user = FirebaseAuth.instance.currentUser;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // 유저의 진행 상황을 데이터베이스에 저장
-  Future<void> writeProgressData(ProgressData progressData) async {
-    if (user == null) {
-      debugPrint("User not logged in.");
-      return;
+  /// 현재 로그인된 사용자 ID 가져오기
+  String getCurrentUserId() {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null || userId.isEmpty) {
+      debugPrint("Error: No user is currently logged in.");
+      throw Exception("User ID is empty");
     }
-    String path = 'progress/${user!.uid}';
-    debugPrint("Writing progress data to $path");
-    await _databaseService.writeDB(
-      path,
-      {
-        'level': progressData.level,
-        'experience': progressData.exp,
-        'solvedQuestions': progressData.solvedQuestions,
-        'questionStatus': progressData.questionStatus.map(
-          (key, value) => MapEntry(
-            key,
-            value?.toIso8601String(),
-          ),
-        ), // DateTime을 String으로 변환
-      },
-    );
+    return userId;
   }
 
-  // 유저의 진행 상황을 데이터베이스에서 읽기
-  Future<ProgressData?> readProgressData() async {
-    if (user == null) {
-      debugPrint("User not logged in.");
+  /// ProgressData를 데이터베이스에 작성하는 함수
+  Future<void> writeProgressData(ProgressData progressData) async {
+    try {
+      final userId = getCurrentUserId();
+      final path = 'progress/$userId';
+
+      debugPrint("Writing ProgressData to $path: $progressData");
+      await _databaseService.writeDB(path, {
+        'level': progressData.level,
+        'exp': progressData.exp,
+        'tier': progressData.tier,
+        'grade': progressData.grade,
+        'score': progressData.score,
+        'questionState': progressData.questionState,
+      });
+    } catch (error) {
+      debugPrint("Failed to write ProgressData: $error");
+    }
+  }
+
+  /// ProgressData를 데이터베이스에서 읽어오는 함수
+  Future<ProgressData?> readProgressData([String? userId]) async {
+    try {
+      final currentUserId = userId ?? getCurrentUserId();
+      final path = 'progress/$currentUserId';
+
+      debugPrint("Reading ProgressData from $path");
+      final data = await _databaseService.readDB(path);
+
+      if (data != null) {
+        debugPrint("Data retrieved: $data");
+        return ProgressData(
+          userId: currentUserId,
+          level: data['level'] ?? 0,
+          exp: data['exp'] ?? 0,
+          tier: data['tier'] ?? 'Bronze',
+          grade: data['grade'] ?? 'V',
+          score: data['score'] ?? 0,
+          questionState: Map<String, bool>.from(data['questionState'] ?? {}),
+        );
+      }
+
+      debugPrint("No ProgressData found for userId: $currentUserId");
+      return null;
+    } catch (error) {
+      debugPrint("Failed to read ProgressData: $error");
       return null;
     }
-    String path = 'progress/${user!.uid}';
-    debugPrint("Reading progress data from $path");
-    final data = await _databaseService.readDB(path);
-    if (data != null) {
-      debugPrint("Progress data retrieved: $data");
-      return ProgressData(
-        userId: user!.uid,
-        level: data['level'] ?? 0,
-        exp: data['exp'] ?? 0,
-        solvedQuestions: List<String>.from(data['solvedQuestions'] ?? []),
-        questionStatus: Map<String, DateTime?>.from(data['questionStatus']?.map(
-                (key, value) => MapEntry(
-                    key, value != null ? DateTime.parse(value) : null)) ??
-            {}),
-      );
-    }
-    debugPrint("No progress data found for user.");
-    return null;
   }
 
-  // 유저의 진행 상황을 업데이트
-  Future<void> updateProgressData(Map<String, dynamic> updates) async {
-    if (user == null) {
-      debugPrint("User not logged in.");
-      return;
+  /// ProgressData를 업데이트하는 함수
+  Future<void> updateProgressData(
+      String userId, Map<String, dynamic> updates) async {
+    try {
+      final currentUserId = getCurrentUserId();
+      if (currentUserId != userId) {
+        debugPrint(
+            "Warning: Updating data for a userId ($userId) different from the logged-in user ($currentUserId).");
+      }
+      final path = 'progress/$userId';
+
+      debugPrint("Updating ProgressData at $path with $updates");
+      await _databaseService.updateDB(path, updates);
+    } catch (error) {
+      debugPrint("Failed to update ProgressData: $error");
     }
-
-    String path = 'progress/${user!.uid}';
-    debugPrint("Updating progress data at $path with $updates");
-
-    // 전달된 필드만 업데이트
-    await _databaseService.updateDB(path, updates);
   }
 }

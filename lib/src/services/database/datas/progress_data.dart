@@ -2,14 +2,18 @@ class ProgressData {
   final String userId;
   int level;
   int exp;
-  final List<String> solvedQuestions; // 푼 문제의 ID 리스트
-  final Map<String, DateTime?> questionStatus; // 문제 ID를 키로, 해결 시간을 값으로 저장
+  String tier; // 티어 이름
+  String grade; // 등급 이름
+  int score;
+  final Map<String, bool> questionState;
 
   ProgressData({
     required this.userId,
     required this.level,
     required this.exp,
-    required this.solvedQuestions,
-    required this.questionStatus,
+    required this.tier,
+    required this.grade,
+    required this.score,
+    required this.questionState,
   });
 }

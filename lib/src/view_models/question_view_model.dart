@@ -3,77 +3,112 @@ import 'package:code_ground/src/services/database/datas/question_data.dart';
 import 'package:code_ground/src/services/database/operations/question_operation.dart';
 
 class QuestionViewModel extends ChangeNotifier {
-  final QuestionOperation _questionOperation = QuestionOperation();
+  final QuestionOperation _operation = QuestionOperation();
   final List<QuestionData> _questions = [];
   bool _isLoading = false;
-  int _currentPage = 1;
-  final int _limit = 15;
+  String? _lastFetchedKey;
+  QuestionData? _selectedQuestion;
 
   List<QuestionData> get questions => _questions;
   bool get isLoading => _isLoading;
+  QuestionData? get selectedQuestion => _selectedQuestion;
 
+  /// Updates the loading state.
   void _setLoading(bool loading) {
     _isLoading = loading;
+    debugPrint('Loading state updated: $_isLoading');
     notifyListeners();
   }
 
-  // 첫 질문 목록 로드 및 추가 로드를 위한 메서드
-  Future<void> fetchQuestions({bool loadMore = false}) async {
-    if (_isLoading) return;
+  /// Fetches the list of questions.
+  Future<void> fetchQuestions(String category, {int limit = 10}) async {
+    if (_isLoading) {
+      debugPrint('Already loading. Skipping fetchQuestions.');
+      return;
+    }
 
+    debugPrint('Fetching questions for category: $category');
     _setLoading(true);
-    debugPrint("Loading ${loadMore ? 'more' : 'initial'} questions...");
+    try {
+      final newQuestions = await _operation.fetchRecentQuestions(
+        category,
+        limit: limit,
+        startAfter: _lastFetchedKey,
+      );
 
-    if (!loadMore) {
-      _questions.clear(); // 처음 로드 시 기존 데이터를 초기화
-      _currentPage = 1;
-      debugPrint("Starting fresh load. Resetting currentPage to 1.");
-    } else {
-      debugPrint("Fetching page $_currentPage with limit $_limit");
-    }
-
-    List<QuestionData> loadedQuestions = [];
-    for (int i = 0; i < _limit; i++) {
-      String questionId = 'question${(_currentPage - 1) * _limit + i + 1}';
-      debugPrint("Attempting to load question with ID: $questionId");
-      final question = await _questionOperation.readQuestionData(questionId);
-      if (question != null) {
-        loadedQuestions.add(question);
-        debugPrint("Loaded question: ${question.title}");
+      debugPrint('Fetched ${newQuestions.length} questions.');
+      if (newQuestions.isNotEmpty) {
+        _lastFetchedKey = newQuestions.last.questionId;
+        debugPrint('Last fetched key updated: $_lastFetchedKey');
+        _questions.addAll(newQuestions);
+        notifyListeners();
       } else {
-        debugPrint("No question found for ID: $questionId, stopping fetch.");
-        break;
+        debugPrint('No new questions fetched.');
       }
+    } catch (e) {
+      debugPrint('Error fetching questions: $e');
+    } finally {
+      _setLoading(false);
     }
-
-    _questions.addAll(loadedQuestions);
-    if (loadedQuestions.isNotEmpty) {
-      _currentPage++; // 데이터가 있을 경우에만 페이지 증가
-      debugPrint(
-          "Page $_currentPage loaded with ${loadedQuestions.length} questions.");
-    } else {
-      debugPrint("No more questions to load.");
-    }
-
-    _setLoading(false);
-    debugPrint(
-        "Loading complete. Total questions loaded: ${_questions.length}");
   }
 
-  Future<void> addQuestion(String title, String description) async {
-    final questionData = QuestionData(
-      questionId: 'question${_questions.length + 1}',
-      title: title,
-      category: 'General',
-      description: description,
-      difficulty: 'Easy',
-      tags: [],
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-    await _questionOperation.writeQuestionData(questionData);
-    _questions.add(questionData);
+  /// Clears the list of questions and resets the last fetched key.
+  void clearQuestions() {
+    debugPrint('Clearing questions and resetting last fetched key.');
+    _questions.clear();
+    _lastFetchedKey = null;
     notifyListeners();
-    debugPrint("Added new question: ${questionData.title}");
+  }
+
+  /// Updates the selected question.
+  void selectQuestion(QuestionData question) {
+    _selectedQuestion = question;
+    debugPrint('Selected question updated: ${question.questionId}');
+    notifyListeners();
+  }
+
+  Future<void> addQuestion(QuestionData questionData) async {
+    debugPrint('Adding question: ${questionData.questionId}');
+    try {
+      await _operation.writeQuestionData(questionData);
+      _questions.insert(0, questionData);
+      debugPrint('Question added successfully.');
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error adding question: $e');
+    }
+  }
+
+  /// Updates the solvers for a question.
+  Future<void> addSolver(String category, String questionId) async {
+    debugPrint('Updating solvers for question: $questionId');
+    try {
+      final questionIndex =
+          _questions.indexWhere((q) => q.questionId == questionId);
+
+      if (questionIndex != -1) {
+        final question = _questions[questionIndex];
+        final updatedSolvers = (question.solvers ?? 0) + 1;
+
+        debugPrint(
+            'Current solvers: ${question.solvers}, updated solvers: $updatedSolvers');
+        await _operation.updateQuestionData(category, questionId, {
+          'solvers': updatedSolvers,
+        });
+
+        final updatedQuestion = QuestionData.fromMap({
+          ...question.toMap(),
+          'solvers': updatedSolvers,
+        });
+
+        _questions[questionIndex] = updatedQuestion;
+        debugPrint('Solvers updated successfully for question: $questionId');
+        notifyListeners();
+      } else {
+        debugPrint('Question not found in the list: $questionId');
+      }
+    } catch (e) {
+      debugPrint('Error updating solvers: $e');
+    }
   }
 }
