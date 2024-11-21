@@ -75,6 +75,10 @@ class _QuestionListPageState extends State<QuestionListPage> {
               itemCount: categoryQuestions.length,
               itemBuilder: (context, index) {
                 final question = categoryQuestions[index];
+
+                // Sequencing 카테고리의 answer 처리
+                final hasAnswer = (question.answer.isNotEmpty);
+
                 return Card(
                   elevation: 4,
                   margin: const EdgeInsets.only(bottom: 16.0),
@@ -133,6 +137,17 @@ class _QuestionListPageState extends State<QuestionListPage> {
                               color: Colors.black87,
                             ),
                           ),
+                          if (question.category == 'Sequencing' && !hasAnswer)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                'Answer not provided for Sequencing question.',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.redAccent,
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
