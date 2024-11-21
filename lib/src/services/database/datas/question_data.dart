@@ -1,81 +1,106 @@
-import 'package:code_ground/src/services/database/datas/question_datas/syntax_question.dart';
-import 'package:code_ground/src/services/database/datas/question_datas/debugging_question.dart';
-import 'package:code_ground/src/services/database/datas/question_datas/output_question.dart';
-import 'package:code_ground/src/services/database/datas/question_datas/blank_question.dart';
-import 'package:code_ground/src/services/database/datas/question_datas/sequencing_question.dart';
-
-abstract class QuestionData {
+class QuestionData {
   final String questionId;
+  final String title;
   final String writer;
   final String category;
   final String questionType;
-  final DateTime updatedAt;
-  final String title;
   final String description;
   final Map<String, String> codeSnippets;
   final String hint;
-  final dynamic answer; // 모든 서브클래스에 공통이 아니므로 `SequencingQuestion`에서 사용하지 않음
-  final List<String>? answerChoices;
-  final String? tier;
-  final int? solvers;
+  final String answer;
+  final List<String> answerChoices;
+  final String tier;
+  final List<String> solvers;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   QuestionData({
     required this.questionId,
+    required this.title,
     required this.writer,
     required this.category,
     required this.questionType,
-    required this.updatedAt,
-    required this.title,
     required this.description,
     required this.codeSnippets,
     required this.hint,
-    this.answer, // `SequencingQuestion`에서는 `null`로 사용 가능
-    this.answerChoices,
-    this.tier,
-    this.solvers,
+    required this.answer,
+    required this.answerChoices,
+    required this.tier,
+    required this.solvers,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
-  /// 공통 데이터를 Map으로 변환
-  Map<String, dynamic> toBaseMap() {
+  factory QuestionData.fromJson(Map<String, dynamic> json) {
+    return QuestionData(
+      questionId: json['questionId'] ?? '',
+      title: json['title'] ?? 'Untitled',
+      writer: json['writer'] ?? 'Unknown',
+      category: json['category'] ?? 'General',
+      questionType: json['questionType'] ?? 'Unknown',
+      description: json['description'] ?? '',
+      codeSnippets: Map<String, String>.from(json['codeSnippets'] ?? {}),
+      hint: json['hint'] ?? 'No hint available',
+      answer: json['answer'] ?? '',
+      answerChoices: List<String>.from(json['answerChoices'] ?? []),
+      tier: json['tier'] ?? 'Bronze',
+      solvers: List<String>.from(json['solvers'] ?? []),
+      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
     return {
       'questionId': questionId,
+      'title': title,
       'writer': writer,
       'category': category,
       'questionType': questionType,
-      'updatedAt': updatedAt.toIso8601String(),
-      'title': title,
       'description': description,
-      'codeSnippets': codeSnippets, // Sequencing에서 이 필드를 통해 정답 관리
+      'codeSnippets': codeSnippets,
       'hint': hint,
+      'answer': answer,
+      'answerChoices': answerChoices,
       'tier': tier,
-
-      if (answer != null) 'answer': answer, // SequencingQuestion에서는 사용되지 않음
-      if (answerChoices != null) 'answerChoices': answerChoices,
-
-      if (solvers != null) 'solvers': solvers,
+      'solvers': solvers,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
-  /// 데이터를 Map에서 적절한 서브클래스로 변환
-  factory QuestionData.fromMap(Map<String, dynamic> data) {
-    final category = data['category'] as String? ?? '';
-
-    switch (category) {
-      case 'Syntax':
-        return SyntaxQuestion.fromMap(data);
-      case 'Debugging':
-        return DebuggingQuestion.fromMap(data);
-      case 'Output':
-        return OutputQuestion.fromMap(data);
-      case 'Blank':
-        return BlankQuestion.fromMap(data);
-      case 'Sequencing':
-        return SequencingQuestion.fromMap(data); // SequencingQuestion로 매핑
-      default:
-        throw Exception('Unknown or missing category: $category');
-    }
+  /// `copyWith` 메서드 추가
+  QuestionData copyWith({
+    String? questionId,
+    String? title,
+    String? writer,
+    String? category,
+    String? questionType,
+    String? description,
+    Map<String, String>? codeSnippets,
+    String? hint,
+    String? answer,
+    List<String>? answerChoices,
+    String? tier,
+    List<String>? solvers,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return QuestionData(
+      questionId: questionId ?? this.questionId,
+      title: title ?? this.title,
+      writer: writer ?? this.writer,
+      category: category ?? this.category,
+      questionType: questionType ?? this.questionType,
+      description: description ?? this.description,
+      codeSnippets: codeSnippets ?? this.codeSnippets,
+      hint: hint ?? this.hint,
+      answer: answer ?? this.answer,
+      answerChoices: answerChoices ?? this.answerChoices,
+      tier: tier ?? this.tier,
+      solvers: solvers ?? this.solvers,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
   }
-
-  /// 서브클래스에서 구현해야 할 Map 변환
-  Map<String, dynamic> toMap();
 }

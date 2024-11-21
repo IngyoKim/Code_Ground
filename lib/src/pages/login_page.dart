@@ -51,13 +51,13 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 40),
-                  // 구글 로그인 버튼
+                  // 카카오 로그인 버튼
                   _buildLoginButton(
-                    label: 'Continue with Google',
-                    logoPath: 'assets/logo/Google_logo.png',
+                    label: 'Continue with Kakao',
+                    logoPath: 'assets/logo/KakaoTalk_logo.png',
                     onTap: () async {
                       Provider.of<LoginViewModel>(context, listen: false)
-                          .setLoginType(GoogleLogin());
+                          .setLoginType(KakaoLogin());
                       await tryLogin(
                         context: context,
                         loginAction: loginViewModel.login,
@@ -72,13 +72,14 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  // 카카오 로그인 버튼
+
+                  // 구글 로그인 버튼
                   _buildLoginButton(
-                    label: 'Continue with KAKAO',
-                    logoPath: 'assets/logo/KakaoTalk_logo.png',
+                    label: 'Continue with Google',
+                    logoPath: 'assets/logo/Google_logo.png',
                     onTap: () async {
                       Provider.of<LoginViewModel>(context, listen: false)
-                          .setLoginType(KakaoLogin());
+                          .setLoginType(GoogleLogin());
                       await tryLogin(
                         context: context,
                         loginAction: loginViewModel.login,

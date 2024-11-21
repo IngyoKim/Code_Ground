@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart'; // Toast 패키지 추가
 import 'package:provider/provider.dart';
 
-import 'package:code_ground/src/utils/add_question_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 
-import 'package:code_ground/src/services/database/datas/tier_data.dart'; // Tier 데이터 import
+import 'package:code_ground/src/services/database/datas/question_data.dart';
+import 'package:code_ground/src/services/database/datas/tier_data.dart';
+
 import 'package:code_ground/src/components/add_question_widgets/header/title_input.dart';
 import 'package:code_ground/src/components/add_question_widgets/header/description_input.dart';
 import 'package:code_ground/src/components/add_question_widgets/body/category_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/body/tier_input.dart'; // TierInput 추가
+import 'package:code_ground/src/components/add_question_widgets/body/tier_input.dart';
 import 'package:code_ground/src/components/add_question_widgets/footer/question_type_input.dart';
 import 'package:code_ground/src/components/add_question_widgets/body/language_input.dart';
 import 'package:code_ground/src/components/add_question_widgets/body/code_snippet_input.dart';
@@ -34,10 +36,10 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
   String _selectedCategory = 'Syntax';
   String _selectedType = 'Subjective';
   String _selectedLanguage = 'C';
-  Tier _selectedTier = tiers.first; // Tier 초기값
+  Tier _selectedTier = tiers.first;
   final _codeSnippets = <String, String>{};
-  final _answerChoices = <String>[]; // 객관식 답변 선택지
-  String? _selectedAnswer; // 선택된 답변 저장
+  final _answerChoices = <String>[];
+  String? _selectedAnswer;
 
   @override
   void dispose() {
@@ -51,77 +53,67 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
 
   Future<void> _submitQuestion() async {
     final user = Provider.of<UserViewModel>(context, listen: false).userData;
+    final questionViewModel =
+        Provider.of<QuestionViewModel>(context, listen: false);
+
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please log in to continue.')),
-      );
+      _showToast('Please log in to continue.');
       return;
     }
 
-    // Code Snippet 유효성 검사
     if (_codeSnippets.isEmpty ||
         !_codeSnippets.values.any((value) => value.isNotEmpty)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Please add at least one valid Code Snippet.')),
-      );
+      _showToast('Please add at least one valid Code Snippet.');
       return;
     }
 
-    // 객관식 답변 선택 유효성 검사
     if (_selectedType == 'Objective' && _selectedAnswer == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Please select an answer before submitting.')),
-      );
+      _showToast('Please select an answer before submitting.');
       return;
     }
 
     try {
-      if (_selectedCategory == 'Sequencing') {
-        final newCodeSnippets = <String, String>{};
-        int index = 0;
-        _codeSnippets.forEach((key, value) {
-          if (value.isNotEmpty) {
-            newCodeSnippets[index.toString()] = value;
-            index++;
-          }
-        });
-        _codeSnippets.clear();
-        _codeSnippets.addAll(newCodeSnippets);
-      }
-
-      final question = prepareAddQuestionData(
-        questionId: DateTime.now().millisecondsSinceEpoch.toString(),
-        writerUid: user.userId,
-        selectedCategory: _selectedCategory,
-        selectedType: _selectedType,
-        codeSnippets: _codeSnippets,
+      final questionData = QuestionData(
+        questionId: '', // ViewModel에서 자동 생성
         title: _titleController.text,
+        writer: user.userId,
+        category: _selectedCategory,
+        questionType: _selectedType,
         description: _descriptionController.text,
-        tier: _selectedTier, // Tier 이름 전달
-        hint: _hintController.text,
-        answerChoices: _selectedType == 'Objective' ? _answerChoices : null,
-        selectedAnswer: _selectedType == 'Objective' ? _selectedAnswer : null,
-        subjectiveAnswer: _selectedType == 'Subjective'
+        codeSnippets: _codeSnippets,
+        hint: _hintController.text.isNotEmpty
+            ? _hintController.text
+            : 'No hint provided',
+        answer: _selectedType == 'Subjective'
             ? _subjectiveAnswerController.text
-            : null,
+            : _selectedAnswer ?? '',
+        answerChoices: _selectedType == 'Objective' ? _answerChoices : [],
+        tier: _selectedTier.name,
+        solvers: [],
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
-      await Provider.of<QuestionViewModel>(context, listen: false)
-          .addQuestion(question);
+      await questionViewModel.addQuestion(questionData);
 
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Question added successfully.')),
-      );
-      if (mounted) Navigator.pop(context);
+      if (mounted) {
+        _showToast('Question added successfully.');
+        Navigator.pop(context);
+      }
     } catch (e) {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error occurred: $e')),
-      );
+      _showToast('Error occurred: $e');
     }
+  }
+
+  void _showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.black87,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
   @override
@@ -154,24 +146,17 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
           ),
           TierInput(
             selectedTier: _selectedTier,
-            onTierChanged: (value) {
-              setState(() {
-                _selectedTier = value!;
-              });
-            },
+            onTierChanged: (value) => setState(() => _selectedTier = value!),
           ),
           if (_selectedCategory == 'Syntax' || _selectedCategory == 'Debugging')
             QuestionTypeInput(
               selectedType: _selectedType,
-              onTypeChanged: (value) => setState(() {
-                _selectedType = value!;
-              }),
+              onTypeChanged: (value) => setState(() => _selectedType = value!),
             ),
           LanguageInput(
             selectedLanguage: _selectedLanguage,
-            onLanguageChanged: (value) {
-              setState(() => _selectedLanguage = value!);
-            },
+            onLanguageChanged: (value) =>
+                setState(() => _selectedLanguage = value!),
           ),
           CodeSnippetInput(
             category: _selectedCategory,
@@ -180,32 +165,14 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
             snippetController: _codeSnippetController,
             onAddSnippet: (key, snippet) {
               setState(() {
-                if (_selectedCategory == 'Syntax') {
-                  if (_codeSnippets.isNotEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Only one Code Snippet is allowed for Syntax.',
-                        ),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                    return;
-                  }
-                  _codeSnippets[key] = snippet;
-                } else if (_selectedCategory == 'Sequencing') {
-                  final index = _codeSnippets.length.toString();
-                  _codeSnippets[index] = snippet;
-                } else {
-                  _codeSnippets[key] = snippet;
+                if (_selectedCategory == 'Syntax' && _codeSnippets.isNotEmpty) {
+                  _showToast('Only one Code Snippet is allowed for Syntax.');
+                  return;
                 }
+                _codeSnippets[key] = snippet;
               });
             },
-            onDeleteSnippet: (key) {
-              setState(() {
-                _codeSnippets.remove(key);
-              });
-            },
+            onDeleteSnippet: (key) => setState(() => _codeSnippets.remove(key)),
           ),
           HintInput(hintController: _hintController),
           if (_selectedType == 'Subjective')

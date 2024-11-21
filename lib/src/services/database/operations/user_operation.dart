@@ -1,71 +1,82 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:code_ground/src/services/database/operations/database_service.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth 사용
 import 'package:code_ground/src/services/database/datas/user_data.dart';
 
+const basePath = 'Users';
+
 class UserOperation {
-  final DatabaseService _databaseService = DatabaseService();
-  final User? user = FirebaseAuth.instance.currentUser;
+  final DatabaseService _dbService = DatabaseService();
 
-  Future<void> writeUserData() async {
-    if (user == null) {
-      debugPrint("User not logged in.");
-      return;
-    }
-    String path = 'users/${user!.uid}';
-    debugPrint("Writing user data to $path");
-    await _databaseService.writeDB(
-      path,
-      {
-        'name': user?.displayName ?? '',
-        'email': user?.email ?? '',
-        'profileImageUrl': user?.photoURL ?? '',
-
-        /// Default empty or assign a default value
-        'nickname': '',
-
-        /// Default value, modify if needed
-        'isAdmin': false,
-      },
-    );
+  // Write user data
+  Future<void> writeUserData(UserData userData) async {
+    String path = '$basePath/${userData.userId}';
+    await _dbService.writeDB(path, userData.toJson());
   }
 
-  Future<UserData?> readUserData({String? uid}) async {
-    final userId = uid ?? user?.uid;
+  // Initialize user data if it doesn't exist
+  Future<void> initializeUserData() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      debugPrint("No user is currently logged in.");
+      return;
+    }
+
+    String path = '$basePath/${user.uid}';
+    final data = await _dbService.readDB(path);
+
+    // If user data doesn't exist, write default data
+    if (data == null) {
+      debugPrint("User data not found. Initializing default data.");
+      final defaultUserData = UserData(
+        userId: user.uid,
+        name: user.displayName ?? 'Guest',
+        email: user.email ?? '',
+        photoUrl: user.photoURL ?? '',
+        nickname: '', // Default empty or user-defined logic
+        isAdmin: false, // Default value
+      );
+
+      await writeUserData(defaultUserData);
+    } else {
+      debugPrint("User data already exists for userId: ${user.uid}");
+    }
+  }
+
+  // Read user data
+  Future<UserData?> readUserData([String? userId]) async {
+    // Use current logged-in user's UID if userId is null
+    userId ??= FirebaseAuth.instance.currentUser?.uid;
 
     if (userId == null) {
-      debugPrint("User not logged in and no UID provided.");
-      return null;
+      // No user is logged in
+      throw Exception('No user is currently logged in.');
     }
 
-    String path = 'users/$userId';
-    debugPrint("Reading user data from $path");
-
-    final data = await _databaseService.readDB(path);
-
+    String path = '$basePath/$userId';
+    final data = await _dbService.readDB(path);
     if (data != null) {
-      debugPrint("User data retrieved: $data");
-      return UserData(
-        userId: userId,
-        name: data['name'] ?? '',
-        email: data['email'] ?? '',
-        profileImageUrl: data['profileImageUrl'] ?? '',
-        nickname: data['nickname'] ?? '',
-        isAdmin: data['isAdmin'] ?? false,
-      );
+      return UserData.fromJson(Map<String, dynamic>.from(data));
     }
-
-    debugPrint("No data found for user with UID $userId.");
     return null;
   }
 
-  Future<void> updateUserData(Map<String, dynamic> updates) async {
-    if (user == null) {
-      debugPrint("User not logged in.");
-      return;
+  // Update user data
+  Future<void> updateUserData(
+      String userId, Map<String, dynamic> updates) async {
+    String path = '$basePath/$userId';
+    await _dbService.updateDB(path, updates);
+  }
+
+  // Fetch all user data (optional)
+  Future<List<UserData>> fetchAllUsers() async {
+    final data = await _dbService.readDB(basePath);
+    if (data != null) {
+      return data.entries.map((entry) {
+        return UserData.fromJson(Map<String, dynamic>.from(entry.value));
+      }).toList();
     }
-    String path = 'users/${user!.uid}';
-    debugPrint("Updating user data at $path with $updates");
-    await _databaseService.updateDB(path, updates);
+    return [];
   }
 }

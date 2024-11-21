@@ -16,8 +16,8 @@ class Tier {
   static Tier? getTierByName(String tierName) {
     try {
       return tiers.firstWhere((tier) => tier.name == tierName);
-    } catch (e) {
-      debugPrint("Tier not found for name: $tierName");
+    } catch (error) {
+      debugPrint("Tier not found for name: $error");
       return null;
     }
   }
