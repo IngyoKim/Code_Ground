@@ -1,34 +1,39 @@
 import 'package:flutter/material.dart';
 
-class AboutPage extends StatelessWidget {
+class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // 5명의 개발자 정보를 리스트로 관리
-    final List<Map<String, String>> developers = [
-      {
-        'name': '김인교',
-        'email': 'a58276976@gmail.com',
-      },
-      {
-        'name': '신지안',
-        'email': 'tlswldks12345@gmail.com',
-      },
-      {
-        'name': '장윤호',
-        'email': 'yunho2066@gmail.com',
-      },
-      {
-        'name': '전상민',
-        'email': 'jeonsm0404@gmail.com',
-      },
-      {
-        'name': '최희진',
-        'email': 'osisland2918@gmail.com',
-      },
-    ];
+  State<AboutPage> createState() => _AboutPageState();
+}
 
+class _AboutPageState extends State<AboutPage> {
+  // 5명의 개발자 정보를 리스트로 관리
+  final List<Map<String, String>> developers = [
+    {
+      'name': '김인교',
+      'email': 'a58276976@gmail.com',
+    },
+    {
+      'name': '신지안',
+      'email': 'tlswldks12345@gmail.com',
+    },
+    {
+      'name': '장윤호',
+      'email': 'yunho2066@gmail.com',
+    },
+    {
+      'name': '전상민',
+      'email': 'jeonsm0404@gmail.com',
+    },
+    {
+      'name': '최희진',
+      'email': 'osisland2918@gmail.com',
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('About'),
