@@ -5,12 +5,12 @@ import 'package:code_ground/src/utils/question_detail_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 
-import 'package:code_ground/src/components/question_detail_widget/question_header.dart';
-import 'package:code_ground/src/components/question_detail_widget/language_selector.dart';
-import 'package:code_ground/src/components/question_detail_widget/code_snippet.dart';
-import 'package:code_ground/src/components/question_detail_widget/subjective_submit.dart';
-import 'package:code_ground/src/components/question_detail_widget/objective_submit.dart';
-import 'package:code_ground/src/components/question_detail_widget/sequencing_submit.dart';
+import 'package:code_ground/src/components/question_detail_widget/contents/question_header.dart';
+import 'package:code_ground/src/components/question_detail_widget/contents/language_selector.dart';
+import 'package:code_ground/src/components/question_detail_widget/contents/code_snippet.dart';
+import 'package:code_ground/src/components/question_detail_widget/submit/subjective_submit.dart';
+import 'package:code_ground/src/components/question_detail_widget/submit/objective_submit.dart';
+import 'package:code_ground/src/components/question_detail_widget/submit/sequencing_submit.dart';
 
 class QuestionDetailPage extends StatefulWidget {
   const QuestionDetailPage({super.key});
@@ -23,40 +23,46 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
   final TextEditingController _answerController = TextEditingController();
   String? _selectedLanguage;
   String? _selectedAnswer;
-  bool _isLoading = true; // 로딩 상태 추가
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final questionViewModel =
-          Provider.of<QuestionViewModel>(context, listen: false);
-      final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-      final question = questionViewModel.selectedQuestion;
-
-      if (question != null) {
-        try {
-          // 로딩 시작
-          setState(() {
-            _isLoading = true;
-          });
-
-          // 데이터 로드
-          _selectedLanguage = question.codeSnippets.keys.isNotEmpty
-              ? question.codeSnippets.keys.first
-              : null; // 코드 스니펫의 첫 번째 언어로 초기화
-          await userViewModel.fetchUserData(uid: question.writer);
-        } finally {
-          // 로딩 종료
-          if (mounted) {
-            setState(() {
-              _isLoading = false;
-            });
-          }
-        }
-      }
+      await _initializePage();
     });
+  }
+
+  /// 페이지 초기화 로직
+  Future<void> _initializePage() async {
+    final questionViewModel =
+        Provider.of<QuestionViewModel>(context, listen: false);
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    final question = questionViewModel.selectedQuestion;
+
+    if (question == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    try {
+      setState(() {
+        _isLoading = true;
+        _selectedLanguage = question.codeSnippets.isNotEmpty
+            ? question.codeSnippets.keys.first
+            : null;
+      });
+
+      // 작성자 정보 가져오기
+      await userViewModel.fetchUserData(question.writer);
+    } catch (e) {
+      debugPrint('Error initializing QuestionDetailPage: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -71,7 +77,6 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
     final userViewModel = Provider.of<UserViewModel>(context);
     final question = questionViewModel.selectedQuestion;
 
-    // 로딩 중인 경우 로딩 화면 표시
     if (_isLoading) {
       return const Scaffold(
         body: Center(
@@ -80,7 +85,6 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       );
     }
 
-    // 질문 데이터가 없는 경우
     if (question == null) {
       return Scaffold(
         appBar: AppBar(
@@ -90,7 +94,8 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       );
     }
 
-    // 질문 데이터가 준비된 경우
+    final userData = userViewModel.userData;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(question.title),
@@ -99,20 +104,18 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // 제목 및 설명
-            if (userViewModel.userData != null)
-              questionHeader(question, userViewModel.userData!),
-            // 언어 선택 및 코드 스니펫 표시
+            if (userData != null) questionHeader(question, userData),
             if (question.category != 'Sequencing') ...[
-              languageSelector(
-                languages: question.codeSnippets.keys.toList(),
-                selectedLanguage: _selectedLanguage!,
-                onLanguageSelected: (language) {
-                  setState(() {
-                    _selectedLanguage = language;
-                  });
-                },
-              ),
+              if (question.codeSnippets.isNotEmpty)
+                languageSelector(
+                  languages: question.codeSnippets.keys.toList(),
+                  selectedLanguage: _selectedLanguage!,
+                  onLanguageSelected: (language) {
+                    setState(() {
+                      _selectedLanguage = language;
+                    });
+                  },
+                ),
               const SizedBox(height: 16),
               if (_selectedLanguage != null)
                 filterdCodeSnippets(
@@ -121,7 +124,6 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                 ),
             ],
             const SizedBox(height: 20),
-            // 답 입력 위젯
             if (question.questionType == 'Subjective')
               subjectiveSubmit(
                 context: context,
@@ -134,7 +136,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
             else if (question.questionType == 'Objective')
               objectiveSubmit(
                 context: context,
-                answerChoices: question.answerChoices ?? [],
+                answerChoices: question.answerChoices,
                 selectedAnswer: _selectedAnswer,
                 onAnswerSelected: (answer) {
                   setState(() {

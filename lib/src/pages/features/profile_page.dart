@@ -16,8 +16,11 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userViewModel = Provider.of<UserViewModel>(context);
-    final progressViewModel = Provider.of<ProgressViewModel>(context);
+    final userViewModel = context.watch<UserViewModel>();
+    final progressViewModel = context.watch<ProgressViewModel>();
+
+    final userData = userViewModel.userData;
+    final progressData = progressViewModel.progressData;
 
     final List<Map<String, dynamic>> learningMenuItems = [
       {
@@ -46,7 +49,6 @@ class ProfilePage extends StatelessWidget {
       },
     ];
 
-    /// Menu items for the profile page
     final List<Map<String, dynamic>> appMenuItems = [
       {
         'icon': Icons.settings,
@@ -114,16 +116,17 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
           child: Column(
             children: [
-              /// User profile card with logout button
+              /// User profile card
               Card(
                 elevation: 2,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: ListTile(
                     leading: ClipOval(
-                      child: userViewModel.userData?.profileImageUrl != null
+                      child: (userData?.photoUrl != null &&
+                              userData!.photoUrl.isNotEmpty)
                           ? Image.network(
-                              userViewModel.userData!.profileImageUrl,
+                              userData.photoUrl,
                               width: 50,
                               height: 50,
                               fit: BoxFit.cover,
@@ -135,13 +138,11 @@ class ProfilePage extends StatelessWidget {
                             ),
                     ),
                     title: Text(
-                      userViewModel.userData != null
-                          ? (userViewModel.userData!.nickname.isNotEmpty
-                              ? userViewModel.userData!.nickname
-                              : userViewModel.userData!.name)
-                          : 'Guest', // userData가 null일 경우 대체 텍스트
+                      userData?.nickname.isNotEmpty == true
+                          ? userData!.nickname
+                          : userData?.name ?? 'Guest',
                     ),
-                    subtitle: Text(userViewModel.userData?.name ?? ''),
+                    subtitle: Text(userData?.email ?? 'No email available'),
                     trailing: ElevatedButton(
                       onPressed: () {
                         showLogoutDialog(context);
@@ -152,7 +153,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
 
-              /// Progress card showing level, experience, tier, and score
+              /// Progress card
               Card(
                 elevation: 2,
                 child: Padding(
@@ -161,7 +162,7 @@ class ProfilePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "Level: ${progressViewModel.progressData?.level ?? 0}",
+                        "Level: ${progressData?.level ?? 0}",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -170,30 +171,20 @@ class ProfilePage extends StatelessWidget {
                       const SizedBox(height: 8.0),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20.0),
-                        child: TweenAnimationBuilder<double>(
-                          tween: Tween<double>(
-                            begin: 0.0,
-                            end: progressViewModel.progressData?.exp != null
-                                ? (progressViewModel.progressData!.exp / 100)
-                                : 0.0,
-                          ),
-                          duration:
-                              const Duration(milliseconds: 500), // 애니메이션 지속 시간
-                          builder: (context, value, child) {
-                            return LinearProgressIndicator(
-                              value: value, // 애니메이션 적용된 값
-                              backgroundColor: Colors.grey[300],
-                              valueColor: const AlwaysStoppedAnimation<Color>(
-                                  Colors.blue),
-                              minHeight: 8.0,
-                            );
-                          },
+                        child: LinearProgressIndicator(
+                          value: progressData?.exp != null
+                              ? (progressData!.exp / 100)
+                              : 0.0,
+                          backgroundColor: Colors.grey[300],
+                          valueColor:
+                              const AlwaysStoppedAnimation<Color>(Colors.blue),
+                          minHeight: 8.0,
                         ),
                       ),
                       const SizedBox(height: 8.0),
                       Text(
-                        progressViewModel.progressData?.exp != null
-                            ? "EXP: ${progressViewModel.progressData!.exp}/100"
+                        progressData != null
+                            ? "EXP: ${progressData.exp}/100"
                             : "EXP: 0/100",
                         style: const TextStyle(
                           fontSize: 14,
@@ -202,7 +193,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8.0),
                       Text(
-                        "Tier: ${progressViewModel.progressData?.tier ?? 'Bronze'} ${progressViewModel.progressData?.grade ?? 'V'}",
+                        "Tier: ${progressData?.tier ?? 'Bronze'} ${progressData?.grade ?? 'V'}",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -210,7 +201,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8.0),
                       Text(
-                        "Score: ${progressViewModel.progressData?.score ?? 0}",
+                        "Score: ${progressData?.score ?? 0}",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -221,6 +212,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
 
+              /// Learning menu items
               const Divider(
                 height: 50.0,
                 color: Colors.grey,
@@ -229,9 +221,10 @@ class ProfilePage extends StatelessWidget {
               ),
               Align(
                 alignment: Alignment.centerLeft,
-                child: const Text("Learning Data",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: const Text(
+                  "Learning Data",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
               const SizedBox(height: 10),
               ...learningMenuItems.map(
@@ -259,6 +252,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
 
+              /// Application menu items
               const Divider(
                 height: 50.0,
                 color: Colors.grey,
@@ -267,9 +261,10 @@ class ProfilePage extends StatelessWidget {
               ),
               Align(
                 alignment: Alignment.centerLeft,
-                child: const Text("Application Data",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: const Text(
+                  "Application Data",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
               const SizedBox(height: 10),
               ...appMenuItems.map(

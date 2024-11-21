@@ -1,145 +1,108 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:code_ground/src/services/database/operations/database_service.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
+import 'package:code_ground/src/services/database/operations/database_service.dart';
+
+const basePath = 'Questions';
 
 class QuestionOperation {
-  final DatabaseService _databaseService = DatabaseService();
-  final Map<String, int> _idCounters = {};
+  final DatabaseService _dbService = DatabaseService();
 
-  /// 카테고리에 따라 문제 번호의 접두사를 반환
-  String _getCategoryPrefix(String category) {
-    switch (category) {
-      case 'Syntax':
-        return '1';
-      case 'Debugging':
-        return '2';
-      case 'Output':
-        return '3';
-      case 'Blank':
-        return '4';
-      case 'Sequencing':
-        return '5';
-      default:
-        throw Exception("Unknown category: $category");
-    }
+  /// 카테고리 접두사 가져오기
+  String getPrefixFromCategory(String category) {
+    const categoryPrefixes = {
+      'syntax': '1',
+      'debugging': '2',
+      'output': '3',
+      'blank': '4',
+      'sequencing': '5',
+    };
+    return categoryPrefixes[category.toLowerCase()] ?? '0';
   }
 
-  /// 데이터베이스에서 현재 문제 번호 가져오기
-  Future<int> _fetchLastQuestionId(String category) async {
-    try {
-      final ref = _databaseService.database.ref('questions/$category');
-      final snapshot = await ref.orderByKey().limitToLast(1).get();
-
-      if (snapshot.exists) {
-        final lastKey = snapshot.children.first.key;
-        if (lastKey != null && lastKey.length > 1) {
-          // 문제 번호를 접두사 제거 후 숫자로 변환
-          final lastId = int.parse(lastKey.substring(1));
-          return lastId;
-        }
-      }
-    } catch (error) {
-      debugPrint('Error fetching last question ID: $error');
-    }
-    return 0; // 기본값: 데이터가 없으면 0 반환
-  }
-
-  /// 문제 번호 생성
-  Future<String> generateQuestionId(String category) async {
-    if (!_idCounters.containsKey(category)) {
-      _idCounters[category] = await _fetchLastQuestionId(category);
-    }
-
-    // 새로운 문제 번호 생성
-    _idCounters[category] = (_idCounters[category] ?? 0) + 1;
-
-    // 접두사와 5자리 문제 번호 생성
-    final prefix = _getCategoryPrefix(category);
-    final paddedId = _idCounters[category]!.toString().padLeft(5, '0');
-    final questionId = '$prefix$paddedId';
-    debugPrint('Generated questionId for category $category: $questionId');
-    return questionId;
-  }
-
-  /// QuestionData를 데이터베이스에 저장
+  /// 질문 데이터 저장
   Future<void> writeQuestionData(QuestionData questionData) async {
-    try {
-      final questionId = await generateQuestionId(questionData.category);
-      final path = 'questions/${questionData.category}/$questionId';
-
-      // 데이터 생성
-      final data = {
-        ...questionData.toMap(),
-        'questionId': questionId, // 문제 번호 추가
-        'createdAt': DateTime.now().toIso8601String(),
-      };
-
-      debugPrint('Writing question data to $path: $data');
-      await _databaseService.writeDB(path, data);
-      debugPrint('Successfully wrote question data to $path');
-    } catch (error) {
-      debugPrint('Error writing question data: $error');
-      rethrow;
+    if (questionData.questionId.isEmpty) {
+      questionData = await _generateQuestionId(questionData);
     }
+
+    final now = DateTime.now();
+    questionData = questionData.copyWith(
+      createdAt: questionData.createdAt.isAtSameMomentAs(DateTime(0))
+          ? now
+          : questionData.createdAt,
+      updatedAt: now,
+    );
+
+    final path =
+        '$basePath/${questionData.category.toLowerCase()}/${questionData.questionId}';
+    await _dbService.writeDB(path, questionData.toJson());
   }
 
-  /// QuestionData를 데이터베이스에서 읽기
+  /// 질문 ID 생성
+  Future<QuestionData> _generateQuestionId(QuestionData questionData) async {
+    final prefix = getPrefixFromCategory(questionData.category);
+    final lastNumber = await _getLastNumberForCategory(questionData.category);
+
+    final newNumber = (lastNumber + 1).toString().padLeft(5, '0'); // 5자리로 패딩
+    final newId = '$prefix$newNumber';
+
+    return questionData.copyWith(questionId: newId);
+  }
+
+  /// 카테고리별 마지막 번호 가져오기
+  Future<int> _getLastNumberForCategory(String category) async {
+    final questions = await fetchQuestionsByCategory(category);
+    if (questions.isEmpty) return 0;
+
+    final lastNumber = questions
+        .map((q) => int.tryParse(q.questionId.substring(1)) ?? 0)
+        .reduce((a, b) => a > b ? a : b);
+
+    return lastNumber;
+  }
+
+  /// 특정 카테고리의 질문 가져오기
+  Future<List<QuestionData>> fetchQuestionsByCategory(String category) async {
+    final path = '$basePath/${category.toLowerCase()}';
+    final data = await _dbService.readDB(path);
+
+    if (data == null) return [];
+    return data.entries
+        .map((entry) =>
+            QuestionData.fromJson(Map<String, dynamic>.from(entry.value)))
+        .toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  }
+
+  /// 모든 질문 가져오기
+  Future<List<QuestionData>> fetchAllQuestions() async {
+    final categories = ['syntax', 'debugging', 'output', 'blank', 'sequencing'];
+    final allQuestions = <QuestionData>[];
+
+    for (final category in categories) {
+      final categoryQuestions = await fetchQuestionsByCategory(category);
+      allQuestions.addAll(categoryQuestions);
+    }
+
+    allQuestions.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return allQuestions;
+  }
+
+  /// 특정 질문 읽기
   Future<QuestionData?> readQuestionData(
       String category, String questionId) async {
-    try {
-      final path = 'questions/$category/$questionId';
-      debugPrint('Reading question data from $path');
-      final data = await _databaseService.readDB(path);
-
-      if (data is Map<String, dynamic>) {
-        debugPrint('Successfully read question data: $data');
-        return QuestionData.fromMap(data); // factory 사용
-      } else {
-        debugPrint(
-          "Error: Expected a Map<String, dynamic> but got ${data.runtimeType}",
-        );
-        return null;
-      }
-    } catch (error) {
-      debugPrint('Error reading question data: $error');
-      return null;
-    }
+    final path = '$basePath/${category.toLowerCase()}/$questionId';
+    final data = await _dbService.readDB(path);
+    return data != null
+        ? QuestionData.fromJson(Map<String, dynamic>.from(data))
+        : null;
   }
 
-  /// QuestionData를 업데이트
+  /// 질문 데이터 업데이트
   Future<void> updateQuestionData(
       String category, String questionId, Map<String, dynamic> updates) async {
-    try {
-      final path = 'questions/$category/$questionId';
-      debugPrint('Updating question data at $path with $updates');
-      await _databaseService.updateDB(path, updates);
-      debugPrint('Successfully updated question data at $path');
-    } catch (error) {
-      debugPrint('Error updating question data: $error');
-      rethrow;
-    }
-  }
+    updates['updatedAt'] = DateTime.now().toIso8601String();
 
-  /// 최신 문제 가져오기
-  Future<List<QuestionData>> fetchRecentQuestions(String category,
-      {int limit = 10, String? startAfter}) async {
-    final ref = _databaseService.database.ref('questions/$category');
-    Query query = ref.orderByChild('createdAt').limitToFirst(limit);
-
-    if (startAfter != null) {
-      query = query.startAfter([startAfter]);
-    }
-
-    final snapshot = await query.get();
-    if (snapshot.exists) {
-      final data = snapshot.value as Map<dynamic, dynamic>;
-      return data.entries.map((entry) {
-        final questionMap = Map<String, dynamic>.from(entry.value as Map);
-        debugPrint(questionMap.toString());
-        return QuestionData.fromMap(questionMap); // factory 사용
-      }).toList();
-    }
-    return [];
+    final path = '$basePath/${category.toLowerCase()}/$questionId';
+    await _dbService.updateDB(path, updates);
   }
 }

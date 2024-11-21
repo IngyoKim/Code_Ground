@@ -6,13 +6,13 @@ import 'package:code_ground/src/services/logins/google_login.dart';
 class LoginPreference {
   static const String loginTypeKey = 'loginType';
 
-  /// 로그인 타입을 SharedPreferences에 저장
+  /// Save login type in SharedPreferences
   Future<void> setLoginType(SocialLogin socialLogin) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(loginTypeKey, socialLogin.loginType);
   }
 
-  /// SharedPreferences에서 로그인 타입을 불러와 SocialLogin 객체로 반환
+  /// Load login type from SharedPreferences and return as a SocialLogin object
   Future<SocialLogin?> getLoginType() async {
     final prefs = await SharedPreferences.getInstance();
     final loginTypeString = prefs.getString(loginTypeKey);
@@ -27,9 +27,11 @@ class LoginPreference {
     }
   }
 
-  /// SharedPreferences 전체 초기화
+  /// Clear all data in SharedPreferences
   Future<void> clearPreferences() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); // 전체 초기화
+
+    /// Clear all data
+    await prefs.clear();
   }
 }

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:code_ground/src/pages/questions/question_detail_page.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
-import 'package:code_ground/src/view_models/progress_view_model.dart';
 import 'package:code_ground/src/utils/question_list_utils.dart';
 
 class QuestionListPage extends StatefulWidget {
@@ -15,44 +14,38 @@ class QuestionListPage extends StatefulWidget {
 }
 
 class _QuestionListPageState extends State<QuestionListPage> {
+  final ScrollController _scrollController = ScrollController();
   final QuestionListUtils _listUtils = QuestionListUtils();
-  late final ScrollController _scrollController = ScrollController()
-    ..addListener(() {
-      _listUtils.handleScroll(
-        scrollController: _scrollController,
-        fetchNextPage: () {
-          final selectedCategory =
-              Provider.of<CategoryViewModel>(context, listen: false)
-                  .selectedCategory;
-          Provider.of<QuestionViewModel>(context, listen: false)
-              .fetchQuestions(selectedCategory);
-        },
-        isLoading:
-            Provider.of<QuestionViewModel>(context, listen: false).isLoading,
-      );
-    });
+
   @override
   void initState() {
     super.initState();
 
-    debugPrint('QuestionListPage initialized.');
+    // 초기 데이터 로드
+    final selectedCategory =
+        Provider.of<CategoryViewModel>(context, listen: false).selectedCategory;
+    _loadQuestions(selectedCategory);
 
-    Future.microtask(() {
-      final selectedCategory =
-          // ignore: use_build_context_synchronously
-          Provider.of<CategoryViewModel>(context, listen: false)
-              .selectedCategory;
-
-      debugPrint('Selected category: $selectedCategory');
-
+    // 스크롤 이벤트 추가
+    _scrollController.addListener(() {
       final questionViewModel =
-          // ignore: use_build_context_synchronously
           Provider.of<QuestionViewModel>(context, listen: false);
+      final categoryQuestions =
+          questionViewModel.categoryQuestions[selectedCategory] ?? [];
 
-      debugPrint('Fetching questions from initState.');
-      questionViewModel.clearQuestions();
-      questionViewModel.fetchQuestions(selectedCategory);
+      _listUtils.handleScroll(
+        scrollController: _scrollController,
+        fetchNextPage: () => _loadQuestions(selectedCategory),
+        isLoading: categoryQuestions.isEmpty,
+      );
     });
+  }
+
+  Future<void> _loadQuestions(String category) async {
+    final questionViewModel =
+        Provider.of<QuestionViewModel>(context, listen: false);
+    await questionViewModel.fetchQuestionsByCategory(category);
+    setState(() => _listUtils.nextPage());
   }
 
   @override
@@ -63,34 +56,90 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final questionViewModel = Provider.of<QuestionViewModel>(context);
-    final progressViewModel = Provider.of<ProgressViewModel>(context);
+    final questionViewModel = context.watch<QuestionViewModel>();
+    final selectedCategory =
+        Provider.of<CategoryViewModel>(context).selectedCategory;
+    final categoryQuestions =
+        questionViewModel.categoryQuestions[selectedCategory] ?? [];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Questions')),
-      body: ListView.builder(
-        controller: _scrollController,
-        itemCount: questionViewModel.questions.length,
-        itemBuilder: (context, index) {
-          final question = questionViewModel.questions[index];
-          final questionState = progressViewModel
-              .progressData?.questionState[question.questionId];
-
-          return _listUtils.buildQuestionTile(
-            question: question,
-            questionState: questionState,
-            onTap: () {
-              questionViewModel.selectQuestion(question);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const QuestionDetailPage(),
-                ),
-              );
-            },
-          );
-        },
+      appBar: AppBar(
+        title: const Text('Questions'),
+        backgroundColor: Colors.black,
       ),
+      body: categoryQuestions.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16.0),
+              itemCount: categoryQuestions.length,
+              itemBuilder: (context, index) {
+                final question = categoryQuestions[index];
+                return Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.only(bottom: 16.0),
+                  child: InkWell(
+                    onTap: () {
+                      // 선택한 질문 설정
+                      questionViewModel.setSelectedQuestion(question);
+
+                      // 질문 상세 페이지로 이동
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const QuestionDetailPage(),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            question.title,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Row(
+                            children: [
+                              Text(
+                                'Category: ${question.category}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              const Spacer(),
+                              Text(
+                                'Difficulty: ${question.tier}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            question.description,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
 import 'package:code_ground/src/pages/questions/question_list_page.dart';
+import 'package:code_ground/src/pages/questions/add_question_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -10,7 +12,7 @@ class HomePage extends StatelessWidget {
     {'name': 'Syntax', 'icon': Icons.code},
     {'name': 'Debugging', 'icon': Icons.bug_report},
     {'name': 'Output', 'icon': Icons.print},
-    {'name': 'Blank', 'icon': Icons.pending_actions},
+    {'name': 'Blank', 'icon': Icons.edit},
     {'name': 'Sequencing', 'icon': Icons.format_list_numbered},
   ];
 
@@ -34,9 +36,9 @@ class HomePage extends StatelessWidget {
                     height: 80,
                     fit: BoxFit.contain,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 20),
                   const Text(
-                    'CODEGROUND',
+                    'CODE GROUND',
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -49,14 +51,43 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 20),
 
             // "Select a Category" - Fixed position
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'Select a Category',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w600,
-                ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: <Widget>[
+                  const Text(
+                    'Select a Category',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(),
+                  ),
+                  Consumer<UserViewModel>(
+                    builder: (context, userViewModel, child) {
+                      if (userViewModel.userData?.isAdmin ?? false) {
+                        return IconButton(
+                          icon: const Icon(
+                            Icons.add_rounded,
+                            fill: 1,
+                            size: 25,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AddQuestionPage(),
+                              ),
+                            );
+                          },
+                        );
+                      }
+                      return Container();
+                    },
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 25),

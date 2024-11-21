@@ -1,10 +1,11 @@
-import 'package:code_ground/src/pages/features/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/pages/features/quiz_page.dart';
+import 'package:code_ground/src/pages/features/home_page.dart';
 import 'package:code_ground/src/pages/features/profile_page.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
+import 'package:code_ground/src/view_models/progress_view_model.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -23,6 +24,8 @@ class _MainPageState extends State<MainPage>
     _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserViewModel>(context, listen: false).fetchUserData();
+      Provider.of<ProgressViewModel>(context, listen: false)
+          .fetchProgressData();
     });
   }
 
@@ -56,18 +59,21 @@ class _MainPageState extends State<MainPage>
                 Icons.group,
                 size: 24,
               ),
+              text: "Social",
             ),
             Tab(
               icon: Icon(
                 Icons.home,
                 size: 24,
               ),
+              text: "Home",
             ),
             Tab(
               icon: Icon(
                 Icons.person,
                 size: 24,
               ),
+              text: "Profile",
             ),
           ],
         ),
