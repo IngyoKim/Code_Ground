@@ -55,7 +55,12 @@ class ProfilePage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const SettingPage(),
+              builder: (context) => SettingPage(
+                nickname:
+                    userViewModel.userData?.nickname ?? 'Guest', //이부분 확인해야함.
+                isAdmin: userViewModel.userData?.isAdmin ?? false,
+                initialNickname: '',
+              ),
             ),
           );
         },
