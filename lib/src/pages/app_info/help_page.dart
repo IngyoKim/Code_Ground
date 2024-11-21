@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
-class HelpPage extends StatelessWidget {
+class HelpPage extends StatefulWidget {
   const HelpPage({super.key});
 
+  @override
+  State<HelpPage> createState() => _HelpPageState();
+}
+
+class _HelpPageState extends State<HelpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +36,6 @@ class HelpPage extends StatelessWidget {
               subtitle: 'Learn how to use our app effectively with these tips.',
               onTap: () {
                 // 앱 사용법 페이지로 이동
-                // 예시로 다른 페이지로 이동하려면 Navigator.push() 사용
                 showDialog(
                   context: context,
                   builder: (_) => const AlertDialog(
