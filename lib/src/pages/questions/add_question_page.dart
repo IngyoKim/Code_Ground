@@ -52,7 +52,8 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
   }
 
   Future<void> _submitQuestion() async {
-    final user = Provider.of<UserViewModel>(context, listen: false).userData;
+    final user =
+        Provider.of<UserViewModel>(context, listen: false).currentUserData;
     final questionViewModel =
         Provider.of<QuestionViewModel>(context, listen: false);
 
@@ -87,7 +88,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         answer: _selectedType == 'Subjective'
             ? _subjectiveAnswerController.text
             : _selectedAnswer ?? '',
-        answerChoices: _selectedType == 'Objective' ? _answerChoices : [],
+        answerList: _selectedType == 'Objective' ? _answerChoices : [],
         tier: _selectedTier.name,
         solvers: [],
         createdAt: DateTime.now(),

@@ -8,7 +8,7 @@ class QuestionData {
   final Map<String, String> codeSnippets;
   final String hint;
   final String answer;
-  final List<String> answerChoices;
+  final List<String>? answerList;
   final String tier;
   final List<String> solvers;
   final DateTime createdAt;
@@ -24,7 +24,7 @@ class QuestionData {
     required this.codeSnippets,
     required this.hint,
     required this.answer,
-    required this.answerChoices,
+    required this.answerList,
     required this.tier,
     required this.solvers,
     required this.createdAt,
@@ -41,8 +41,9 @@ class QuestionData {
       description: json['description'] ?? '',
       codeSnippets: Map<String, String>.from(json['codeSnippets'] ?? {}),
       hint: json['hint'] ?? 'No hint available',
-      answer: json['answer'] ?? '',
-      answerChoices: List<String>.from(json['answerChoices'] ?? []),
+      answer: json['answer'] ??
+          Map<String, String>.from(json['codeSnippets'] ?? {}).keys,
+      answerList: List<String>.from(json['answerList'] ?? []),
       tier: json['tier'] ?? 'Bronze',
       solvers: List<String>.from(json['solvers'] ?? []),
       createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
@@ -61,7 +62,7 @@ class QuestionData {
       'codeSnippets': codeSnippets,
       'hint': hint,
       'answer': answer,
-      'answerChoices': answerChoices,
+      'answerList': answerList,
       'tier': tier,
       'solvers': solvers,
       'createdAt': createdAt.toIso8601String(),
@@ -96,7 +97,7 @@ class QuestionData {
       codeSnippets: codeSnippets ?? this.codeSnippets,
       hint: hint ?? this.hint,
       answer: answer ?? this.answer,
-      answerChoices: answerChoices ?? this.answerChoices,
+      answerList: answerList,
       tier: tier ?? this.tier,
       solvers: solvers ?? this.solvers,
       createdAt: createdAt ?? this.createdAt,

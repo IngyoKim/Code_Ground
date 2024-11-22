@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CodeSnippetInput extends StatelessWidget {
-  final String category; // "Syntax", "Sequencing", 기타
+  final String category;
   final String selectedLanguage;
   final Map<String, String> codeSnippets;
   final TextEditingController snippetController;
@@ -38,7 +38,7 @@ class CodeSnippetInput extends StatelessWidget {
             if (snippet.isNotEmpty) {
               if (category == 'Sequencing') {
                 // Sequencing: 키 값 자동 생성
-                final key = codeSnippets.length.toString();
+                final key = 'list${codeSnippets.length.toString()}';
                 onAddSnippet(key, snippet);
               } else {
                 if (codeSnippets.containsKey(selectedLanguage)) {

@@ -5,28 +5,27 @@ import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth 사용
 
 class UserViewModel with ChangeNotifier {
   final UserOperation _userOperation = UserOperation();
-  UserData? _userData;
+  UserData? _currentUserData;
+  UserData? _otherUserData;
 
-  UserData? get userData => _userData;
+  UserData? get currentUserData => _currentUserData;
+  UserData? get otherUserData => _otherUserData;
 
-  /// Fetch user data for a specific user or the current user if userId is null
-  Future<void> fetchUserData([String? userId]) async {
+  /// 현재 로그인된 유저의 데이터 가져오기
+  Future<void> fetchCurrentUserData() async {
     try {
-      // 현재 로그인된 유저의 ID를 가져옴
-      final currentUserId = userId ?? FirebaseAuth.instance.currentUser?.uid;
+      final currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
       if (currentUserId == null) {
-        throw Exception('User ID is null and no user is logged in.');
+        throw Exception('No user is currently logged in.');
       }
 
-      // 데이터베이스에서 유저 데이터 읽기
-      _userData = await _userOperation.readUserData(currentUserId);
+      _currentUserData = await _userOperation.readUserData(currentUserId);
 
-      // 유저 데이터가 없으면 초기화
-      if (_userData == null) {
+      if (_currentUserData == null) {
         final User? firebaseUser = FirebaseAuth.instance.currentUser;
 
-        _userData = UserData(
+        _currentUserData = UserData(
           userId: currentUserId,
           name: firebaseUser?.displayName ?? 'Guest',
           email: firebaseUser?.email ?? '',
@@ -35,47 +34,31 @@ class UserViewModel with ChangeNotifier {
           isAdmin: false,
         );
 
-        await _userOperation.writeUserData(_userData!);
+        await _userOperation.writeUserData(_currentUserData!);
       }
 
       notifyListeners();
     } catch (e) {
-      debugPrint('Error fetching user data: $e');
-      _userData = null;
+      debugPrint('Error fetching current user data: $e');
+      _currentUserData = null;
       notifyListeners();
     }
   }
 
-  /// Save user data
-  Future<void> saveUserData(UserData userData) async {
+  /// 특정 ID의 유저 데이터 가져오기 (다른 유저)
+  Future<void> fetchOtherUserData(String userId) async {
     try {
-      await _userOperation.writeUserData(userData);
-      _userData = userData;
+      _otherUserData = await _userOperation.readUserData(userId);
       notifyListeners();
     } catch (e) {
-      debugPrint('Error saving user data: $e');
+      debugPrint('Error fetching other user data: $e');
+      _otherUserData = null;
     }
   }
 
-  /// Update user data for a specific user or the current user if userId is null
-  Future<void> updateUserData(Map<String, dynamic> updates,
-      [String? userId]) async {
-    try {
-      // 현재 로그인된 유저의 ID를 가져옴
-      final currentUserId = userId ?? FirebaseAuth.instance.currentUser?.uid;
-
-      if (currentUserId == null) {
-        throw Exception('User ID is null and no user is logged in.');
-      }
-
-      // 데이터 업데이트
-      await _userOperation.updateUserData(currentUserId, updates);
-
-      // 업데이트된 데이터 다시 가져오기
-      _userData = await _userOperation.readUserData(currentUserId);
-      notifyListeners();
-    } catch (e) {
-      debugPrint('Error updating user data: $e');
-    }
+  /// 다른 유저 데이터 초기화
+  void clearOtherUserData() {
+    _otherUserData = null;
+    notifyListeners();
   }
 }

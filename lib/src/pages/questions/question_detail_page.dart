@@ -54,8 +54,8 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
             : null;
       });
 
-      // 작성자 정보 가져오기
-      await userViewModel.fetchUserData(question.writer);
+      // 다른 사용자의 정보 가져오기
+      await userViewModel.fetchOtherUserData(question.writer);
     } catch (e) {
       debugPrint('Error initializing QuestionDetailPage: $e');
     } finally {
@@ -94,7 +94,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       );
     }
 
-    final userData = userViewModel.userData;
+    final userData = userViewModel.otherUserData;
 
     return Scaffold(
       appBar: AppBar(
@@ -136,7 +136,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
             else if (question.questionType == 'Objective')
               objectiveSubmit(
                 context: context,
-                answerChoices: question.answerChoices,
+                answerList: question.answerList!,
                 selectedAnswer: _selectedAnswer,
                 onAnswerSelected: (answer) {
                   setState(() {

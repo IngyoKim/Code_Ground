@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
                   ),
                   Consumer<UserViewModel>(
                     builder: (context, userViewModel, child) {
-                      if (userViewModel.userData?.isAdmin ?? false) {
+                      if (userViewModel.currentUserData?.isAdmin ?? false) {
                         return IconButton(
                           icon: const Icon(
                             Icons.add_rounded,

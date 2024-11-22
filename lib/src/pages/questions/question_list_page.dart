@@ -77,7 +77,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
                 final question = categoryQuestions[index];
 
                 // Sequencing 카테고리의 answer 처리
-                final hasAnswer = (question.answer.isNotEmpty);
+                final hasAnswer = question.answer.isNotEmpty;
 
                 return Card(
                   elevation: 4,
@@ -137,7 +137,8 @@ class _QuestionListPageState extends State<QuestionListPage> {
                               color: Colors.black87,
                             ),
                           ),
-                          if (question.category == 'Sequencing' && !hasAnswer)
+                          if (question.questionType == 'Sequencing' &&
+                              !hasAnswer)
                             const Padding(
                               padding: EdgeInsets.only(top: 8.0),
                               child: Text(

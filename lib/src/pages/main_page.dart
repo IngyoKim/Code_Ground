@@ -23,7 +23,7 @@ class _MainPageState extends State<MainPage>
     super.initState();
     _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<UserViewModel>(context, listen: false).fetchUserData();
+      Provider.of<UserViewModel>(context, listen: false).fetchCurrentUserData();
       Provider.of<ProgressViewModel>(context, listen: false)
           .fetchProgressData();
     });

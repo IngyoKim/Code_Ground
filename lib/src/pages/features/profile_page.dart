@@ -19,7 +19,7 @@ class ProfilePage extends StatelessWidget {
     final userViewModel = context.watch<UserViewModel>();
     final progressViewModel = context.watch<ProgressViewModel>();
 
-    final userData = userViewModel.userData;
+    final userData = userViewModel.currentUserData;
     final progressData = progressViewModel.progressData;
 
     final List<Map<String, dynamic>> learningMenuItems = [
