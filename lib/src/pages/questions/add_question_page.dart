@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
@@ -18,6 +17,8 @@ import 'package:code_ground/src/components/add_question_widgets/body/code_snippe
 import 'package:code_ground/src/components/add_question_widgets/footer/subjective_input.dart';
 import 'package:code_ground/src/components/add_question_widgets/footer/objective_answer_input.dart';
 import 'package:code_ground/src/components/add_question_widgets/body/hint_input.dart';
+
+import 'package:code_ground/src/utils/toast_message.dart'; // ToastMessage 추가
 
 class AddQuestionPage extends StatefulWidget {
   const AddQuestionPage({super.key});
@@ -58,18 +59,18 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         Provider.of<QuestionViewModel>(context, listen: false);
 
     if (user == null) {
-      _showToast('Please log in to continue.');
+      ToastMessage.show('Please log in to continue.');
       return;
     }
 
     if (_codeSnippets.isEmpty ||
         !_codeSnippets.values.any((value) => value.isNotEmpty)) {
-      _showToast('Please add at least one valid Code Snippet.');
+      ToastMessage.show('Please add at least one valid Code Snippet.');
       return;
     }
 
     if (_selectedType == 'Objective' && _selectedAnswer == null) {
-      _showToast('Please select an answer before submitting.');
+      ToastMessage.show('Please select an answer before submitting.');
       return;
     }
 
@@ -101,23 +102,12 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
       await questionViewModel.addQuestion(questionData);
 
       if (mounted) {
-        _showToast('Question added successfully.');
+        ToastMessage.show('Question added successfully.');
         Navigator.pop(context);
       }
-    } catch (e) {
-      _showToast('Error occurred: $e');
+    } catch (error) {
+      ToastMessage.show('Error occurred: $error');
     }
-  }
-
-  void _showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.black87,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
   }
 
   @override
@@ -170,11 +160,11 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
             onAddSnippet: (key, snippet) {
               setState(() {
                 if (_selectedCategory == 'Syntax' && _codeSnippets.isNotEmpty) {
-                  _showToast('Only one Code Snippet is allowed for Syntax.');
+                  ToastMessage.show(
+                      'Only one Code Snippet is allowed for Syntax.');
                   return;
                 }
 
-                // Sequencing의 경우 인덱스 키로 저장
                 if (_selectedCategory == 'Sequencing') {
                   final indexKey = _codeSnippets.length.toString();
                   _codeSnippets[indexKey] = snippet;

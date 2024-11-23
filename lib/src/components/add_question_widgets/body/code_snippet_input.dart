@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:code_ground/src/utils/toast_message.dart';
 
 class CodeSnippetInput extends StatelessWidget {
   final String category;
@@ -42,13 +43,8 @@ class CodeSnippetInput extends StatelessWidget {
                 onAddSnippet(key, snippet);
               } else {
                 if (codeSnippets.containsKey(selectedLanguage)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'A snippet for "$selectedLanguage" is already added.',
-                      ),
-                      duration: const Duration(seconds: 2),
-                    ),
+                  ToastMessage.show(
+                    'A snippet for "$selectedLanguage" is already added.',
                   );
                   return;
                 }
@@ -56,12 +52,7 @@ class CodeSnippetInput extends StatelessWidget {
               }
               snippetController.clear();
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Snippet cannot be empty.'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
+              ToastMessage.show('Snippet cannot be empty.');
             }
           },
           child: const Text('Add Snippet'),
@@ -75,7 +66,7 @@ class CodeSnippetInput extends StatelessWidget {
           const SizedBox(height: 8),
           ...codeSnippets.entries.map(
             (entry) => ListTile(
-              title: Text('Step: ${entry.key}'),
+              title: Text(entry.key),
               subtitle: Text(entry.value),
               trailing: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),

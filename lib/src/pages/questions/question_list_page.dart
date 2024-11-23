@@ -18,7 +18,7 @@ class QuestionListPage extends StatefulWidget {
 }
 
 class _QuestionListPageState extends State<QuestionListPage> {
-  late String _selectedCategory;
+  late String _categoryName;
   late PagingController<QuestionData> _pagingController;
   late QuestionListUtil<QuestionData> _listUtil;
   final ScrollController _scrollController = ScrollController();
@@ -33,17 +33,19 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
   /// 페이지 초기화
   void _initializePage() {
-    _selectedCategory =
-        Provider.of<CategoryViewModel>(context, listen: false).selectedCategory;
+    final categoryViewModel =
+        Provider.of<CategoryViewModel>(context, listen: false);
+
+    _categoryName = categoryViewModel.selectedCategory; // 카테고리 이름 설정
 
     Provider.of<QuestionViewModel>(context, listen: false)
-        .resetCategoryState(_selectedCategory);
+        .resetCategoryState(_categoryName);
 
     _pagingController = PagingController<QuestionData>(
       fetchData: (page, pageSize) async {
         return await Provider.of<QuestionViewModel>(context, listen: false)
             .fetchQuestionsByCategoryPaged(
-          category: _selectedCategory,
+          category: _categoryName,
           page: page,
           pageSize: pageSize,
         );
@@ -53,10 +55,10 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
     _listUtil = QuestionListUtil<QuestionData>();
     _resetPageState();
-    _loadInitialData(); // 초기 데이터 로드
+    _loadInitialData();
 
     _scrollController.addListener(() {
-      if (_isInitialLoading) return; // 초기 로딩 중일 때 추가 요청 차단
+      if (_isInitialLoading) return; // 초기 로딩 중일 때 추가 fetch 차단
       if (!_pagingController.isFetching && _pagingController.hasMoreData) {
         ScrollHandler.handleScroll<QuestionData>(
           scrollController: _scrollController,
@@ -114,13 +116,12 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Questions'),
-        backgroundColor: Colors.black,
+        title: Text(_categoryName), // 카테고리 이름 표시
       ),
       body: ListView.builder(
         controller: _scrollController,
         padding: const EdgeInsets.all(16.0),
-        itemCount: _listUtil.items.length + 1, // +1 for LoadingIndicator
+        itemCount: _listUtil.items.length + 1,
         itemBuilder: (context, index) {
           if (index == _listUtil.items.length) {
             return LoadingIndicator(isFetching: isLoading);

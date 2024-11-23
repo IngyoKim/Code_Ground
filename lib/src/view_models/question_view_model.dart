@@ -74,7 +74,7 @@ class QuestionViewModel with ChangeNotifier {
             '[fetchQuestionsByCategoryPaged] No more questions available.');
         _hasMoreData = false;
       } else {
-        _hasMoreData = true; // 데이터가 충분하면 다시 true로 설정
+        _hasMoreData = true;
       }
 
       _categoryQuestions[category]!.addAll(questions);

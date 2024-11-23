@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:code_ground/src/utils/toast_message.dart';
 import 'package:code_ground/src/utils/question_detail_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
@@ -142,10 +143,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                       },
                       onSubmit: () {
                         if (_selectedAnswer == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Please select an answer.')),
-                          );
+                          ToastMessage.show('Please select an answer.');
                           return;
                         }
                         final isCorrect =
