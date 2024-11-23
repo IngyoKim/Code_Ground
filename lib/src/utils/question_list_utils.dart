@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'package:code_ground/src/utils/paging_controller.dart';
 
 class QuestionListUtil<T> {
   final List<T> _visibleItems = [];
@@ -33,5 +33,22 @@ class QuestionListUtil<T> {
   void reset() {
     _visibleItems.clear();
     _isAdding = false;
+  }
+
+  /// 페이징 상태 초기화
+  void resetPagingState(PagingController<T> pagingController) {
+    pagingController.reset();
+    reset();
+  }
+
+  /// 다음 페이지 로드 및 아이템 추가
+  Future<void> loadNextPageAndAddItems({
+    required PagingController<T> pagingController,
+    required void Function() refreshCallback,
+  }) async {
+    if (pagingController.isFetching) return;
+
+    await pagingController.loadNextPage();
+    await addItemsGradually(pagingController.items, refreshCallback);
   }
 }

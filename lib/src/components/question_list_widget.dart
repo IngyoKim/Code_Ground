@@ -60,12 +60,13 @@ class QuestionListWidget extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          question.codeSnippets.keys.join(', '),
+          question.languages.join(', '),
           style: const TextStyle(
             color: Colors.white70,
             fontSize: 14,
           ),
         ),
+        trailing: Text(question.tier),
         onTap: onTap,
       ),
     );

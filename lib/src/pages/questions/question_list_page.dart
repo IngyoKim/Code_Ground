@@ -1,14 +1,17 @@
-import 'package:code_ground/src/components/loading_indicator.dart';
-import 'package:code_ground/src/components/question_list_widget.dart';
-import 'package:code_ground/src/pages/questions/question_detail_page.dart';
-import 'package:code_ground/src/services/database/datas/question_data.dart';
-import 'package:code_ground/src/utils/paging_controller.dart';
-import 'package:code_ground/src/utils/question_list_utils.dart';
-import 'package:code_ground/src/utils/scroll_handler.dart';
-import 'package:code_ground/src/view_models/category_view_model.dart';
-import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'package:code_ground/src/utils/scroll_handler.dart';
+import 'package:code_ground/src/utils/paging_controller.dart';
+import 'package:code_ground/src/utils/question_list_utils.dart';
+import 'package:code_ground/src/components/loading_indicator.dart';
+import 'package:code_ground/src/components/question_list_widget.dart';
+
+import 'package:code_ground/src/pages/questions/question_detail_page.dart';
+import 'package:code_ground/src/services/database/datas/question_data.dart';
+
+import 'package:code_ground/src/view_models/category_view_model.dart';
+import 'package:code_ground/src/view_models/question_view_model.dart';
 
 class QuestionListPage extends StatefulWidget {
   const QuestionListPage({super.key});
@@ -23,7 +26,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
   late QuestionListUtil<QuestionData> _listUtil;
   final ScrollController _scrollController = ScrollController();
 
-  bool _isInitialLoading = true; // 초기 로딩 상태
+  bool _isInitialLoading = true;
 
   @override
   void initState() {
@@ -31,12 +34,11 @@ class _QuestionListPageState extends State<QuestionListPage> {
     _initializePage();
   }
 
-  /// 페이지 초기화
   void _initializePage() {
     final categoryViewModel =
         Provider.of<CategoryViewModel>(context, listen: false);
 
-    _categoryName = categoryViewModel.selectedCategory; // 카테고리 이름 설정
+    _categoryName = categoryViewModel.selectedCategory;
 
     Provider.of<QuestionViewModel>(context, listen: false)
         .resetCategoryState(_categoryName);
@@ -58,48 +60,45 @@ class _QuestionListPageState extends State<QuestionListPage> {
     _loadInitialData();
 
     _scrollController.addListener(() {
-      if (_isInitialLoading) return; // 초기 로딩 중일 때 추가 fetch 차단
+      if (_isInitialLoading) return;
       if (!_pagingController.isFetching && _pagingController.hasMoreData) {
         ScrollHandler.handleScroll<QuestionData>(
           scrollController: _scrollController,
           pagingController: _pagingController,
-          onScrollEnd: _loadNextPage,
+          onScrollEnd: () => _listUtil.loadNextPageAndAddItems(
+            pagingController: _pagingController,
+            refreshCallback: () {
+              if (mounted) setState(() {});
+            },
+          ),
         );
       }
     });
   }
 
   /// 상태 초기화
-  void _resetPageState() {
-    _pagingController.reset();
-    _listUtil.reset();
-    _isInitialLoading = true; // 초기 로딩 상태 설정
+  void _resetPageState({bool preserveItems = false}) {
+    if (!preserveItems) {
+      // 완전 초기화
+      _pagingController.reset();
+      _listUtil.reset();
+    }
+    _isInitialLoading = true;
     setState(() {});
   }
 
   /// 초기 데이터 로드
   Future<void> _loadInitialData() async {
-    await _loadNextPage();
+    await _listUtil.loadNextPageAndAddItems(
+      pagingController: _pagingController,
+      refreshCallback: () {
+        if (mounted) setState(() {});
+      },
+    );
     if (mounted) {
       setState(() {
-        _isInitialLoading = false; // 초기 로딩 완료
+        _isInitialLoading = false;
       });
-    }
-  }
-
-  /// 다음 페이지 로드 및 질문 추가
-  Future<void> _loadNextPage() async {
-    if (_pagingController.isFetching) return;
-
-    await _pagingController.loadNextPage();
-
-    if (mounted) {
-      await _listUtil.addItemsGradually(
-        _pagingController.items,
-        () {
-          if (mounted) setState(() {});
-        },
-      );
     }
   }
 
@@ -116,7 +115,13 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_categoryName), // 카테고리 이름 표시
+        title: Text(_categoryName),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _initializePage,
+          ),
+        ],
       ),
       body: ListView.builder(
         controller: _scrollController,
@@ -140,8 +145,8 @@ class _QuestionListPageState extends State<QuestionListPage> {
                   builder: (context) => const QuestionDetailPage(),
                 ),
               ).then((_) {
-                _resetPageState();
-                _loadNextPage();
+                _resetPageState(preserveItems: true);
+                _loadInitialData();
               });
             },
           );

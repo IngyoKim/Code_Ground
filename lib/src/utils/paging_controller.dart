@@ -24,10 +24,12 @@ class PagingController<T> {
   bool get hasMoreData => _hasMoreData;
 
   /// 데이터 초기화
-  void reset() {
+  void reset({bool preserveItems = false}) {
     debugPrint("[PagingController] Resetting paging state");
     _currentPage = 0;
-    _items.clear();
+    if (!preserveItems) {
+      _items.clear(); // 기존 데이터를 유지하거나 초기화
+    }
     _isFetching = false;
     _hasMoreData = true;
   }
