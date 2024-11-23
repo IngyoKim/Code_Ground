@@ -87,7 +87,7 @@ class QuestionData {
     Map<String, String>? codeSnippets,
     String? hint,
     String? answer,
-    List<String>? answerChoices,
+    List<String>? answerList,
     String? tier,
     List<String>? solvers,
     DateTime? createdAt,

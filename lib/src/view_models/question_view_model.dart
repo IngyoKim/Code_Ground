@@ -40,6 +40,22 @@ class QuestionViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  /// 특정 질문 ID로 질문 가져오기
+  Future<void> fetchQuestionById(String questionId) async {
+    try {
+      final question = await _questionOperation.fetchQuestionById(questionId);
+      if (question != null) {
+        _selectedQuestion = question;
+        notifyListeners();
+        debugPrint('Question fetched successfully for ID: $questionId');
+      } else {
+        debugPrint('No question found for ID: $questionId');
+      }
+    } catch (error) {
+      debugPrint('Error fetching question by ID: $error');
+    }
+  }
+
   /// 특정 카테고리의 질문 불러오기 (페이징 기반)
   Future<List<QuestionData>> fetchQuestionsByCategoryPaged({
     required String category,
@@ -103,6 +119,31 @@ class QuestionViewModel with ChangeNotifier {
       notifyListeners();
     } catch (error) {
       debugPrint('Error adding question: $error');
+    }
+  }
+
+  /// 질문 업데이트
+  Future<void> updateQuestion(QuestionData updatedQuestion) async {
+    try {
+      await _questionOperation.updateQuestionData(updatedQuestion);
+
+      final category = updatedQuestion.category.toLowerCase();
+      if (_categoryQuestions.containsKey(category)) {
+        final questionIndex = _categoryQuestions[category]!
+            .indexWhere((q) => q.questionId == updatedQuestion.questionId);
+
+        if (questionIndex != -1) {
+          _categoryQuestions[category]![questionIndex] = updatedQuestion;
+          notifyListeners();
+          debugPrint('Question updated successfully.');
+        } else {
+          debugPrint('Question not found in local cache.');
+        }
+      } else {
+        debugPrint('Category not found in local cache.');
+      }
+    } catch (error) {
+      debugPrint('Error updating question: $error');
     }
   }
 
