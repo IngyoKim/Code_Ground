@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:code_ground/src/utils/login_uitils.dart';
 import 'package:code_ground/src/components/loading_indicator.dart';
 import 'package:code_ground/src/components/login_widgets/login_button.dart';
 import 'package:code_ground/src/components/login_widgets/login_header.dart';
-import 'package:code_ground/src/components/login_widgets/login_footer.dart'; // Footer import
+import 'package:code_ground/src/components/login_widgets/login_footer.dart';
+
 import 'package:code_ground/src/services/logins/google_login.dart';
 import 'package:code_ground/src/services/logins/kakao_login.dart';
 import 'package:code_ground/src/view_models/login_view_model.dart';
@@ -23,6 +23,21 @@ class _LoginPageState extends State<LoginPage> {
   void _setLoading(bool isLoading) {
     if (mounted) {
       setState(() => _isLoading = isLoading);
+    }
+  }
+
+  Future<void> tryLogin({
+    required BuildContext context,
+    required Future<void> Function() loginAction,
+    required void Function(bool) setLoading,
+  }) async {
+    setLoading(true);
+    try {
+      await loginAction();
+    } catch (error) {
+      debugPrint("로그인에 실패했습니다: $error");
+    } finally {
+      setLoading(false);
     }
   }
 

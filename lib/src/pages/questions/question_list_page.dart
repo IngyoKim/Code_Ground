@@ -23,6 +23,8 @@ class _QuestionListPageState extends State<QuestionListPage> {
   late QuestionListUtil<QuestionData> _listUtil;
   final ScrollController _scrollController = ScrollController();
 
+  bool _isInitialLoading = true; // 초기 로딩 상태
+
   @override
   void initState() {
     super.initState();
@@ -34,7 +36,6 @@ class _QuestionListPageState extends State<QuestionListPage> {
     _selectedCategory =
         Provider.of<CategoryViewModel>(context, listen: false).selectedCategory;
 
-    // ViewModel 초기화
     Provider.of<QuestionViewModel>(context, listen: false)
         .resetCategoryState(_selectedCategory);
 
@@ -52,27 +53,44 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
     _listUtil = QuestionListUtil<QuestionData>();
     _resetPageState();
-    _loadNextPage();
+    _loadInitialData(); // 초기 데이터 로드
 
     _scrollController.addListener(() {
-      ScrollHandler.handleScroll<QuestionData>(
-        scrollController: _scrollController,
-        pagingController: _pagingController,
-        onScrollEnd: _loadNextPage,
-      );
+      if (_isInitialLoading) return; // 초기 로딩 중일 때 추가 요청 차단
+      if (!_pagingController.isFetching && _pagingController.hasMoreData) {
+        ScrollHandler.handleScroll<QuestionData>(
+          scrollController: _scrollController,
+          pagingController: _pagingController,
+          onScrollEnd: _loadNextPage,
+        );
+      }
     });
   }
 
   /// 상태 초기화
   void _resetPageState() {
-    _pagingController.reset(); // PagingController 상태 초기화
-    _listUtil.reset(); // 화면 데이터 초기화
+    _pagingController.reset();
+    _listUtil.reset();
+    _isInitialLoading = true; // 초기 로딩 상태 설정
     setState(() {});
   }
 
-  /// 다음 페이지 로드 및 질문 하나씩 추가
+  /// 초기 데이터 로드
+  Future<void> _loadInitialData() async {
+    await _loadNextPage();
+    if (mounted) {
+      setState(() {
+        _isInitialLoading = false; // 초기 로딩 완료
+      });
+    }
+  }
+
+  /// 다음 페이지 로드 및 질문 추가
   Future<void> _loadNextPage() async {
+    if (_pagingController.isFetching) return;
+
     await _pagingController.loadNextPage();
+
     if (mounted) {
       await _listUtil.addItemsGradually(
         _pagingController.items,
@@ -83,21 +101,17 @@ class _QuestionListPageState extends State<QuestionListPage> {
     }
   }
 
-  /// 페이지를 나갈 때 상태 초기화
   @override
   void dispose() {
     _scrollController.dispose();
-
-    // ViewModel 상태 초기화
-    final viewModel = Provider.of<QuestionViewModel>(context, listen: false);
-    viewModel.clearQuestions();
-    viewModel.resetCategoryState(_selectedCategory);
-
+    Provider.of<QuestionViewModel>(context, listen: false).clearQuestions();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = _isInitialLoading || _pagingController.isFetching;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Questions'),
@@ -106,10 +120,10 @@ class _QuestionListPageState extends State<QuestionListPage> {
       body: ListView.builder(
         controller: _scrollController,
         padding: const EdgeInsets.all(16.0),
-        itemCount: _listUtil.items.length + 1,
+        itemCount: _listUtil.items.length + 1, // +1 for LoadingIndicator
         itemBuilder: (context, index) {
           if (index == _listUtil.items.length) {
-            return LoadingIndicator(isFetching: _pagingController.isFetching);
+            return LoadingIndicator(isFetching: isLoading);
           }
 
           final question = _listUtil.items[index];

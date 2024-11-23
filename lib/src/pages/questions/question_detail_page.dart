@@ -96,7 +96,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
         title: Text(question.title),
       ),
       body: _isLoading
-          ? const LoadingIndicator(isFetching: true) // 로딩 인디케이터 재사용
+          ? const LoadingIndicator(isFetching: true)
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: ListView(
