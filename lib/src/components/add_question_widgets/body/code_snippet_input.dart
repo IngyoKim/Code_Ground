@@ -37,8 +37,8 @@ class CodeSnippetInput extends StatelessWidget {
             final snippet = snippetController.text.trim();
             if (snippet.isNotEmpty) {
               if (category == 'Sequencing') {
-                // Sequencing: 키 값 자동 생성
-                final key = 'list${codeSnippets.length.toString()}';
+                // Sequencing: 순서를 기반으로 키 값 생성
+                final key = 'step${codeSnippets.length}'; // 마지막 인덱스 + 1로 생성
                 onAddSnippet(key, snippet);
               } else {
                 if (codeSnippets.containsKey(selectedLanguage)) {
@@ -75,16 +75,37 @@ class CodeSnippetInput extends StatelessWidget {
           const SizedBox(height: 8),
           ...codeSnippets.entries.map(
             (entry) => ListTile(
-              title: Text('Language: ${entry.key}'),
+              title: Text('Step: ${entry.key}'),
               subtitle: Text(entry.value),
               trailing: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () => onDeleteSnippet(entry.key),
+                onPressed: () {
+                  // 삭제 및 키 재정렬
+                  onDeleteSnippet(entry.key);
+                  _reorderKeys();
+                },
               ),
             ),
           ),
         ],
       ],
     );
+  }
+
+  /// 키 값 재정렬 (Sequencing 전용)
+  void _reorderKeys() {
+    if (category == 'Sequencing') {
+      final updatedSnippets = <String, String>{};
+      int index = 0;
+
+      for (final entry in codeSnippets.entries) {
+        final newKey = 'step$index'; // 새로운 인덱스 기반 키 생성
+        updatedSnippets[newKey] = entry.value;
+        index++;
+      }
+
+      codeSnippets.clear();
+      codeSnippets.addAll(updatedSnippets);
+    }
   }
 }

@@ -29,7 +29,7 @@ class ObjectiveAnswerInput extends StatelessWidget {
               child: TextField(
                 controller: choiceController,
                 decoration: const InputDecoration(
-                  labelText: 'Add Answer Choice',
+                  labelText: 'Add Answer List',
                 ),
               ),
             ),
@@ -46,7 +46,7 @@ class ObjectiveAnswerInput extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         const Text(
-          'Answer Choices:',
+          'Answer List:',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),

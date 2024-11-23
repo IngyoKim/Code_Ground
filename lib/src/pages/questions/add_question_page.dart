@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart'; // Toast 패키지 추가
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
@@ -81,6 +81,9 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         category: _selectedCategory,
         questionType: _selectedType,
         description: _descriptionController.text,
+        languages: _selectedCategory == 'Sequencing'
+            ? [_selectedLanguage]
+            : _codeSnippets.keys.toList(),
         codeSnippets: _codeSnippets,
         hint: _hintController.text.isNotEmpty
             ? _hintController.text
@@ -170,7 +173,14 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
                   _showToast('Only one Code Snippet is allowed for Syntax.');
                   return;
                 }
-                _codeSnippets[key] = snippet;
+
+                // Sequencing의 경우 인덱스 키로 저장
+                if (_selectedCategory == 'Sequencing') {
+                  final indexKey = _codeSnippets.length.toString();
+                  _codeSnippets[indexKey] = snippet;
+                } else {
+                  _codeSnippets[key] = snippet;
+                }
               });
             },
             onDeleteSnippet: (key) => setState(() => _codeSnippets.remove(key)),

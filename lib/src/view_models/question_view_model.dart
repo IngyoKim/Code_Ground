@@ -6,6 +6,7 @@ class QuestionViewModel with ChangeNotifier {
   final QuestionOperation _questionOperation = QuestionOperation();
   Map<String, List<QuestionData>> _categoryQuestions = {};
   QuestionData? _selectedQuestion;
+  bool _isFetching = false;
 
   /// 카테고리별 질문 데이터
   Map<String, List<QuestionData>> get categoryQuestions => _categoryQuestions;
@@ -13,22 +14,42 @@ class QuestionViewModel with ChangeNotifier {
   /// 선택된 질문
   QuestionData? get selectedQuestion => _selectedQuestion;
 
+  /// 로딩 상태
+  bool get isFetching => _isFetching;
+
   /// 모든 질문 초기화
   void clearQuestions() {
     _categoryQuestions = {};
     _selectedQuestion = null;
+    _isFetching = false;
     notifyListeners();
   }
 
-  /// 특정 카테고리의 질문 불러오기
+  /// 특정 카테고리의 질문 불러오기 (하나씩 추가)
   Future<void> fetchQuestionsByCategory(String category) async {
+    if (_isFetching) return; // 중복 로딩 방지
+    _isFetching = true;
+    notifyListeners();
+
     try {
       final questions =
           await _questionOperation.fetchQuestionsByCategory(category);
-      _categoryQuestions[category] = questions;
-      notifyListeners();
+
+      for (var question in questions) {
+        if (!_categoryQuestions.containsKey(category)) {
+          _categoryQuestions[category] = [];
+        }
+        if (!_categoryQuestions[category]!.contains(question)) {
+          _categoryQuestions[category]!.add(question);
+          notifyListeners(); // 하나씩 추가 시 화면 업데이트
+          await Future.delayed(const Duration(milliseconds: 200)); // 시각적 효과
+        }
+      }
     } catch (e) {
       debugPrint('Error fetching questions for category $category: $e');
+    } finally {
+      _isFetching = false;
+      notifyListeners();
     }
   }
 

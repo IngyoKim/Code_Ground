@@ -23,8 +23,8 @@ class FirebaseAuthData {
       }
 
       return customTokenResponse.body;
-    } catch (e) {
-      debugPrint("Error creating custom token: $e");
+    } catch (error) {
+      debugPrint("Error creating custom token: $error");
       rethrow;
     }
   }
