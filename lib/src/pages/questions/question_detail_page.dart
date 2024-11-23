@@ -105,7 +105,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(question.title),
+        title: Text(question.questionId),
         actions: [
           if (isEditable)
             IconButton(
@@ -117,7 +117,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                     builder: (context) => const EditQuestionPage(),
                   ),
                 );
-                await _fetchQuestionDetail(); // 돌아온 후 데이터 다시 가져오기
+                await _fetchQuestionDetail();
               },
             ),
         ],
