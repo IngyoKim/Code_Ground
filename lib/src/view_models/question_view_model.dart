@@ -45,8 +45,8 @@ class QuestionViewModel with ChangeNotifier {
           await Future.delayed(const Duration(milliseconds: 200)); // 시각적 효과
         }
       }
-    } catch (e) {
-      debugPrint('Error fetching questions for category $category: $e');
+    } catch (error) {
+      debugPrint('Error fetching questions for category $category: $error');
     } finally {
       _isFetching = false;
       notifyListeners();
@@ -66,8 +66,8 @@ class QuestionViewModel with ChangeNotifier {
       for (final category in categories) {
         await fetchQuestionsByCategory(category);
       }
-    } catch (e) {
-      debugPrint('Error fetching all questions: $e');
+    } catch (error) {
+      debugPrint('Error fetching all questions: $error');
     }
   }
 
@@ -77,8 +77,8 @@ class QuestionViewModel with ChangeNotifier {
       _selectedQuestion =
           await _questionOperation.readQuestionData(category, questionId);
       notifyListeners();
-    } catch (e) {
-      debugPrint('Error fetching question by ID: $e');
+    } catch (error) {
+      debugPrint('Error fetching question by ID: $error');
     }
   }
 
@@ -93,8 +93,8 @@ class QuestionViewModel with ChangeNotifier {
         questionData
       ];
       notifyListeners();
-    } catch (e) {
-      debugPrint('Error adding question: $e');
+    } catch (error) {
+      debugPrint('Error adding question: $error');
     }
   }
 
@@ -116,8 +116,8 @@ class QuestionViewModel with ChangeNotifier {
           notifyListeners();
         }
       }
-    } catch (e) {
-      debugPrint('Error updating question: $e');
+    } catch (error) {
+      debugPrint('Error updating question: $error');
     }
   }
 
