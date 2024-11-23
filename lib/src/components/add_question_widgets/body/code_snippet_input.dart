@@ -38,8 +38,8 @@ class CodeSnippetInput extends StatelessWidget {
             final snippet = snippetController.text.trim();
             if (snippet.isNotEmpty) {
               if (category == 'Sequencing') {
-                // Sequencing: 순서를 기반으로 키 값 생성
-                final key = 'step${codeSnippets.length}'; // 마지막 인덱스 + 1로 생성
+                // Sequencing: 'i1', 'i2', ... 형식으로 키 값 생성
+                final key = 'i${codeSnippets.length}';
                 onAddSnippet(key, snippet);
               } else {
                 if (codeSnippets.containsKey(selectedLanguage)) {
@@ -90,7 +90,7 @@ class CodeSnippetInput extends StatelessWidget {
       int index = 0;
 
       for (final entry in codeSnippets.entries) {
-        final newKey = 'step$index'; // 새로운 인덱스 기반 키 생성
+        final newKey = 'i$index'; // 'i1', 'i2' 형식으로 키 재정렬
         updatedSnippets[newKey] = entry.value;
         index++;
       }

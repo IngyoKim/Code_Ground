@@ -75,22 +75,34 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
     }
 
     try {
+      // Sequencing의 경우 키를 i1, i2, i3 형식으로 재정렬
+      final Map<String, String> validatedCodeSnippets = {};
+      if (_selectedCategory == 'Sequencing') {
+        int index = 1; // i1, i2, i3 형식으로 시작
+        for (final snippet in _codeSnippets.values) {
+          validatedCodeSnippets['i$index'] = snippet;
+          index++;
+        }
+      } else {
+        validatedCodeSnippets.addAll(_codeSnippets);
+      }
+
       final questionData = QuestionData(
         questionId: '', // ViewModel에서 자동 생성
-        title: _titleController.text,
+        title: _titleController.text.trim(),
         writer: user.userId,
         category: _selectedCategory,
         questionType: _selectedType,
-        description: _descriptionController.text,
+        description: _descriptionController.text.trim(),
         languages: _selectedCategory == 'Sequencing'
-            ? [_selectedLanguage]
-            : _codeSnippets.keys.toList(),
-        codeSnippets: _codeSnippets,
+            ? [_selectedLanguage] // Sequencing의 경우 단일 언어
+            : validatedCodeSnippets.keys.toList(),
+        codeSnippets: validatedCodeSnippets,
         hint: _hintController.text.isNotEmpty
-            ? _hintController.text
+            ? _hintController.text.trim()
             : 'No hint provided',
         answer: _selectedType == 'Subjective'
-            ? _subjectiveAnswerController.text
+            ? _subjectiveAnswerController.text.trim()
             : _selectedAnswer ?? '',
         answerList: _selectedType == 'Objective' ? _answerChoices : [],
         tier: _selectedTier.name,
@@ -99,6 +111,8 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         updatedAt: DateTime.now(),
       );
 
+      debugPrint('Uploading QuestionData: ${questionData.toJson()}');
+
       await questionViewModel.addQuestion(questionData);
 
       if (mounted) {
@@ -106,6 +120,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         Navigator.pop(context);
       }
     } catch (error) {
+      debugPrint('Error adding question: $error');
       ToastMessage.show('Error occurred: $error');
     }
   }
