@@ -1,6 +1,7 @@
 import 'package:code_ground/src/pages/questions/question_state_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:code_ground/kakao_invite_test.dart';
 
 import 'package:code_ground/src/pages/app_info/setting_page.dart';
 import 'package:code_ground/src/pages/app_info/about_page.dart';
@@ -18,6 +19,8 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final userViewModel = context.watch<UserViewModel>();
     final progressViewModel = context.watch<ProgressViewModel>();
+
+    final KakaoShareManager kakaoShareManager = KakaoShareManager();
 
     final userData = userViewModel.currentUserData;
     final progressData = progressViewModel.progressData;
@@ -96,6 +99,15 @@ class ProfilePage extends StatelessWidget {
               builder: (context) => const FAQPage(),
             ),
           );
+        },
+      },
+      {
+        'icon': Icons.person_add,
+        'text': 'Invite',
+        'onTap': () async {
+          createCustomLink(userData!.userId);
+          await kakaoShareManager
+              .shareContent(userData.nickname); // KakaoShareManager 호출
         },
       },
     ];
