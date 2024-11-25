@@ -17,6 +17,7 @@ class ProgressOperation {
     try {
       await _dbService.writeDB(path, progressData.toJson());
       debugPrint('[writeProgressData] Successfully wrote data to $path');
+      debugPrint('[writeProgressData] ${progressData.toJson()}');
     } catch (error) {
       debugPrint('[writeProgressData] Error writing data: $error');
       rethrow;

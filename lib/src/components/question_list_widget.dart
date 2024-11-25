@@ -3,7 +3,7 @@ import 'package:code_ground/src/services/database/datas/question_data.dart';
 
 class QuestionListWidget extends StatelessWidget {
   final QuestionData question;
-  final bool? questionState;
+  final String? questionState;
   final VoidCallback onTap;
 
   const QuestionListWidget({
@@ -13,15 +13,15 @@ class QuestionListWidget extends StatelessWidget {
     required this.onTap,
   });
 
-  IconData? _getLeadingIcon(bool? state) {
-    if (state == true) return Icons.check_circle;
-    if (state == false) return Icons.cancel;
+  IconData? _getLeadingIcon(String? state) {
+    if (state == 'correct') return Icons.check_circle;
+    if (state == 'wrong') return Icons.cancel;
     return null;
   }
 
-  Color? _getIconColor(bool? state) {
-    if (state == true) return Colors.green;
-    if (state == false) return Colors.red;
+  Color? _getIconColor(String? state) {
+    if (state == 'correct') return Colors.green;
+    if (state == 'wrong') return Colors.red;
     return null;
   }
 
@@ -66,7 +66,13 @@ class QuestionListWidget extends StatelessWidget {
             fontSize: 14,
           ),
         ),
-        trailing: Text(question.tier),
+        trailing: Text(
+          question.tier,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         onTap: onTap,
       ),
     );

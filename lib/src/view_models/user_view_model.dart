@@ -38,22 +38,27 @@ class UserViewModel with ChangeNotifier {
       }
 
       notifyListeners();
-    } catch (e) {
-      debugPrint('Error fetching current user data: $e');
+    } catch (error) {
+      debugPrint('Error fetching current user data: $error');
       _currentUserData = null;
       notifyListeners();
     }
   }
 
   /// 특정 ID의 유저 데이터 가져오기 (다른 유저)
-  Future<void> fetchOtherUserData(String userId) async {
+  Future<void> fetchOtherUserData(String uid) async {
     try {
-      _otherUserData = await _userOperation.readUserData(userId);
+      _otherUserData = await _userOperation.readUserData(uid);
       notifyListeners();
-    } catch (e) {
-      debugPrint('Error fetching other user data: $e');
+    } catch (error) {
+      debugPrint('Error fetching other user data: $error');
       _otherUserData = null;
     }
+  }
+
+  Future<void> updateNickname(String nickname) async {
+    _userOperation.updateUserData({'nickname': nickname});
+    notifyListeners();
   }
 
   /// 다른 유저 데이터 초기화
