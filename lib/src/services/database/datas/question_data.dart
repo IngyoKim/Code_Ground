@@ -5,10 +5,11 @@ class QuestionData {
   final String category;
   final String questionType;
   final String description;
+  final List<String> languages;
   final Map<String, String> codeSnippets;
   final String hint;
-  final String answer;
-  final List<String> answerChoices;
+  final String? answer;
+  final List<String>? answerList;
   final String tier;
   final List<String> solvers;
   final DateTime createdAt;
@@ -21,10 +22,11 @@ class QuestionData {
     required this.category,
     required this.questionType,
     required this.description,
+    required this.languages,
     required this.codeSnippets,
     required this.hint,
     required this.answer,
-    required this.answerChoices,
+    required this.answerList,
     required this.tier,
     required this.solvers,
     required this.createdAt,
@@ -39,10 +41,13 @@ class QuestionData {
       category: json['category'] ?? 'General',
       questionType: json['questionType'] ?? 'Unknown',
       description: json['description'] ?? '',
+      languages: List<String>.from(json['languages'] ?? []), // 명시적 변환
       codeSnippets: Map<String, String>.from(json['codeSnippets'] ?? {}),
       hint: json['hint'] ?? 'No hint available',
-      answer: json['answer'] ?? '',
-      answerChoices: List<String>.from(json['answerChoices'] ?? []),
+      answer: json['answer'],
+      answerList: json['answerList'] != null
+          ? List<String>.from(json['answerList'] ?? [])
+          : null, // null 처리 및 명시적 변환
       tier: json['tier'] ?? 'Bronze',
       solvers: List<String>.from(json['solvers'] ?? []),
       createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
@@ -58,10 +63,11 @@ class QuestionData {
       'category': category,
       'questionType': questionType,
       'description': description,
+      'languages': languages,
       'codeSnippets': codeSnippets,
       'hint': hint,
       'answer': answer,
-      'answerChoices': answerChoices,
+      'answerList': answerList,
       'tier': tier,
       'solvers': solvers,
       'createdAt': createdAt.toIso8601String(),
@@ -69,7 +75,6 @@ class QuestionData {
     };
   }
 
-  /// `copyWith` 메서드 추가
   QuestionData copyWith({
     String? questionId,
     String? title,
@@ -77,10 +82,11 @@ class QuestionData {
     String? category,
     String? questionType,
     String? description,
+    List<String>? languages,
     Map<String, String>? codeSnippets,
     String? hint,
     String? answer,
-    List<String>? answerChoices,
+    List<String>? answerList,
     String? tier,
     List<String>? solvers,
     DateTime? createdAt,
@@ -93,10 +99,11 @@ class QuestionData {
       category: category ?? this.category,
       questionType: questionType ?? this.questionType,
       description: description ?? this.description,
+      languages: languages ?? this.languages,
       codeSnippets: codeSnippets ?? this.codeSnippets,
       hint: hint ?? this.hint,
-      answer: answer ?? this.answer,
-      answerChoices: answerChoices ?? this.answerChoices,
+      answer: answer,
+      answerList: answerList,
       tier: tier ?? this.tier,
       solvers: solvers ?? this.solvers,
       createdAt: createdAt ?? this.createdAt,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:code_ground/src/utils/permission_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
 import 'package:code_ground/src/pages/questions/question_list_page.dart';
@@ -50,7 +51,7 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // "Select a Category" - Fixed position
+            // "Select a Category" with Fixed Add Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -62,29 +63,34 @@ class HomePage extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Expanded(
-                    child: Container(),
-                  ),
+                  const Spacer(),
+                  // 고정된 크기의 버튼
                   Consumer<UserViewModel>(
                     builder: (context, userViewModel, child) {
-                      if (userViewModel.userData?.isAdmin ?? false) {
-                        return IconButton(
-                          icon: const Icon(
-                            Icons.add_rounded,
-                            fill: 1,
-                            size: 25,
+                      final role = userViewModel.currentUserData?.role ?? '';
+                      return SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: IconButton(
+                          icon: Icon(
+                            RolePermissions.canPerformAction(role, 'create')
+                                ? Icons.add_rounded
+                                : null, // 기본 아이콘 제공
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AddQuestionPage(),
-                              ),
-                            );
-                          },
-                        );
-                      }
-                      return Container();
+                          onPressed:
+                              RolePermissions.canPerformAction(role, 'create')
+                                  ? () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AddQuestionPage(),
+                                        ),
+                                      );
+                                    }
+                                  : null, // 관리자가 아닐 경우 비활성화
+                        ),
+                      );
                     },
                   ),
                 ],

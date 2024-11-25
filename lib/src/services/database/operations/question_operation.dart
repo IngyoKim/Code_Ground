@@ -1,108 +1,103 @@
+import 'package:flutter/foundation.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
 import 'package:code_ground/src/services/database/operations/database_service.dart';
+import 'package:code_ground/src/services/database/datas/question_id_generator.dart';
 
 const basePath = 'Questions';
 
 class QuestionOperation {
   final DatabaseService _dbService = DatabaseService();
 
-  /// 카테고리 접두사 가져오기
-  String getPrefixFromCategory(String category) {
-    const categoryPrefixes = {
-      'syntax': '1',
-      'debugging': '2',
-      'output': '3',
-      'blank': '4',
-      'sequencing': '5',
-    };
-    return categoryPrefixes[category.toLowerCase()] ?? '0';
-  }
+  /// 질문 ID로 질문 가져오기
+  Future<QuestionData?> fetchQuestionById(String questionId) async {
+    try {
+      final category = QuestionIdGenerator.getCategoryFromId(questionId);
+      if (category == null) {
+        debugPrint('[fetchQuestionById] Invalid question ID: $questionId');
+        return null;
+      }
 
-  /// 질문 데이터 저장
-  Future<void> writeQuestionData(QuestionData questionData) async {
-    if (questionData.questionId.isEmpty) {
-      questionData = await _generateQuestionId(questionData);
+      final path = '$basePath/${category.toLowerCase()}/$questionId';
+      final data = await _dbService.readDB(path);
+      if (data != null) {
+        return QuestionData.fromJson(Map<String, dynamic>.from(data));
+      } else {
+        debugPrint(
+            '[fetchQuestionById] No data found for question ID: $questionId');
+        return null;
+      }
+    } catch (error) {
+      debugPrint('[fetchQuestionById] Error fetching question: $error');
+      return null;
     }
-
-    final now = DateTime.now();
-    questionData = questionData.copyWith(
-      createdAt: questionData.createdAt.isAtSameMomentAs(DateTime(0))
-          ? now
-          : questionData.createdAt,
-      updatedAt: now,
-    );
-
-    final path =
-        '$basePath/${questionData.category.toLowerCase()}/${questionData.questionId}';
-    await _dbService.writeDB(path, questionData.toJson());
-  }
-
-  /// 질문 ID 생성
-  Future<QuestionData> _generateQuestionId(QuestionData questionData) async {
-    final prefix = getPrefixFromCategory(questionData.category);
-    final lastNumber = await _getLastNumberForCategory(questionData.category);
-
-    final newNumber = (lastNumber + 1).toString().padLeft(5, '0'); // 5자리로 패딩
-    final newId = '$prefix$newNumber';
-
-    return questionData.copyWith(questionId: newId);
   }
 
   /// 카테고리별 마지막 번호 가져오기
   Future<int> _getLastNumberForCategory(String category) async {
-    final questions = await fetchQuestionsByCategory(category);
-    if (questions.isEmpty) return 0;
-
-    final lastNumber = questions
+    debugPrint(
+        '[getLastNumberForCategory] Fetching last number for category: $category');
+    final questions = await fetchQuestions(category, 0, 1);
+    if (questions.isEmpty) {
+      return 0;
+    }
+    return questions
         .map((q) => int.tryParse(q.questionId.substring(1)) ?? 0)
         .reduce((a, b) => a > b ? a : b);
-
-    return lastNumber;
   }
 
-  /// 특정 카테고리의 질문 가져오기
-  Future<List<QuestionData>> fetchQuestionsByCategory(String category) async {
-    final path = '$basePath/${category.toLowerCase()}';
-    final data = await _dbService.readDB(path);
-
-    if (data == null) return [];
-    return data.entries
-        .map((entry) =>
-            QuestionData.fromJson(Map<String, dynamic>.from(entry.value)))
-        .toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  /// 새로운 질문 ID 생성
+  Future<String> generateQuestionId(String category) async {
+    final lastNumber = await _getLastNumberForCategory(category);
+    return QuestionIdGenerator.generateNewId(
+        category: category, lastNumber: lastNumber);
   }
 
-  /// 모든 질문 가져오기
-  Future<List<QuestionData>> fetchAllQuestions() async {
-    final categories = ['syntax', 'debugging', 'output', 'blank', 'sequencing'];
-    final allQuestions = <QuestionData>[];
-
-    for (final category in categories) {
-      final categoryQuestions = await fetchQuestionsByCategory(category);
-      allQuestions.addAll(categoryQuestions);
+  /// 질문 데이터 저장
+  Future<void> writeQuestionData(QuestionData questionData) async {
+    debugPrint('[writeQuestionData] Start writing question');
+    if (questionData.questionId.isEmpty) {
+      final newId = await generateQuestionId(questionData.category);
+      questionData = questionData.copyWith(questionId: newId);
     }
 
-    allQuestions.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    return allQuestions;
-  }
-
-  /// 특정 질문 읽기
-  Future<QuestionData?> readQuestionData(
-      String category, String questionId) async {
-    final path = '$basePath/${category.toLowerCase()}/$questionId';
-    final data = await _dbService.readDB(path);
-    return data != null
-        ? QuestionData.fromJson(Map<String, dynamic>.from(data))
-        : null;
+    final path =
+        '$basePath/${questionData.category.toLowerCase()}/${questionData.questionId}';
+    await _dbService.writeDB(path, questionData.toJson());
+    debugPrint('[writeQuestionData] Question saved at path: $path');
   }
 
   /// 질문 데이터 업데이트
-  Future<void> updateQuestionData(
-      String category, String questionId, Map<String, dynamic> updates) async {
-    updates['updatedAt'] = DateTime.now().toIso8601String();
+  Future<void> updateQuestionData(QuestionData updatedQuestion) async {
+    final path =
+        '$basePath/${updatedQuestion.category.toLowerCase()}/${updatedQuestion.questionId}';
+    try {
+      await _dbService.updateDB(path, updatedQuestion.toJson());
+      debugPrint('[updateQuestionData] Question updated at path: $path');
+    } catch (error) {
+      debugPrint('[updateQuestionData] Error updating question: $error');
+      rethrow;
+    }
+  }
 
-    final path = '$basePath/${category.toLowerCase()}/$questionId';
-    await _dbService.updateDB(path, updates);
+  /// 특정 카테고리의 질문 가져오기 (페이징 기반)
+  Future<List<QuestionData>> fetchQuestions(
+      String category, int page, int pageSize) async {
+    final path = '$basePath/${category.toLowerCase()}';
+    final data = await _dbService.readDB(path);
+    if (data == null) {
+      return [];
+    }
+
+    final questions = data.entries
+        .map((entry) =>
+            QuestionData.fromJson(Map<String, dynamic>.from(entry.value)))
+        .toList();
+
+    questions.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final startIndex = page * pageSize;
+    return startIndex < questions.length
+        ? questions.sublist(
+            startIndex, (startIndex + pageSize).clamp(0, questions.length))
+        : [];
   }
 }

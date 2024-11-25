@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:code_ground/src/pages/questions/question_detail_page.dart';
-import 'package:code_ground/src/view_models/question_view_model.dart';
-import 'package:code_ground/src/view_models/category_view_model.dart';
+import 'package:code_ground/src/utils/scroll_handler.dart';
+import 'package:code_ground/src/utils/paging_controller.dart';
 import 'package:code_ground/src/utils/question_list_utils.dart';
+import 'package:code_ground/src/components/loading_indicator.dart';
+import 'package:code_ground/src/components/question_list_widget.dart';
+
+import 'package:code_ground/src/pages/questions/question_detail_page.dart';
+import 'package:code_ground/src/services/database/datas/question_data.dart';
+
+import 'package:code_ground/src/view_models/category_view_model.dart';
+import 'package:code_ground/src/view_models/question_view_model.dart';
 
 class QuestionListPage extends StatefulWidget {
   const QuestionListPage({super.key});
@@ -14,132 +21,137 @@ class QuestionListPage extends StatefulWidget {
 }
 
 class _QuestionListPageState extends State<QuestionListPage> {
+  late String _categoryName;
+  late PagingController<QuestionData> _pagingController;
+  late QuestionListUtil<QuestionData> _listUtil;
   final ScrollController _scrollController = ScrollController();
-  final QuestionListUtils _listUtils = QuestionListUtils();
+
+  bool _isInitialLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _initializePage();
+  }
 
-    // 초기 데이터 로드
-    final selectedCategory =
-        Provider.of<CategoryViewModel>(context, listen: false).selectedCategory;
-    _loadQuestions(selectedCategory);
+  void _initializePage() {
+    final categoryViewModel =
+        Provider.of<CategoryViewModel>(context, listen: false);
 
-    // 스크롤 이벤트 추가
+    _categoryName = categoryViewModel.selectedCategory;
+
+    Provider.of<QuestionViewModel>(context, listen: false)
+        .resetCategoryState(_categoryName);
+
+    _pagingController = PagingController<QuestionData>(
+      fetchData: (page, pageSize) async {
+        return await Provider.of<QuestionViewModel>(context, listen: false)
+            .fetchQuestionsByCategoryPaged(
+          category: _categoryName,
+          page: page,
+          pageSize: pageSize,
+        );
+      },
+      pageSize: 10,
+    );
+
+    _listUtil = QuestionListUtil<QuestionData>();
+    _resetPageState();
+    _loadInitialData();
+
     _scrollController.addListener(() {
-      final questionViewModel =
-          Provider.of<QuestionViewModel>(context, listen: false);
-      final categoryQuestions =
-          questionViewModel.categoryQuestions[selectedCategory] ?? [];
-
-      _listUtils.handleScroll(
-        scrollController: _scrollController,
-        fetchNextPage: () => _loadQuestions(selectedCategory),
-        isLoading: categoryQuestions.isEmpty,
-      );
+      if (_isInitialLoading) return;
+      if (!_pagingController.isFetching && _pagingController.hasMoreData) {
+        ScrollHandler.handleScroll<QuestionData>(
+          scrollController: _scrollController,
+          pagingController: _pagingController,
+          onScrollEnd: () => _listUtil.loadNextPageAndAddItems(
+            pagingController: _pagingController,
+            refreshCallback: () {
+              if (mounted) setState(() {});
+            },
+          ),
+        );
+      }
     });
   }
 
-  Future<void> _loadQuestions(String category) async {
-    final questionViewModel =
-        Provider.of<QuestionViewModel>(context, listen: false);
-    await questionViewModel.fetchQuestionsByCategory(category);
-    setState(() => _listUtils.nextPage());
+  /// 상태 초기화
+  void _resetPageState({bool preserveItems = false}) {
+    if (!preserveItems) {
+      // 완전 초기화
+      _pagingController.reset();
+      _listUtil.reset();
+    }
+    _isInitialLoading = true;
+    setState(() {});
+  }
+
+  /// 초기 데이터 로드
+  Future<void> _loadInitialData() async {
+    await _listUtil.loadNextPageAndAddItems(
+      pagingController: _pagingController,
+      refreshCallback: () {
+        if (mounted) setState(() {});
+      },
+    );
+    if (mounted) {
+      setState(() {
+        _isInitialLoading = false;
+      });
+    }
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    Provider.of<QuestionViewModel>(context, listen: false).clearQuestions();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final questionViewModel = context.watch<QuestionViewModel>();
-    final selectedCategory =
-        Provider.of<CategoryViewModel>(context).selectedCategory;
-    final categoryQuestions =
-        questionViewModel.categoryQuestions[selectedCategory] ?? [];
+    final isLoading = _isInitialLoading || _pagingController.isFetching;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Questions'),
-        backgroundColor: Colors.black,
+        title: Text(_categoryName),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _initializePage,
+          ),
+        ],
       ),
-      body: categoryQuestions.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(16.0),
-              itemCount: categoryQuestions.length,
-              itemBuilder: (context, index) {
-                final question = categoryQuestions[index];
-                return Card(
-                  elevation: 4,
-                  margin: const EdgeInsets.only(bottom: 16.0),
-                  child: InkWell(
-                    onTap: () {
-                      // 선택한 질문 설정
-                      questionViewModel.setSelectedQuestion(question);
+      body: ListView.builder(
+        controller: _scrollController,
+        padding: const EdgeInsets.all(16.0),
+        itemCount: _listUtil.items.length + 1,
+        itemBuilder: (context, index) {
+          if (index == _listUtil.items.length) {
+            return LoadingIndicator(isFetching: isLoading);
+          }
 
-                      // 질문 상세 페이지로 이동
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const QuestionDetailPage(),
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            question.title,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Row(
-                            children: [
-                              Text(
-                                'Category: ${question.category}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[700],
-                                ),
-                              ),
-                              const Spacer(),
-                              Text(
-                                'Difficulty: ${question.tier}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[700],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8.0),
-                          Text(
-                            question.description,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
+          final question = _listUtil.items[index];
+          return QuestionListWidget(
+            question: question,
+            questionState: null,
+            onTap: () {
+              Provider.of<QuestionViewModel>(context, listen: false)
+                  .setSelectedQuestion(question);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const QuestionDetailPage(),
+                ),
+              ).then((_) {
+                _resetPageState(preserveItems: true);
+                _loadInitialData();
+              });
+            },
+          );
+        },
+      ),
     );
   }
 }

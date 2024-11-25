@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 
 Widget objectiveSubmit({
   required BuildContext context,
-  required List<String> answerChoices,
+  required List<String> answerList,
   required ValueChanged<String?> onAnswerSelected, // String?로 변경
   required VoidCallback onSubmit,
   String? selectedAnswer, // 현재 선택된 답안
 }) {
   // 선지들을 랜덤으로 섞기
-  final shuffledChoices = List<String>.from(answerChoices)..shuffle(Random());
+  final shuffledChoices = List<String>.from(answerList)..shuffle(Random());
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,

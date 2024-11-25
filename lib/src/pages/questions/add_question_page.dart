@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart'; // Toast 패키지 추가
 import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/view_models/user_view_model.dart';
@@ -18,6 +17,8 @@ import 'package:code_ground/src/components/add_question_widgets/body/code_snippe
 import 'package:code_ground/src/components/add_question_widgets/footer/subjective_input.dart';
 import 'package:code_ground/src/components/add_question_widgets/footer/objective_answer_input.dart';
 import 'package:code_ground/src/components/add_question_widgets/body/hint_input.dart';
+
+import 'package:code_ground/src/utils/toast_message.dart'; // ToastMessage 추가
 
 class AddQuestionPage extends StatefulWidget {
   const AddQuestionPage({super.key});
@@ -52,68 +53,76 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
   }
 
   Future<void> _submitQuestion() async {
-    final user = Provider.of<UserViewModel>(context, listen: false).userData;
+    final user =
+        Provider.of<UserViewModel>(context, listen: false).currentUserData;
     final questionViewModel =
         Provider.of<QuestionViewModel>(context, listen: false);
 
     if (user == null) {
-      _showToast('Please log in to continue.');
+      ToastMessage.show('Please log in to continue.');
       return;
     }
 
     if (_codeSnippets.isEmpty ||
         !_codeSnippets.values.any((value) => value.isNotEmpty)) {
-      _showToast('Please add at least one valid Code Snippet.');
+      ToastMessage.show('Please add at least one valid Code Snippet.');
       return;
     }
 
     if (_selectedType == 'Objective' && _selectedAnswer == null) {
-      _showToast('Please select an answer before submitting.');
+      ToastMessage.show('Please select an answer before submitting.');
       return;
     }
 
     try {
+      // Sequencing의 경우 키를 i1, i2, i3 형식으로 재정렬
+      final Map<String, String> validatedCodeSnippets = {};
+      if (_selectedCategory == 'Sequencing') {
+        int index = 1; // i1, i2, i3 형식으로 시작
+        for (final snippet in _codeSnippets.values) {
+          validatedCodeSnippets['i$index'] = snippet;
+          index++;
+        }
+      } else {
+        validatedCodeSnippets.addAll(_codeSnippets);
+      }
+
       final questionData = QuestionData(
         questionId: '', // ViewModel에서 자동 생성
-        title: _titleController.text,
-        writer: user.userId,
+        title: _titleController.text.trim(),
+        writer: user.uid,
         category: _selectedCategory,
         questionType: _selectedType,
-        description: _descriptionController.text,
-        codeSnippets: _codeSnippets,
+        description: _descriptionController.text.trim(),
+        languages: _selectedCategory == 'Sequencing'
+            ? [_selectedLanguage] // Sequencing의 경우 단일 언어
+            : validatedCodeSnippets.keys.toList(),
+        codeSnippets: validatedCodeSnippets,
         hint: _hintController.text.isNotEmpty
-            ? _hintController.text
+            ? _hintController.text.trim()
             : 'No hint provided',
         answer: _selectedType == 'Subjective'
-            ? _subjectiveAnswerController.text
+            ? _subjectiveAnswerController.text.trim()
             : _selectedAnswer ?? '',
-        answerChoices: _selectedType == 'Objective' ? _answerChoices : [],
+        answerList: _selectedType == 'Objective' ? _answerChoices : [],
         tier: _selectedTier.name,
         solvers: [],
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
 
+      debugPrint('Uploading QuestionData: ${questionData.toJson()}');
+
       await questionViewModel.addQuestion(questionData);
 
       if (mounted) {
-        _showToast('Question added successfully.');
+        ToastMessage.show('Question added successfully.');
         Navigator.pop(context);
       }
-    } catch (e) {
-      _showToast('Error occurred: $e');
+    } catch (error) {
+      debugPrint('Error adding question: $error');
+      ToastMessage.show('Error occurred: $error');
     }
-  }
-
-  void _showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.black87,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
   }
 
   @override
@@ -166,10 +175,17 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
             onAddSnippet: (key, snippet) {
               setState(() {
                 if (_selectedCategory == 'Syntax' && _codeSnippets.isNotEmpty) {
-                  _showToast('Only one Code Snippet is allowed for Syntax.');
+                  ToastMessage.show(
+                      'Only one Code Snippet is allowed for Syntax.');
                   return;
                 }
-                _codeSnippets[key] = snippet;
+
+                if (_selectedCategory == 'Sequencing') {
+                  final indexKey = _codeSnippets.length.toString();
+                  _codeSnippets[indexKey] = snippet;
+                } else {
+                  _codeSnippets[key] = snippet;
+                }
               });
             },
             onDeleteSnippet: (key) => setState(() => _codeSnippets.remove(key)),

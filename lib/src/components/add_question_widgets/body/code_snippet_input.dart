@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:code_ground/src/utils/toast_message.dart';
 
 class CodeSnippetInput extends StatelessWidget {
-  final String category; // "Syntax", "Sequencing", 기타
+  final String category;
   final String selectedLanguage;
   final Map<String, String> codeSnippets;
   final TextEditingController snippetController;
@@ -37,18 +38,13 @@ class CodeSnippetInput extends StatelessWidget {
             final snippet = snippetController.text.trim();
             if (snippet.isNotEmpty) {
               if (category == 'Sequencing') {
-                // Sequencing: 키 값 자동 생성
-                final key = codeSnippets.length.toString();
+                // Sequencing: 'i1', 'i2', ... 형식으로 키 값 생성
+                final key = 'i${codeSnippets.length}';
                 onAddSnippet(key, snippet);
               } else {
                 if (codeSnippets.containsKey(selectedLanguage)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'A snippet for "$selectedLanguage" is already added.',
-                      ),
-                      duration: const Duration(seconds: 2),
-                    ),
+                  ToastMessage.show(
+                    'A snippet for "$selectedLanguage" is already added.',
                   );
                   return;
                 }
@@ -56,12 +52,7 @@ class CodeSnippetInput extends StatelessWidget {
               }
               snippetController.clear();
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Snippet cannot be empty.'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
+              ToastMessage.show('Snippet cannot be empty.');
             }
           },
           child: const Text('Add Snippet'),
@@ -75,16 +66,37 @@ class CodeSnippetInput extends StatelessWidget {
           const SizedBox(height: 8),
           ...codeSnippets.entries.map(
             (entry) => ListTile(
-              title: Text('Language: ${entry.key}'),
+              title: Text(entry.key),
               subtitle: Text(entry.value),
               trailing: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () => onDeleteSnippet(entry.key),
+                onPressed: () {
+                  // 삭제 및 키 재정렬
+                  onDeleteSnippet(entry.key);
+                  _reorderKeys();
+                },
               ),
             ),
           ),
         ],
       ],
     );
+  }
+
+  /// 키 값 재정렬 (Sequencing 전용)
+  void _reorderKeys() {
+    if (category == 'Sequencing') {
+      final updatedSnippets = <String, String>{};
+      int index = 0;
+
+      for (final entry in codeSnippets.entries) {
+        final newKey = 'i$index'; // 'i1', 'i2' 형식으로 키 재정렬
+        updatedSnippets[newKey] = entry.value;
+        index++;
+      }
+
+      codeSnippets.clear();
+      codeSnippets.addAll(updatedSnippets);
+    }
   }
 }

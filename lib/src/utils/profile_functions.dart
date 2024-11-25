@@ -22,8 +22,8 @@ void navigateToSettingPage(BuildContext context, UserViewModel userViewModel) {
     MaterialPageRoute(
       builder: (context) => SettingPage(
         nickname: userViewModel.userData?.nickname ?? 'Guest',
-        isAdmin: userViewModel.userData?.isAdmin ?? false,
-        initialNickname: '',
+        role: userViewModel.userData?.isAdmin ?? false,
+        initialNickname: 'Guest',
       ),
     ),
   );

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class SettingPage extends StatefulWidget {
   final String initialNickname;
-  final bool isAdmin;
+  final String role;
 
   const SettingPage({
-    Key? key,
+    super.key,
     required this.initialNickname,
-    required this.isAdmin,
-    required String nickname,
-  }) : super(key: key);
+    required this.role,
+    required nickname,
+  });
 
   @override
   State<SettingPage> createState() => _SettingPageState();
@@ -21,18 +21,34 @@ class _SettingPageState extends State<SettingPage> {
   String _language = 'English';
   bool _isInfoExpanded = false;
   bool _isEditingNickname = false; // 닉네임 편집 상태
-  late TextEditingController _nicknameController;
 
+  late TextEditingController _nicknameController;
+  late String _nickname; // 닉네임을 상태로 관리
+//hint input의 예시를 보고 고치기
   @override
   void initState() {
     super.initState();
-    _nicknameController = TextEditingController(text: widget.initialNickname);
+    _nickname = widget.initialNickname; // 초기값 설정
+    _nicknameController = TextEditingController(text: _nickname);
   }
 
   @override
   void dispose() {
     _nicknameController.dispose();
     super.dispose();
+  }
+
+  void _updateNickname(String newNickname) {
+    setState(() {
+      _nickname = newNickname; // 수정된 nickname을 상태에 저장
+      _nicknameController.text = newNickname; // TextField에 반영
+    });
+  }
+
+  void _toggleEditingNickname() {
+    setState(() {
+      _isEditingNickname = !_isEditingNickname;
+    });
   }
 
   @override
@@ -45,6 +61,7 @@ class _SettingPageState extends State<SettingPage> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+          // Your Info Section
           ListTile(
             title: const Text('Your INFO'),
             trailing: Icon(
@@ -67,15 +84,11 @@ class _SettingPageState extends State<SettingPage> {
                           decoration: const InputDecoration(
                             hintText: 'Enter your nickname',
                           ),
-                          onSubmitted: (newNickname) {
-                            setState(() {
-                              // nickname 수정->그런데 저장이 안 되는 문제가 발생. 데이터베이스 구조를 바꿔서 문제인건지는 모르겠음.
-                            });
-                          },
+                          onSubmitted: _updateNickname, // 수정된 닉네임 저장
                         ),
                       )
                     : Text(
-                        'NickName: ${_nicknameController.text}', // 수정된 nickname 사용
+                        'NickName: $_nickname', // 수정된 nickname 사용
                         style: const TextStyle(fontSize: 16.0),
                       ),
                 IconButton(
@@ -83,23 +96,19 @@ class _SettingPageState extends State<SettingPage> {
                     _isEditingNickname ? Icons.check : Icons.edit,
                     color: Colors.blue,
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _isEditingNickname = !_isEditingNickname;
-                    });
-                  },
+                  onPressed: _toggleEditingNickname, // 편집 모드 전환
                 ),
               ],
             ),
             const SizedBox(height: 8.0),
             Text(
-              'Admin: ${widget.isAdmin ? 'Yes' : 'No'}',
+              'Role: ${widget.role}',
               style: const TextStyle(fontSize: 16.0),
             ),
           ],
-          const Divider(),
+          const Divider(), //확인하고 고치기
 
-          // 나머지 설정 항목들
+          // Other Settings Section
           ListTile(
             title: const Text('Dark Mode'),
             trailing: Switch(

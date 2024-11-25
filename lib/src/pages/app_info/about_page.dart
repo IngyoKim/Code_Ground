@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:code_ground/src/utils/toast_message.dart'; // ToastMessage 추가
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -113,13 +114,9 @@ class _AboutPageState extends State<AboutPage> {
             const SizedBox(height: 16), // 여백 줄임
             ElevatedButton(
               onPressed: () {
-                // SnackBar를 ScaffoldMessenger를 통해 표시
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content:
-                        Text('Open in browser functionality can be added.'),
-                  ),
-                );
+                // ToastMessage를 통해 메시지 표시
+                ToastMessage.show(
+                    'Open in browser functionality can be added.');
               },
               child: const Text('Visit Website'),
             ),
