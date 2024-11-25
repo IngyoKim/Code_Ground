@@ -141,6 +141,7 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
     try {
       await questionViewModel.updateQuestion(updatedQuestion);
       ToastMessage.show("Question updated successfully.");
+      // ignore: use_build_context_synchronously
       Navigator.pop(context);
     } catch (error) {
       ToastMessage.show("Failed to update question: $error");
