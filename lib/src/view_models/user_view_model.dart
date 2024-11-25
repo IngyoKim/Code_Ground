@@ -11,6 +11,8 @@ class UserViewModel with ChangeNotifier {
   UserData? get currentUserData => _currentUserData;
   UserData? get otherUserData => _otherUserData;
 
+  get userData => null;
+
   /// 현재 로그인된 유저의 데이터 가져오기
   Future<void> fetchCurrentUserData() async {
     try {

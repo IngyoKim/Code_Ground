@@ -1,39 +1,47 @@
 import 'package:flutter/material.dart';
 
-class FAQPage extends StatelessWidget {
+class FAQPage extends StatefulWidget {
   const FAQPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // FAQ 질문 및 답변 목록
-    final List<Map<String, String>> faqs = [
-      {
-        'question': 'How do I reset my password?',
-        'answer':
-            'To reset your password, go to the settings page and select "Reset Password". You will receive an email with a link to reset your password.',
-      },
-      {
-        'question': 'How can I contact support?',
-        'answer':
-            'You can contact support through the "Help" section in the app. Simply click on the "Contact Support" button.',
-      },
-      {
-        'question': 'What is the app\'s privacy policy?',
-        'answer':
-            'Our privacy policy can be accessed through the "About" page in the app. It outlines how we handle your data and your privacy rights.',
-      },
-      {
-        'question': 'How do I update the app?',
-        'answer':
-            'App updates are available through your device\'s app store (Google Play or Apple App Store). Make sure to enable automatic updates or check for updates manually.',
-      },
-      {
-        'question': 'How can I give feedback?',
-        'answer':
-            'To provide feedback, visit the "Help" page and click on "Send Feedback". You can submit suggestions or report issues directly through this feature.',
-      },
-    ];
+  State<FAQPage> createState() => _FAQPageState();
+}
 
+class _FAQPageState extends State<FAQPage> {
+  // FAQ 질문 및 답변 목록
+  final List<Map<String, String>> faqs = [
+    {
+      'question': 'How do I reset my password?',
+      'answer':
+          'To reset your password, go to the settings page and select "Reset Password". You will receive an email with a link to reset your password.',
+    },
+    {
+      'question': 'How can I contact support?',
+      'answer':
+          'You can contact support through the "Help" section in the app. Simply click on the "Contact Support" button.',
+    },
+    {
+      'question': 'What is the app\'s privacy policy?',
+      'answer':
+          'Our privacy policy can be accessed through the "About" page in the app. It outlines how we handle your data and your privacy rights.',
+    },
+    {
+      'question': 'How do I update the app?',
+      'answer':
+          'App updates are available through your device\'s app store (Google Play or Apple App Store). Make sure to enable automatic updates or check for updates manually.',
+    },
+    {
+      'question': 'How can I give feedback?',
+      'answer':
+          'To provide feedback, visit the "Help" page and click on "Send Feedback". You can submit suggestions or report issues directly through this feature.',
+    },
+  ];
+
+  // FAQ 목록에 대한 선택 상태를 추적
+  final List<bool> _isExpanded = List.generate(5, (_) => false);
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('FAQ'),
@@ -59,6 +67,12 @@ class FAQPage extends StatelessWidget {
                     ),
                   ],
                 ),
+                initiallyExpanded: _isExpanded[index], // 기존 상태값에 맞춰서 열림/닫힘 설정
+                onExpansionChanged: (bool expanded) {
+                  setState(() {
+                    _isExpanded[index] = expanded; // 열림/닫힘 상태 갱신
+                  });
+                },
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),

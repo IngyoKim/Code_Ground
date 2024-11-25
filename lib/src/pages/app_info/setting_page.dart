@@ -1,16 +1,46 @@
 import 'package:flutter/material.dart';
 
 class SettingPage extends StatefulWidget {
-  const SettingPage({super.key});
+  final String initialNickname;
+  final String role;
+  final dynamic userData; // userData 객체 추가
+
+  const SettingPage({
+    super.key,
+    required this.initialNickname,
+    required this.role,
+    required this.userData,
+    required String nickname,
+  });
 
   @override
   State<SettingPage> createState() => _SettingPageState();
 }
 
 class _SettingPageState extends State<SettingPage> {
-  bool _darkMode = false; // 다크 모드 상태
-  bool _notificationsEnabled = true; // 알림 기능 상태
-  String _language = 'English'; // 선택된 언어
+  bool _darkMode = false;
+  bool _notificationsEnabled = true;
+  String _language = 'English';
+  bool _isInfoExpanded = false;
+
+  late TextEditingController _nicknameController;
+  late String _nickname;
+
+  @override
+  void initState() {
+    super.initState();
+    // 닉네임 초기화: userData 기반
+    _nickname = widget.userData?.nickname.isNotEmpty == true
+        ? widget.userData!.nickname
+        : widget.userData?.name ?? 'Guest';
+    _nicknameController = TextEditingController(text: _nickname);
+  }
+
+  @override
+  void dispose() {
+    _nicknameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +52,39 @@ class _SettingPageState extends State<SettingPage> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          /// 다크 모드 토글
+          // Your Info Section
+          ListTile(
+            title: const Text('Your INFO'),
+            trailing: Icon(
+              _isInfoExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+            ),
+            onTap: () {
+              setState(() {
+                _isInfoExpanded = !_isInfoExpanded;
+              });
+            },
+          ),
+          if (_isInfoExpanded) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'NickName: $_nickname', // 현재 닉네임 표시
+                    style: const TextStyle(fontSize: 16.0),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              'Role: ${widget.role}',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+          ],
+          const Divider(),
+
+          // Other Settings Section
           ListTile(
             title: const Text('Dark Mode'),
             trailing: Switch(
@@ -36,7 +98,6 @@ class _SettingPageState extends State<SettingPage> {
           ),
           const Divider(),
 
-          /// 알림 설정 토글
           ListTile(
             title: const Text('Notifications'),
             trailing: Switch(
@@ -50,7 +111,6 @@ class _SettingPageState extends State<SettingPage> {
           ),
           const Divider(),
 
-          /// 언어 선택
           ListTile(
             title: const Text('Language'),
             subtitle: Text(_language),
@@ -58,6 +118,7 @@ class _SettingPageState extends State<SettingPage> {
               value: _language,
               items: const [
                 DropdownMenuItem(value: 'English', child: Text('English')),
+                DropdownMenuItem(value: 'Korean', child: Text('Korean')),
               ],
               onChanged: (String? newValue) {
                 setState(() {

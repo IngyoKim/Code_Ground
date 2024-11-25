@@ -13,8 +13,25 @@ import 'package:code_ground/src/components/logout_dialog.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  // 닉네임 수정 상태를 관리할 변수
+  bool _isEditingNickname = false;
+  late TextEditingController _nicknameController;
+
+  @override
+  void initState() {
+    super.initState();
+    final userData = context.read<UserViewModel>().currentUserData;
+    _nicknameController =
+        TextEditingController(text: userData?.nickname ?? 'Guest');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +77,12 @@ class ProfilePage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const SettingPage(),
+              builder: (context) => SettingPage(
+                initialNickname: '',
+                role: userData?.role ?? 'member',
+                nickname: userData?.nickname ?? 'Guest',
+                userData: userData,
+              ),
             ),
           );
         },
@@ -128,6 +150,7 @@ class ProfilePage extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: ListTile(
+                    //닉네임 재 정의할 떄마다 바로바로 새고고침 되도록하기
                     leading: ClipOval(
                       child: (userData?.photoUrl != null &&
                               userData!.photoUrl.isNotEmpty)
@@ -143,17 +166,56 @@ class ProfilePage extends StatelessWidget {
                               size: 50,
                             ),
                     ),
-                    title: Text(
-                      userData?.nickname.isNotEmpty == true
-                          ? userData!.nickname
-                          : userData?.name ?? 'Guest',
-                    ),
+                    title: _isEditingNickname
+                        ? TextField(
+                            controller: _nicknameController,
+                            decoration: const InputDecoration(
+                              hintText: 'Enter new nickname',
+                            ),
+                          )
+                        : Text(
+                            userData?.nickname.isNotEmpty == true
+                                ? userData!.nickname
+                                : userData?.name ?? 'Guest',
+                          ),
                     subtitle: Text(userData?.name ?? 'enter your name'),
-                    trailing: ElevatedButton(
-                      onPressed: () {
-                        showLogoutDialog(context);
-                      },
-                      child: const Text("Logout"),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (!_isEditingNickname)
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () {
+                              setState(() {
+                                _isEditingNickname = true;
+                              });
+                            },
+                          ),
+                        if (_isEditingNickname)
+                          IconButton(
+                            icon: const Icon(Icons.check),
+                            onPressed: () {
+                              setState(() {
+                                // 닉네임 수정 후 저장
+                                userViewModel
+                                    .updateNickname(_nicknameController.text);
+                                // 닉네임 수정 모드 종료
+                                _isEditingNickname = false;
+                              });
+                              // 닉네임이 변경되었으므로 즉시 화면 갱신
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Nickname updated!')),
+                              );
+                            },
+                          ),
+                        ElevatedButton(
+                          onPressed: () {
+                            showLogoutDialog(context);
+                          },
+                          child: const Text("Logout"),
+                        ),
+                      ],
                     ),
                   ),
                 ),
