@@ -1,11 +1,12 @@
-import 'package:code_ground/src/utils/question_detail_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/utils/toast_message.dart';
 import 'package:code_ground/src/utils/permission_utils.dart';
+import 'package:code_ground/src/utils/question_detail_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
+import 'package:code_ground/src/view_models/progress_view_model.dart';
 import 'package:code_ground/src/pages/questions/edit_question_page.dart';
 import 'package:code_ground/src/services/database/datas/user_data.dart';
 
@@ -80,6 +81,15 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
     }
   }
 
+  /// 정답 상태인지 확인
+  bool _isQuestionSolved(String questionId) {
+    final progressViewModel =
+        Provider.of<ProgressViewModel>(context, listen: false);
+    final progressData = progressViewModel.progressData;
+
+    return progressData?.questionState[questionId] == 'correct';
+  }
+
   @override
   void dispose() {
     _answerController.dispose();
@@ -89,7 +99,6 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
   @override
   Widget build(BuildContext context) {
     final questionViewModel = Provider.of<QuestionViewModel>(context);
-
     final question = questionViewModel.selectedQuestion;
 
     if (question == null) {
@@ -100,6 +109,8 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
         body: const Center(child: Text('No question selected.')),
       );
     }
+
+    final isSolved = _isQuestionSolved(question.questionId);
 
     return Scaffold(
       appBar: AppBar(
@@ -146,7 +157,18 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                       ),
                   ],
                   const SizedBox(height: 20),
-                  if (question.questionType == 'Subjective')
+                  if (isSolved)
+                    Center(
+                      child: Text(
+                        'Correct Answer: ${question.answer}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.green,
+                        ),
+                      ),
+                    )
+                  else if (question.questionType == 'Subjective')
                     subjectiveSubmit(
                       context: context,
                       controller: _answerController,

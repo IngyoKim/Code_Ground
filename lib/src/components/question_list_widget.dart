@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
+import 'package:code_ground/src/view_models/progress_view_model.dart';
 
 class QuestionListWidget extends StatelessWidget {
   final QuestionData question;
-  final String? questionState;
   final VoidCallback onTap;
 
   const QuestionListWidget({
     super.key,
     required this.question,
-    required this.questionState,
     required this.onTap,
   });
 
@@ -27,6 +27,12 @@ class QuestionListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ProgressViewModel에서 questionState 가져오기
+    final questionState = context
+        .read<ProgressViewModel>()
+        .progressData
+        ?.questionState[question.questionId];
+
     final leadingIcon = _getLeadingIcon(questionState);
     final iconColor = _getIconColor(questionState);
 

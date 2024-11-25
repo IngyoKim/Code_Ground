@@ -13,7 +13,6 @@ import 'package:code_ground/src/components/add_question_widgets/body/code_snippe
 import 'package:code_ground/src/components/add_question_widgets/footer/subjective_input.dart';
 import 'package:code_ground/src/components/add_question_widgets/footer/objective_answer_input.dart';
 import 'package:code_ground/src/components/add_question_widgets/body/hint_input.dart';
-
 import 'package:code_ground/src/utils/toast_message.dart';
 
 class EditQuestionPage extends StatefulWidget {
@@ -56,37 +55,33 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
-      // 기존 질문 데이터 초기화
-      _titleController.text = question.title;
-      _descriptionController.text = question.description;
-      _hintController.text = question.hint ?? '';
-      _selectedType = question.questionType;
-      _selectedTier = Tier.getTierByName(question.tier) ?? tiers.first;
-      _codeSnippets.addAll(question.codeSnippets);
-
-      if (_selectedType == 'Subjective') {
-        _subjectiveAnswerController.text = question.answer ?? '';
-      } else if (_selectedType == 'Objective') {
-        _answerChoices.addAll(question.answerList ?? []);
-        _selectedAnswer = question.answer;
-      } else if (question.category == 'Sequencing') {
-        _selectedLanguage = question.languages.isNotEmpty
-            ? question.languages.first
-            : 'C'; // Sequencing의 경우 단일 언어
-      }
+      _initializeFields(question);
     } catch (error) {
       ToastMessage.show("Error loading question: $error");
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _initializeFields(dynamic question) {
+    _titleController.text = question.title;
+    _descriptionController.text = question.description;
+    _hintController.text = question.hint ?? '';
+    _selectedType = question.questionType;
+    _selectedTier = Tier.getTierByName(question.tier) ?? tiers.first;
+    _codeSnippets.addAll(question.codeSnippets);
+
+    if (_selectedType == 'Subjective') {
+      _subjectiveAnswerController.text = question.answer ?? '';
+    } else if (_selectedType == 'Objective') {
+      _answerChoices.addAll(question.answerList ?? []);
+      _selectedAnswer = question.answer;
+    } else if (question.category == 'Sequencing') {
+      _selectedLanguage =
+          question.languages.isNotEmpty ? question.languages.first : 'C';
     }
   }
 
@@ -100,36 +95,17 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
       return;
     }
 
-    // 데이터 검증
-    if (_titleController.text.trim().isEmpty ||
-        _descriptionController.text.trim().isEmpty ||
-        _codeSnippets.isEmpty ||
-        (_selectedType == 'Objective' && _answerChoices.isEmpty) ||
-        (_selectedType == 'Subjective' &&
-            _subjectiveAnswerController.text.trim().isEmpty)) {
+    if (!_validateInputs()) {
       ToastMessage.show("Please fill in all required fields.");
       return;
     }
 
-    // Sequencing의 경우 키를 i1, i2, i3 형식으로 재정렬
-    final Map<String, String> validatedCodeSnippets = {};
-    if (question.category == 'Sequencing') {
-      int index = 1; // i1, i2, i3 형식으로 시작
-      for (final snippet in _codeSnippets.values) {
-        validatedCodeSnippets['i$index'] = snippet;
-        index++;
-      }
-    } else {
-      validatedCodeSnippets.addAll(_codeSnippets);
-    }
-
-    // 수정된 데이터로 새로운 QuestionData 생성
     final updatedQuestion = question.copyWith(
       title: _titleController.text.trim(),
       description: _descriptionController.text.trim(),
       hint: _hintController.text.trim(),
       questionType: _selectedType,
-      codeSnippets: validatedCodeSnippets,
+      codeSnippets: _prepareCodeSnippets(question),
       answer: _selectedType == 'Subjective'
           ? _subjectiveAnswerController.text.trim()
           : _selectedAnswer,
@@ -148,14 +124,93 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
     }
   }
 
-  @override
-  void dispose() {
-    _titleController.dispose();
-    _descriptionController.dispose();
-    _hintController.dispose();
-    _codeSnippetController.dispose();
-    _subjectiveAnswerController.dispose();
-    super.dispose();
+  bool _validateInputs() {
+    return _titleController.text.trim().isNotEmpty &&
+        _descriptionController.text.trim().isNotEmpty &&
+        _codeSnippets.isNotEmpty &&
+        (_selectedType != 'Objective' || _answerChoices.isNotEmpty) &&
+        (_selectedType != 'Subjective' ||
+            _subjectiveAnswerController.text.trim().isNotEmpty);
+  }
+
+  Map<String, String> _prepareCodeSnippets(dynamic question) {
+    if (question.category == 'Sequencing') {
+      final validatedSnippets = <String, String>{};
+      int index = 1;
+      for (final snippet in _codeSnippets.values) {
+        validatedSnippets['i$index'] = snippet;
+        index++;
+      }
+      return validatedSnippets;
+    }
+    return {..._codeSnippets};
+  }
+
+  Widget _buildBody(dynamic question) {
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        TitleInput(titleController: _titleController),
+        DescriptionInput(descriptionController: _descriptionController),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: TextFormField(
+            initialValue: question.category,
+            decoration: const InputDecoration(
+              labelText: 'Category',
+              border: OutlineInputBorder(),
+            ),
+            enabled: false,
+          ),
+        ),
+        TierInput(
+          selectedTier: _selectedTier,
+          onTierChanged: (value) => setState(() => _selectedTier = value!),
+        ),
+        if (question.category == 'Syntax' || question.category == 'Debugging')
+          QuestionTypeInput(
+            selectedType: _selectedType ?? 'Subjective',
+            onTypeChanged: (value) => setState(() => _selectedType = value!),
+          ),
+        if (question.category == 'Sequencing')
+          LanguageInput(
+            selectedLanguage: _selectedLanguage,
+            onLanguageChanged: (value) =>
+                setState(() => _selectedLanguage = value!),
+          ),
+        CodeSnippetInput(
+          category: question.category,
+          selectedLanguage: _selectedLanguage,
+          codeSnippets: _codeSnippets,
+          snippetController: _codeSnippetController,
+          onAddSnippet: (key, snippet) =>
+              setState(() => _codeSnippets[key] = snippet),
+          onDeleteSnippet: (key) => setState(() => _codeSnippets.remove(key)),
+        ),
+        if (_selectedType == 'Subjective')
+          SubjectiveAnswerInput(
+            subjectiveAnswerController: _subjectiveAnswerController,
+          )
+        else if (_selectedType == 'Objective')
+          ObjectiveAnswerInput(
+            answerChoices: _answerChoices,
+            selectedAnswer: _selectedAnswer,
+            onAddChoice: (choice) => setState(() => _answerChoices.add(choice)),
+            onDeleteChoice: (choice) => setState(() {
+              _answerChoices.remove(choice);
+              if (_selectedAnswer == choice) _selectedAnswer = null;
+            }),
+            onSelectAnswer: (choice) =>
+                setState(() => _selectedAnswer = choice),
+          ),
+        HintInput(hintController: _hintController),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: _saveQuestion,
+          child: const Text('Save Changes'),
+        ),
+      ],
+    );
   }
 
   @override
@@ -175,99 +230,7 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(16.0),
-              children: [
-                TitleInput(titleController: _titleController),
-                DescriptionInput(descriptionController: _descriptionController),
-                // 카테고리 수정 불가 (비활성화)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: TextFormField(
-                    initialValue: question?.category ?? '',
-                    decoration: const InputDecoration(
-                      labelText: 'Category',
-                      border: OutlineInputBorder(),
-                    ),
-                    enabled: false, // 수정 불가
-                  ),
-                ),
-                TierInput(
-                  selectedTier: _selectedTier,
-                  onTierChanged: (value) {
-                    setState(() {
-                      _selectedTier = value!;
-                    });
-                  },
-                ),
-                if (question?.category == 'Syntax' ||
-                    question?.category == 'Debugging')
-                  QuestionTypeInput(
-                    selectedType: _selectedType ?? 'Subjective',
-                    onTypeChanged: (value) {
-                      setState(() {
-                        _selectedType = value!;
-                      });
-                    },
-                  ),
-                if (question?.category == 'Sequencing')
-                  LanguageInput(
-                    selectedLanguage: _selectedLanguage,
-                    onLanguageChanged: (value) {
-                      setState(() {
-                        _selectedLanguage = value!;
-                      });
-                    },
-                  ),
-                CodeSnippetInput(
-                  category: question?.category ?? '',
-                  selectedLanguage: _selectedLanguage,
-                  codeSnippets: _codeSnippets,
-                  snippetController: _codeSnippetController,
-                  onAddSnippet: (key, snippet) {
-                    setState(() {
-                      _codeSnippets[key] = snippet;
-                    });
-                  },
-                  onDeleteSnippet: (key) {
-                    setState(() {
-                      _codeSnippets.remove(key);
-                    });
-                  },
-                ),
-                if (_selectedType == 'Subjective')
-                  SubjectiveAnswerInput(
-                    subjectiveAnswerController: _subjectiveAnswerController,
-                  )
-                else if (_selectedType == 'Objective')
-                  ObjectiveAnswerInput(
-                    answerChoices: _answerChoices,
-                    selectedAnswer: _selectedAnswer,
-                    onAddChoice: (choice) {
-                      setState(() {
-                        _answerChoices.add(choice);
-                      });
-                    },
-                    onDeleteChoice: (choice) {
-                      setState(() {
-                        _answerChoices.remove(choice);
-                        if (_selectedAnswer == choice) _selectedAnswer = null;
-                      });
-                    },
-                    onSelectAnswer: (choice) {
-                      setState(() {
-                        _selectedAnswer = choice!;
-                      });
-                    },
-                  ),
-                HintInput(hintController: _hintController),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _saveQuestion,
-                  child: const Text('Save Changes'),
-                ),
-              ],
-            ),
+          : _buildBody(question),
     );
   }
 }
