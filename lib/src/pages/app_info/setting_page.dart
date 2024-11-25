@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'package:code_ground/src/view_models/user_view_model.dart'; // UserViewModel import
-import 'package:code_ground/src/utils/toast_message.dart'; // ToastMessage import
 
 class SettingPage extends StatefulWidget {
   final String initialNickname;
@@ -22,17 +18,22 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  bool _isEditingNickname = false;
+  bool _darkMode = false;
+  bool _notificationsEnabled = true;
+  String _language = 'English';
+  bool _isInfoExpanded = false;
+
   late TextEditingController _nicknameController;
+  late String _nickname;
 
   @override
   void initState() {
     super.initState();
-    // userData의 nickname 또는 초기값으로 텍스트 필드 초기화
-    _nicknameController = TextEditingController(
-        text: widget.userData?.nickname.isNotEmpty == true
-            ? widget.userData!.nickname
-            : widget.userData?.name ?? 'Guest');
+    // 닉네임 초기화: userData 기반
+    _nickname = widget.userData?.nickname.isNotEmpty == true
+        ? widget.userData!.nickname
+        : widget.userData?.name ?? 'Guest';
+    _nicknameController = TextEditingController(text: _nickname);
   }
 
   @override
@@ -41,81 +42,92 @@ class _SettingPageState extends State<SettingPage> {
     super.dispose();
   }
 
-  Future<void> _updateNickname() async {
-    final user =
-        Provider.of<UserViewModel>(context, listen: false).currentUserData;
-
-    if (user == null) {
-      ToastMessage.show('Please log in to continue.');
-      return;
-    }
-
-    final newNickname = _nicknameController.text.trim();
-
-    if (newNickname.isEmpty || newNickname == widget.userData?.nickname) {
-      ToastMessage.show('No changes made.');
-      return;
-    }
-
-    try {
-      // 사용자 정보 업데이트: UserViewModel을 사용하여 nickname 저장
-      await Provider.of<UserViewModel>(context, listen: false)
-          .updateNickname(newNickname);
-
-      if (mounted) {
-        ToastMessage.show('Nickname updated successfully.');
-
-        // setState를 사용하여 UI 업데이트
-        setState(() {
-          // 여기에서 nickname을 변경
-          widget.userData.nickname = newNickname; // userData의 nickname을 업데이트
-        });
-
-        Navigator.pop(context); // 닉네임을 업데이트 후 페이지 닫기
-      }
-    } catch (error) {
-      ToastMessage.show('Error occurred: $error');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(
+        title: const Text('Settings'),
+        backgroundColor: Colors.black,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+          // Your Info Section
           ListTile(
-            title: const Text('Edit Nickname'),
+            title: const Text('Your INFO'),
             trailing: Icon(
-              _isEditingNickname ? Icons.check : Icons.edit,
-              color: Colors.blue,
+              _isInfoExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
             ),
             onTap: () {
               setState(() {
-                _isEditingNickname = !_isEditingNickname;
+                _isInfoExpanded = !_isInfoExpanded;
               });
             },
           ),
-          if (_isEditingNickname) ...[
-            // 닉네임을 수정할 수 있는 TextField
-            TextField(
-              controller: _nicknameController,
-              decoration:
-                  const InputDecoration(hintText: 'Enter your nickname'),
+          if (_isInfoExpanded) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'NickName: $_nickname', // 현재 닉네임 표시
+                    style: const TextStyle(fontSize: 16.0),
+                  ),
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: _updateNickname,
-              child: const Text('Save Nickname'),
-            ),
-          ] else ...[
-            // 닉네임을 보여주는 부분
+            const SizedBox(height: 8.0),
             Text(
-              'Nickname: ${_nicknameController.text}',
+              'Role: ${widget.role}',
               style: const TextStyle(fontSize: 16.0),
             ),
           ],
-          const SizedBox(height: 40),
+          const Divider(),
+
+          // Other Settings Section
+          ListTile(
+            title: const Text('Dark Mode'),
+            trailing: Switch(
+              value: _darkMode,
+              onChanged: (bool value) {
+                setState(() {
+                  _darkMode = value;
+                });
+              },
+            ),
+          ),
+          const Divider(),
+
+          ListTile(
+            title: const Text('Notifications'),
+            trailing: Switch(
+              value: _notificationsEnabled,
+              onChanged: (bool value) {
+                setState(() {
+                  _notificationsEnabled = value;
+                });
+              },
+            ),
+          ),
+          const Divider(),
+
+          ListTile(
+            title: const Text('Language'),
+            subtitle: Text(_language),
+            trailing: DropdownButton<String>(
+              value: _language,
+              items: const [
+                DropdownMenuItem(value: 'English', child: Text('English')),
+                DropdownMenuItem(value: 'Korean', child: Text('Korean')),
+              ],
+              onChanged: (String? newValue) {
+                setState(() {
+                  _language = newValue!;
+                });
+              },
+            ),
+          ),
+          const Divider(),
         ],
       ),
     );

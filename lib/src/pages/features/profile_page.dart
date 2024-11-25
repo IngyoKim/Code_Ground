@@ -150,6 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: ListTile(
+                    //닉네임 재 정의할 떄마다 바로바로 새고고침 되도록하기
                     leading: ClipOval(
                       child: (userData?.photoUrl != null &&
                               userData!.photoUrl.isNotEmpty)
@@ -195,10 +196,17 @@ class _ProfilePageState extends State<ProfilePage> {
                             icon: const Icon(Icons.check),
                             onPressed: () {
                               setState(() {
+                                // 닉네임 수정 후 저장
                                 userViewModel
                                     .updateNickname(_nicknameController.text);
+                                // 닉네임 수정 모드 종료
                                 _isEditingNickname = false;
                               });
+                              // 닉네임이 변경되었으므로 즉시 화면 갱신
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Nickname updated!')),
+                              );
                             },
                           ),
                         ElevatedButton(
