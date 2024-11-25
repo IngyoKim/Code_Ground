@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 class SettingPage extends StatefulWidget {
   final String initialNickname;
   final String role;
+  final dynamic userData; // userData 객체 추가
 
   const SettingPage({
     super.key,
     required this.initialNickname,
     required this.role,
-    required nickname,
+    required this.userData,
+    required String nickname,
   });
 
   @override
@@ -20,15 +22,18 @@ class _SettingPageState extends State<SettingPage> {
   bool _notificationsEnabled = true;
   String _language = 'English';
   bool _isInfoExpanded = false;
-  bool _isEditingNickname = false; // 닉네임 편집 상태
+  bool _isEditingNickname = false;
 
   late TextEditingController _nicknameController;
-  late String _nickname; // 닉네임을 상태로 관리
-//hint input의 예시를 보고 고치기
+  late String _nickname;
+
   @override
   void initState() {
     super.initState();
-    _nickname = widget.initialNickname; // 초기값 설정
+    // 닉네임 초기화: userData 기반
+    _nickname = widget.userData?.nickname.isNotEmpty == true
+        ? widget.userData!.nickname
+        : widget.userData?.name ?? 'Guest';
     _nicknameController = TextEditingController(text: _nickname);
   }
 
@@ -40,14 +45,13 @@ class _SettingPageState extends State<SettingPage> {
 
   void _updateNickname(String newNickname) {
     setState(() {
-      _nickname = newNickname; // 수정된 nickname을 상태에 저장
-      _nicknameController.text = newNickname; // TextField에 반영
+      _nickname = newNickname; // 닉네임 상태 업데이트
     });
   }
 
   void _toggleEditingNickname() {
     setState(() {
-      _isEditingNickname = !_isEditingNickname;
+      _isEditingNickname = !_isEditingNickname; // 편집 모드 토글
     });
   }
 
@@ -77,26 +81,29 @@ class _SettingPageState extends State<SettingPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _isEditingNickname
-                    ? Expanded(
-                        child: TextField(
+                Expanded(
+                  child: _isEditingNickname
+                      ? TextField(
                           controller: _nicknameController,
                           decoration: const InputDecoration(
                             hintText: 'Enter your nickname',
                           ),
-                          onSubmitted: _updateNickname, // 수정된 닉네임 저장
+                          onSubmitted: (newNickname) {
+                            _updateNickname(newNickname);
+                            _toggleEditingNickname();
+                          },
+                        )
+                      : Text(
+                          'NickName: $_nickname', // 현재 닉네임 표시
+                          style: const TextStyle(fontSize: 16.0),
                         ),
-                      )
-                    : Text(
-                        'NickName: $_nickname', // 수정된 nickname 사용
-                        style: const TextStyle(fontSize: 16.0),
-                      ),
+                ),
                 IconButton(
                   icon: Icon(
                     _isEditingNickname ? Icons.check : Icons.edit,
                     color: Colors.blue,
                   ),
-                  onPressed: _toggleEditingNickname, // 편집 모드 전환
+                  onPressed: _toggleEditingNickname,
                 ),
               ],
             ),
@@ -106,7 +113,7 @@ class _SettingPageState extends State<SettingPage> {
               style: const TextStyle(fontSize: 16.0),
             ),
           ],
-          const Divider(), //확인하고 고치기
+          const Divider(),
 
           // Other Settings Section
           ListTile(
@@ -142,6 +149,7 @@ class _SettingPageState extends State<SettingPage> {
               value: _language,
               items: const [
                 DropdownMenuItem(value: 'English', child: Text('English')),
+                DropdownMenuItem(value: 'Korean', child: Text('Korean')),
               ],
               onChanged: (String? newValue) {
                 setState(() {

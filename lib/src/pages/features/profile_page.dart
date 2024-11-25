@@ -63,7 +63,8 @@ class ProfilePage extends StatelessWidget {
               builder: (context) => SettingPage(
                 initialNickname: '',
                 role: userData?.role ?? 'member',
-                nickname: null,
+                nickname: userData?.nickname ?? 'Guest',
+                userData: userData,
               ),
             ),
           );
