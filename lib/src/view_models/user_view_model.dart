@@ -26,12 +26,12 @@ class UserViewModel with ChangeNotifier {
         final User? firebaseUser = FirebaseAuth.instance.currentUser;
 
         _currentUserData = UserData(
-          userId: currentUserId,
+          uid: currentUserId,
           name: firebaseUser?.displayName ?? 'Guest',
           email: firebaseUser?.email ?? '',
           photoUrl: firebaseUser?.photoURL ?? '',
           nickname: '',
-          isAdmin: false,
+          role: 'member',
         );
 
         await _userOperation.writeUserData(_currentUserData!);

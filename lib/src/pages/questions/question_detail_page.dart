@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/utils/toast_message.dart';
+import 'package:code_ground/src/utils/permission_utils.dart';
 import 'package:code_ground/src/utils/question_detail_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/pages/questions/edit_question_page.dart';
+import 'package:code_ground/src/services/database/datas/user_data.dart';
 
 import 'package:code_ground/src/components/question_detail_widgets/contents/question_header.dart';
 import 'package:code_ground/src/components/question_detail_widgets/contents/language_selector.dart';
@@ -27,7 +29,8 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
   String? _selectedLanguage;
   String? _selectedAnswer;
   bool _isLoading = true;
-  bool isEditable = false;
+  bool _hasEditPermission = false;
+  UserData? _writer;
 
   @override
   void initState() {
@@ -40,6 +43,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
     final questionViewModel =
         Provider.of<QuestionViewModel>(context, listen: false);
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+
     final question = questionViewModel.selectedQuestion;
 
     if (question == null) {
@@ -50,33 +54,29 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
     try {
       setState(() => _isLoading = true);
 
-      // 질문 데이터를 다시 가져오기
+      // 질문 데이터 갱신
       await questionViewModel.fetchQuestionById(question.questionId);
-
-      // 다른 사용자의 정보 가져오기
       await userViewModel.fetchOtherUserData(question.writer);
 
-      // 언어 설정
+      // 권한 확인
+      final role = userViewModel.currentUserData?.role ?? '';
+      final isOwner = userViewModel.currentUserData?.uid == question.writer;
+      _hasEditPermission = RolePermissions.canPerformAction(role, 'edit_all') ||
+          (RolePermissions.canPerformAction(role, 'edit_own') && isOwner);
+
+      _writer = userViewModel.otherUserData;
+
+      // 언어 초기화
       final updatedQuestion = questionViewModel.selectedQuestion;
       if (updatedQuestion?.codeSnippets.isNotEmpty == true) {
         setState(() {
           _selectedLanguage = updatedQuestion!.codeSnippets.keys.first;
         });
       }
-
-      // 작성자인지 확인
-      final currentUser = userViewModel.currentUserData;
-      if (currentUser?.userId == question.writer) {
-        setState(() {
-          isEditable = true;
-        });
-      }
-    } catch (e) {
-      debugPrint('Error fetching question detail: $e');
+    } catch (error) {
+      debugPrint('Error fetching question detail: $error');
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      setState(() => _isLoading = false);
     }
   }
 
@@ -89,7 +89,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
   @override
   Widget build(BuildContext context) {
     final questionViewModel = Provider.of<QuestionViewModel>(context);
-    final userViewModel = Provider.of<UserViewModel>(context);
+
     final question = questionViewModel.selectedQuestion;
 
     if (question == null) {
@@ -101,13 +101,11 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       );
     }
 
-    final userData = userViewModel.otherUserData;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(question.questionId),
         actions: [
-          if (isEditable)
+          if (_hasEditPermission)
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () async {
@@ -128,7 +126,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
               padding: const EdgeInsets.all(16.0),
               child: ListView(
                 children: [
-                  if (userData != null) questionHeader(question, userData),
+                  questionHeader(question, _writer),
                   if (question.category != 'Sequencing') ...[
                     if (question.codeSnippets.isNotEmpty)
                       languageSelector(

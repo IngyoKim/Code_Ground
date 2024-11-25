@@ -90,7 +90,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
       final questionData = QuestionData(
         questionId: '', // ViewModel에서 자동 생성
         title: _titleController.text.trim(),
-        writer: user.userId,
+        writer: user.uid,
         category: _selectedCategory,
         questionType: _selectedType,
         description: _descriptionController.text.trim(),

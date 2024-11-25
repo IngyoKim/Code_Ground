@@ -10,9 +10,8 @@ class UserOperation {
 
   // Write user data
   Future<void> writeUserData(UserData userData) async {
-    String path = '$basePath/${userData.userId}';
+    String path = '$basePath/${userData.uid}';
     debugPrint('[writeUserData] Writing user data to path: $path');
-    debugPrint('[writeUserData] Data to write: ${userData.toJson()}');
     try {
       await _dbService.writeDB(path, userData.toJson());
       debugPrint('[writeUserData] Successfully wrote user data to $path');
@@ -22,58 +21,17 @@ class UserOperation {
     }
   }
 
-  // Initialize user data if it doesn't exist
-  Future<void> initializeUserData() async {
-    debugPrint('[initializeUserData] Initializing user data if not exists');
-    final User? user = FirebaseAuth.instance.currentUser;
-
-    if (user == null) {
-      debugPrint('[initializeUserData] No user is currently logged in.');
-      return;
-    }
-
-    String path = '$basePath/${user.uid}';
-    debugPrint('[initializeUserData] Checking user data at path: $path');
-    try {
-      final data = await _dbService.readDB(path);
-
-      if (data == null) {
-        debugPrint(
-            '[initializeUserData] User data not found. Initializing default data.');
-        final defaultUserData = UserData(
-          userId: user.uid,
-          name: user.displayName ?? 'Guest',
-          email: user.email ?? '',
-          photoUrl: user.photoURL ?? '',
-          nickname: '', // Default empty or user-defined logic
-          isAdmin: false, // Default value
-        );
-
-        await writeUserData(defaultUserData);
-        debugPrint(
-            '[initializeUserData] Default user data written for userId: ${user.uid}');
-      } else {
-        debugPrint(
-            '[initializeUserData] User data already exists for userId: ${user.uid}');
-      }
-    } catch (error) {
-      debugPrint('[initializeUserData] Error initializing user data: $error');
-      rethrow;
-    }
-  }
-
   // Read user data
-  Future<UserData?> readUserData([String? userId]) async {
+  Future<UserData?> readUserData([String? uid]) async {
     debugPrint('[readUserData] Reading user data');
-    userId ??= FirebaseAuth.instance.currentUser?.uid;
+    uid ??= FirebaseAuth.instance.currentUser?.uid;
 
-    if (userId == null) {
+    if (uid == null) {
       debugPrint('[readUserData] No user is currently logged in.');
       throw Exception('No user is currently logged in.');
     }
 
-    String path = '$basePath/$userId';
-    debugPrint('[readUserData] Reading data for path: $path');
+    String path = '$basePath/$uid';
     try {
       final data = await _dbService.readDB(path);
       if (data != null) {
@@ -85,42 +43,6 @@ class UserOperation {
       }
     } catch (error) {
       debugPrint('[readUserData] Error reading user data: $error');
-      rethrow;
-    }
-  }
-
-  // Update user data
-  Future<void> updateUserData(
-      String userId, Map<String, dynamic> updates) async {
-    String path = '$basePath/$userId';
-    debugPrint('[updateUserData] Updating user data for path: $path');
-    debugPrint('[updateUserData] Updates: $updates');
-    try {
-      await _dbService.updateDB(path, updates);
-      debugPrint('[updateUserData] Successfully updated user data at $path');
-    } catch (error) {
-      debugPrint('[updateUserData] Error updating user data: $error');
-      rethrow;
-    }
-  }
-
-  // Fetch all user data (optional)
-  Future<List<UserData>> fetchAllUsers() async {
-    debugPrint('[fetchAllUsers] Fetching all users');
-    try {
-      final data = await _dbService.readDB(basePath);
-      if (data != null) {
-        final users = data.entries.map((entry) {
-          return UserData.fromJson(Map<String, dynamic>.from(entry.value));
-        }).toList();
-        debugPrint('[fetchAllUsers] Retrieved ${users.length} users');
-        return users;
-      } else {
-        debugPrint('[fetchAllUsers] No users found in database');
-        return [];
-      }
-    } catch (error) {
-      debugPrint('[fetchAllUsers] Error fetching all users: $error');
       rethrow;
     }
   }

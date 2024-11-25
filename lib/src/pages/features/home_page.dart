@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:code_ground/src/utils/permission_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
 import 'package:code_ground/src/pages/questions/question_list_page.dart';
@@ -66,17 +67,18 @@ class HomePage extends StatelessWidget {
                   // 고정된 크기의 버튼
                   Consumer<UserViewModel>(
                     builder: (context, userViewModel, child) {
+                      final role = userViewModel.currentUserData?.role ?? '';
                       return SizedBox(
                         height: 40,
                         width: 40,
                         child: IconButton(
                           icon: Icon(
-                            userViewModel.currentUserData?.isAdmin ?? false
+                            RolePermissions.canPerformAction(role, 'create')
                                 ? Icons.add_rounded
                                 : null, // 기본 아이콘 제공
                           ),
                           onPressed:
-                              userViewModel.currentUserData?.isAdmin ?? false
+                              RolePermissions.canPerformAction(role, 'create')
                                   ? () {
                                       Navigator.push(
                                         context,

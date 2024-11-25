@@ -22,7 +22,7 @@ class ProgressViewModel with ChangeNotifier {
 
       if (_progressData == null) {
         _progressData = ProgressData(
-          userId: currentUserId,
+          uid: currentUserId,
           level: 1,
           exp: 0,
           score: 0,

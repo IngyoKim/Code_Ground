@@ -105,7 +105,7 @@ class ProfilePage extends StatelessWidget {
         'icon': Icons.person_add,
         'text': 'Invite',
         'onTap': () async {
-          final inviteUrl = await createCustomLink(userData!.userId);
+          final inviteUrl = await createCustomLink(userData!.uid);
           await kakaoMessaging.shareContent(userData.nickname, inviteUrl);
         },
       },

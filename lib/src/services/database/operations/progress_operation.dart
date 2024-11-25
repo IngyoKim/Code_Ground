@@ -10,7 +10,7 @@ class ProgressOperation {
 
   // Write progress data
   Future<void> writeProgressData(ProgressData progressData) async {
-    String path = '$basePath/${progressData.userId}';
+    String path = '$basePath/${progressData.uid}';
     debugPrint(
         '[writeProgressData] Start writing progress data for path: $path');
     debugPrint('[writeProgressData] Data to write: ${progressData.toJson()}');
@@ -24,16 +24,16 @@ class ProgressOperation {
   }
 
   // Read progress data
-  Future<ProgressData?> readProgressData([String? userId]) async {
+  Future<ProgressData?> readProgressData([String? uid]) async {
     debugPrint('[readProgressData] Start reading progress data');
-    userId ??= FirebaseAuth.instance.currentUser?.uid;
+    uid ??= FirebaseAuth.instance.currentUser?.uid;
 
-    if (userId == null) {
+    if (uid == null) {
       debugPrint('[readProgressData] No user is currently logged in');
       throw Exception('No user is currently logged in.');
     }
 
-    String path = '$basePath/$userId';
+    String path = '$basePath/$uid';
     debugPrint('[readProgressData] Reading data for path: $path');
     try {
       final data = await _dbService.readDB(path);

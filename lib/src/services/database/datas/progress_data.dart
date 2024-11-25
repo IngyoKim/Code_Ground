@@ -1,5 +1,5 @@
 class ProgressData {
-  final String userId;
+  final String uid;
   final int level;
   final int exp;
   final int score;
@@ -8,7 +8,7 @@ class ProgressData {
   final Map<String, String> questionState;
 
   ProgressData({
-    required this.userId,
+    required this.uid,
     required this.level,
     required this.exp,
     required this.score,
@@ -19,7 +19,7 @@ class ProgressData {
 
   factory ProgressData.fromJson(Map<String, dynamic> json) {
     return ProgressData(
-      userId: json['userId'] ?? '', // 기본값 설정
+      uid: json['uid'] ?? '', // 기본값 설정
       level: json['level'] ?? 1, // 기본값 설정
       exp: json['exp'] ?? 0, // 기본값 설정
       score: json['score'] ?? 0, // 기본값 설정
@@ -32,7 +32,7 @@ class ProgressData {
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
+      'uid': uid,
       'level': level,
       'exp': exp,
       'score': score,
