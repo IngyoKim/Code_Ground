@@ -15,6 +15,7 @@ class UserOperation {
     try {
       await _dbService.writeDB(path, userData.toJson());
       debugPrint('[writeUserData] Successfully wrote user data to $path');
+      debugPrint('[writeUserData] ${userData.toJson()}');
     } catch (error) {
       debugPrint('[writeUserData] Error writing user data: $error');
       rethrow;
@@ -43,6 +44,25 @@ class UserOperation {
       }
     } catch (error) {
       debugPrint('[readUserData] Error reading user data: $error');
+      rethrow;
+    }
+  }
+
+  /// Update user data
+  Future<void> updateUserData(Map<String, dynamic> updates) async {
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) {
+      debugPrint('[readUserData] No user is currently logged in.');
+      throw Exception('No user is currently logged in.');
+    }
+    String path = '$basePath/$uid';
+    debugPrint('[updateUserData] Updating user data at path: $path');
+    try {
+      await _dbService.updateDB(path, updates);
+      debugPrint('[updateUserData] Successfully updated user data at $path');
+      debugPrint('[updateUserData] Updates: $updates');
+    } catch (error) {
+      debugPrint('[updateUserData] Error updating user data: $error');
       rethrow;
     }
   }

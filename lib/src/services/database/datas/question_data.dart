@@ -7,7 +7,7 @@ class QuestionData {
   final String description;
   final List<String> languages;
   final Map<String, String> codeSnippets;
-  final String hint;
+  final String? hint;
   final String? answer;
   final List<String>? answerList;
   final String tier;
@@ -43,7 +43,7 @@ class QuestionData {
       description: json['description'] ?? '',
       languages: List<String>.from(json['languages'] ?? []), // 명시적 변환
       codeSnippets: Map<String, String>.from(json['codeSnippets'] ?? {}),
-      hint: json['hint'] ?? 'No hint available',
+      hint: json['hint'],
       answer: json['answer'],
       answerList: json['answerList'] != null
           ? List<String>.from(json['answerList'] ?? [])
@@ -102,8 +102,8 @@ class QuestionData {
       languages: languages ?? this.languages,
       codeSnippets: codeSnippets ?? this.codeSnippets,
       hint: hint ?? this.hint,
-      answer: answer,
-      answerList: answerList,
+      answer: answer ?? this.answer,
+      answerList: answerList ?? this.answerList,
       tier: tier ?? this.tier,
       solvers: solvers ?? this.solvers,
       createdAt: createdAt ?? this.createdAt,

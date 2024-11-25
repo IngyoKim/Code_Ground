@@ -75,18 +75,6 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
     }
 
     try {
-      // Sequencing의 경우 키를 i1, i2, i3 형식으로 재정렬
-      final Map<String, String> validatedCodeSnippets = {};
-      if (_selectedCategory == 'Sequencing') {
-        int index = 1; // i1, i2, i3 형식으로 시작
-        for (final snippet in _codeSnippets.values) {
-          validatedCodeSnippets['i$index'] = snippet;
-          index++;
-        }
-      } else {
-        validatedCodeSnippets.addAll(_codeSnippets);
-      }
-
       final questionData = QuestionData(
         questionId: '', // ViewModel에서 자동 생성
         title: _titleController.text.trim(),
@@ -96,11 +84,11 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         description: _descriptionController.text.trim(),
         languages: _selectedCategory == 'Sequencing'
             ? [_selectedLanguage] // Sequencing의 경우 단일 언어
-            : validatedCodeSnippets.keys.toList(),
-        codeSnippets: validatedCodeSnippets,
+            : _codeSnippets.keys.toList(),
+        codeSnippets: _codeSnippets, // 이미 재정렬된 상태로 사용
         hint: _hintController.text.isNotEmpty
             ? _hintController.text.trim()
-            : 'No hint provided',
+            : null,
         answer: _selectedType == 'Subjective'
             ? _subjectiveAnswerController.text.trim()
             : _selectedAnswer ?? '',

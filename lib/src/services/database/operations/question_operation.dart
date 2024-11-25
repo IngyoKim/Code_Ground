@@ -64,6 +64,7 @@ class QuestionOperation {
         '$basePath/${questionData.category.toLowerCase()}/${questionData.questionId}';
     await _dbService.writeDB(path, questionData.toJson());
     debugPrint('[writeQuestionData] Question saved at path: $path');
+    debugPrint('[writeQuestionData] ${questionData.toJson()}');
   }
 
   /// 질문 데이터 업데이트

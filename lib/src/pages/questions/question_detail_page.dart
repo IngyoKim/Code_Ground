@@ -1,9 +1,9 @@
+import 'package:code_ground/src/utils/question_detail_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/utils/toast_message.dart';
 import 'package:code_ground/src/utils/permission_utils.dart';
-import 'package:code_ground/src/utils/question_detail_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/pages/questions/edit_question_page.dart';
@@ -151,8 +151,9 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                       context: context,
                       controller: _answerController,
                       onAnswerSubmitted: (answer) {
-                        final isCorrect = verifyAnswer(answer, question);
-                        showAnswerResult(context, isCorrect);
+                        final isCorrect =
+                            QuestionDetailUtil.verifyAnswer(answer, question);
+                        QuestionDetailUtil.showAnswerResult(context, isCorrect);
                       },
                     )
                   else if (question.questionType == 'Objective')
@@ -170,17 +171,18 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                           ToastMessage.show('Please select an answer.');
                           return;
                         }
-                        final isCorrect =
-                            verifyAnswer(_selectedAnswer!, question);
-                        showAnswerResult(context, isCorrect);
+                        final isCorrect = QuestionDetailUtil.verifyAnswer(
+                            _selectedAnswer!, question);
+                        QuestionDetailUtil.showAnswerResult(context, isCorrect);
                       },
                     )
                   else if (question.questionType == 'Sequencing')
                     sequencingSubmit(
                       codeSnippets: question.codeSnippets,
                       onSubmit: (orderedKeys) {
-                        final isCorrect = verifyAnswer(orderedKeys, question);
-                        showAnswerResult(context, isCorrect);
+                        final isCorrect = QuestionDetailUtil.verifyAnswer(
+                            orderedKeys, question);
+                        QuestionDetailUtil.showAnswerResult(context, isCorrect);
                       },
                     ),
                 ],

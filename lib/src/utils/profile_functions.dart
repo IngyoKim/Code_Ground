@@ -17,13 +17,19 @@ void navigateToQuestionStatePage(BuildContext context) {
 }
 
 void navigateToSettingPage(BuildContext context, UserViewModel userViewModel) {
+  // userViewModel.currentUserData가 null일 경우 기본값 처리
+  final nickname = userViewModel.currentUserData?.nickname ?? 'Guest';
+  userViewModel.currentUserData?.role == 'admin'; // 예시로 role을 admin으로 설정
+
+  var role;
+  var userData; //만약 문제 생기면 여기 확인하기
   Navigator.push(
     context,
     MaterialPageRoute(
       builder: (context) => SettingPage(
-        nickname: userViewModel.userData?.nickname ?? 'Guest',
-        role: userViewModel.userData?.isAdmin ?? false,
-        initialNickname: 'Guest',
+        nickname: nickname, // null일 경우 'Guest'로 기본값 설정
+        initialNickname: nickname, role: role,
+        userData: userData, // initialNickname을 nickname과 동일하게 설정
       ),
     ),
   );

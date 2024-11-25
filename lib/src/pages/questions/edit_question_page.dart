@@ -64,7 +64,7 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
       // 기존 질문 데이터 초기화
       _titleController.text = question.title;
       _descriptionController.text = question.description;
-      _hintController.text = question.hint;
+      _hintController.text = question.hint ?? '';
       _selectedType = question.questionType;
       _selectedTier = Tier.getTierByName(question.tier) ?? tiers.first;
       _codeSnippets.addAll(question.codeSnippets);

@@ -1,74 +1,140 @@
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
-import 'package:collection/collection.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:collection/collection.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
+import 'package:code_ground/src/services/database/datas/tier_data.dart';
 
-void showLoading(BuildContext context) {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (_) {
-      return const Center(
-        child: CircularProgressIndicator(),
+class QuestionDetailUtil {
+  /// 사용자 답변 검증
+  static bool verifyAnswer(dynamic userAnswer, QuestionData question) {
+    if (question.questionType != 'Sequencing') {
+      return userAnswer.toString().trim() == question.answer?.toString().trim();
+    }
+
+    // Sequencing 타입: 리스트 비교
+    final userAnswerList = userAnswer as List<int>;
+    final correctAnswerList = question.codeSnippets.keys
+        .map((key) => int.parse(key.substring(1)))
+        .toList();
+
+    debugPrint("User Answer: $userAnswerList");
+    debugPrint("Correct Answer: $correctAnswerList");
+
+    return ListEquality().equals(userAnswerList, correctAnswerList);
+  }
+
+  /// 답변 결과 표시 및 Progress 업데이트
+  static Future<void> showAnswerResult(
+    BuildContext context,
+    bool isCorrect,
+  ) async {
+    final progressViewModel =
+        Provider.of<ProgressViewModel>(context, listen: false);
+    final questionViewModel =
+        Provider.of<QuestionViewModel>(context, listen: false);
+    final question = questionViewModel.selectedQuestion;
+
+    if (question == null) {
+      Fluttertoast.showToast(
+        msg: "Error: Question not found.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
       );
-    },
-  );
-}
+      return;
+    }
 
-/// Utility function to hide the loading spinner
-void hideLoading(BuildContext context) {
-  Navigator.of(context, rootNavigator: true).pop();
-}
+    try {
+      await progressViewModel.fetchProgressData();
+      final progressData = progressViewModel.progressData;
 
-/// Verify the user's answer against the correct answer
-bool verifyAnswer(dynamic userAnswer, QuestionData question) {
-  if (question.questionType != 'Sequencing') {
-    return userAnswer.toString().trim() == question.answer.toString().trim();
+      if (progressData == null) {
+        Fluttertoast.showToast(
+          msg: "Error: Progress data not found.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+        return;
+      }
+
+      final tier = Tier.getTierByName(question.tier);
+      if (tier == null) {
+        Fluttertoast.showToast(
+          msg: "Error: Invalid tier in question.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+        return;
+      }
+
+      final questionId = question.questionId;
+      final currentState = progressData.questionState[questionId] ?? '';
+      final updates = <String, dynamic>{};
+
+      if (currentState == 'correct') {
+        Fluttertoast.showToast(
+          msg: "You already solved this question.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.blue,
+          textColor: Colors.white,
+        );
+        return;
+      }
+
+      if (isCorrect) {
+        final expGain = tier.bonusExp;
+        final scoreGain = tier.bonusScore;
+
+        updates['exp'] = progressData.exp + expGain;
+        updates['score'] = progressData.score + scoreGain;
+        updates['questionState'] = {
+          ...progressData.questionState,
+          questionId: 'correct',
+        };
+
+        Fluttertoast.showToast(
+          msg: "Correct! Gained $expGain EXP and $scoreGain points.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
+      } else {
+        updates['questionState'] = {
+          ...progressData.questionState,
+          questionId: 'wrong',
+        };
+
+        Fluttertoast.showToast(
+          msg: "Wrong! Try Again.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
+
+      if (updates.isNotEmpty) {
+        await progressViewModel.updateProgressData(updates);
+      }
+    } catch (error) {
+      debugPrint("Error updating progress: $error");
+      Fluttertoast.showToast(
+        msg: "Error updating progress.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
   }
-
-  /// Compare arrays for Sequencing type
-  final userAnswerList = userAnswer as List<int>;
-  final correctAnswerList =
-      question.codeSnippets.keys.map((key) => int.parse(key)).toList();
-
-  /// Debugging outputs
-  debugPrint("User Answer: $userAnswerList");
-  debugPrint("Correct Answer: $correctAnswerList");
-
-  return ListEquality().equals(userAnswerList, correctAnswerList);
-}
-
-/// Show the result of the user's answer
-void showAnswerResult(BuildContext context, bool isCorrect) async {
-  //final progressViewModel =
-  Provider.of<ProgressViewModel>(context, listen: false);
-  final questionViewModel =
-      Provider.of<QuestionViewModel>(context, listen: false);
-  final question = questionViewModel.selectedQuestion;
-
-  if (question == null) {
-    Fluttertoast.showToast(
-      msg: "Error: Question not found.",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-    );
-    return;
-  }
-
-  showLoading(context);
-
-  Fluttertoast.showToast(
-    msg: isCorrect ? "Correct!" : "Wrong! Try Again.",
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    backgroundColor: isCorrect ? Colors.green : Colors.red,
-    textColor: Colors.white,
-  );
 }
