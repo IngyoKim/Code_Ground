@@ -18,10 +18,9 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final KakaoMessaging kakaoMessaging = KakaoMessaging();
     final userViewModel = context.watch<UserViewModel>();
     final progressViewModel = context.watch<ProgressViewModel>();
-
-    final KakaoMessaging kakaoMessaging = KakaoMessaging();
 
     final userData = userViewModel.currentUserData;
     final progressData = progressViewModel.progressData;
@@ -149,7 +148,7 @@ class ProfilePage extends StatelessWidget {
                           ? userData!.nickname
                           : userData?.name ?? 'Guest',
                     ),
-                    subtitle: Text(userData?.email ?? 'No email available'),
+                    subtitle: Text(userData?.name ?? 'enter your name'),
                     trailing: ElevatedButton(
                       onPressed: () {
                         showLogoutDialog(context);

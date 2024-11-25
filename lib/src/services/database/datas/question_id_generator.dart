@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-/// `QuestionIdManager`
-/// ID 생성 및 카테고리와 관련된 작업을 담당하는 클래스
-class QuestionIdManager {
+/// questionId 생성 및 카테고리 분류 작업을 담당하는 클래스
+class QuestionIdGenerator {
   static const Map<String, String> _categoryPrefixes = {
     'syntax': '1',
     'debugging': '2',

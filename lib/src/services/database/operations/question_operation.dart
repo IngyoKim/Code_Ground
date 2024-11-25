@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
 import 'package:code_ground/src/services/database/operations/database_service.dart';
-import 'package:code_ground/src/services/database/datas/question_id_manager.dart';
+import 'package:code_ground/src/services/database/datas/question_id_generator.dart';
 
 const basePath = 'Questions';
 
@@ -11,7 +11,7 @@ class QuestionOperation {
   /// 질문 ID로 질문 가져오기
   Future<QuestionData?> fetchQuestionById(String questionId) async {
     try {
-      final category = QuestionIdManager.getCategoryFromId(questionId);
+      final category = QuestionIdGenerator.getCategoryFromId(questionId);
       if (category == null) {
         debugPrint('[fetchQuestionById] Invalid question ID: $questionId');
         return null;
@@ -48,7 +48,7 @@ class QuestionOperation {
   /// 새로운 질문 ID 생성
   Future<String> generateQuestionId(String category) async {
     final lastNumber = await _getLastNumberForCategory(category);
-    return QuestionIdManager.generateNewId(
+    return QuestionIdGenerator.generateNewId(
         category: category, lastNumber: lastNumber);
   }
 
