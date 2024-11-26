@@ -1,4 +1,5 @@
 # Code Ground - Coding Problem Solving Application
+![CodeGround 로고 1](https://github.com/user-attachments/assets/434d55ae-7563-412e-9db2-57533f526f5e)
 
 ## Project Overview
 **Code Ground** is a coding problem-solving application with the goal of making coding a daily habit. It supports users in solving coding problems and learning at any time, helping them improve their coding skills through regular practice and repetition.
@@ -58,8 +59,13 @@ For questions or suggestions regarding this project, please feel free to open an
 
 ## Document
 
-### Class Diagram
-
 ### System Architecture
+![image](https://github.com/user-attachments/assets/eb378641-272e-4fa2-8cd5-8ecda3fd3b33)
+
+### Class Diagram
+- Login
+![image](https://github.com/user-attachments/assets/27fa7b4f-5645-41c1-870d-00f747a43189)
 
 ### Flow
+- Login
+![image](https://github.com/user-attachments/assets/107315fe-dc2b-46ac-80dd-3dae2840cce1)
