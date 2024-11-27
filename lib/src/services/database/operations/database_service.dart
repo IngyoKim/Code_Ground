@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -9,7 +10,8 @@ class DatabaseService {
     DatabaseReference ref = database.ref(path);
     try {
       await ref.set(data);
-      debugPrint("[DatabaseService] Data written to $path: $data");
+      final formattedData = JsonEncoder.withIndent('  ').convert(data);
+      debugPrint("[DatabaseService] Data written to $path:\n$formattedData");
     } catch (error) {
       debugPrint("[DatabaseService] Error writing data to $path: $error");
       rethrow;
@@ -22,7 +24,9 @@ class DatabaseService {
     try {
       final snapshot = await ref.get();
       if (snapshot.exists) {
-        debugPrint("[DatabaseService] Data read from $path: ${snapshot.value}");
+        final formattedData =
+            JsonEncoder.withIndent('  ').convert(snapshot.value);
+        debugPrint("[DatabaseService] Data read from $path:\n$formattedData");
         return snapshot.value as Map<dynamic, dynamic>;
       } else {
         debugPrint("[DatabaseService] No data available at path: $path");
@@ -39,14 +43,15 @@ class DatabaseService {
     DatabaseReference ref = database.ref(path);
     try {
       await ref.update(updates);
-      debugPrint("[DatabaseService] Data updated at $path: $updates");
+      final formattedUpdates = JsonEncoder.withIndent('  ').convert(updates);
+      debugPrint("[DatabaseService] Data updated at $path:\n$formattedUpdates");
     } catch (error) {
       debugPrint("[DatabaseService] Error updating data at $path: $error");
       rethrow;
     }
   }
 
-  /// Fetch method for retrieving filtered and sorted data
+  /// Generic fetch method for any data type
   Future<List<Map<String, dynamic>>> fetchDB(
     String path, {
     String? orderByChild,
@@ -71,8 +76,10 @@ class DatabaseService {
         final data = snapshot.children
             .map((child) => Map<String, dynamic>.from(child.value as Map))
             .toList();
+
+        final formattedData = JsonEncoder.withIndent('  ').convert(data);
         debugPrint(
-            "[DatabaseService] Data fetched from $path with query: $data");
+            "[DatabaseService] Data fetched from $path with query:\n$formattedData");
         return data;
       } else {
         debugPrint("[DatabaseService] No data available with query at $path");

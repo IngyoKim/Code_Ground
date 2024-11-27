@@ -36,7 +36,6 @@ class UserOperation {
     try {
       final data = await _dbService.readDB(path);
       if (data != null) {
-        debugPrint('[readUserData] Data retrieved: $data');
         return UserData.fromJson(Map<String, dynamic>.from(data));
       } else {
         debugPrint('[readUserData] No data found at path: $path');
@@ -60,7 +59,6 @@ class UserOperation {
     try {
       await _dbService.updateDB(path, updates);
       debugPrint('[updateUserData] Successfully updated user data at $path');
-      debugPrint('[updateUserData] Updates: $updates');
     } catch (error) {
       debugPrint('[updateUserData] Error updating user data: $error');
       rethrow;

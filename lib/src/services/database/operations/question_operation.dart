@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
 import 'package:code_ground/src/services/database/operations/database_service.dart';
 
@@ -19,10 +20,15 @@ class QuestionOperation {
   /// ID로 카테고리 추출
   String? _getCategoryFromId(String questionId) {
     final prefix = questionId.substring(0, 1);
-    final categoryEntry = _categoryPrefixes.entries.firstWhere(
-        (entry) => entry.value == prefix,
-        orElse: () => const MapEntry('', ''));
-    return categoryEntry.key.isNotEmpty ? categoryEntry.key : null;
+    return _categoryPrefixes.entries
+            .firstWhere((entry) => entry.value == prefix,
+                orElse: () => const MapEntry('', ''))
+            .key
+            .isNotEmpty
+        ? _categoryPrefixes.entries
+            .firstWhere((entry) => entry.value == prefix)
+            .key
+        : null;
   }
 
   /// 카테고리 접두사 가져오기
@@ -32,14 +38,14 @@ class QuestionOperation {
 
   /// 질문 ID로 질문 가져오기
   Future<QuestionData?> fetchQuestionById(String questionId) async {
-    try {
-      final category = _getCategoryFromId(questionId);
-      if (category == null) {
-        debugPrint('[fetchQuestionById] Invalid question ID: $questionId');
-        return null;
-      }
+    final category = _getCategoryFromId(questionId);
+    if (category == null) {
+      debugPrint('[fetchQuestionById] Invalid question ID: $questionId');
+      return null;
+    }
 
-      final path = '$basePath/${category.toLowerCase()}/$questionId';
+    final path = '$basePath/${category.toLowerCase()}/$questionId';
+    try {
       final data = await _dbService.readDB(path);
       if (data != null) {
         return QuestionData.fromJson(Map<String, dynamic>.from(data));
@@ -54,30 +60,24 @@ class QuestionOperation {
     }
   }
 
-  /// 카테고리별 마지막 번호 가져오기
-  Future<int> _getLastNumberForCategory(String category) async {
-    debugPrint(
-        '[getLastNumberForCategory] Fetching last number for category: $category');
-    final questions = await fetchQuestions(category, 0, 1);
-    if (questions.isEmpty) {
-      return 0;
-    }
-    return questions
-        .map((q) => int.tryParse(q.questionId.substring(1)) ?? 0)
-        .reduce((a, b) => a > b ? a : b);
-  }
-
   /// 새로운 질문 ID 생성
   Future<String> generateQuestionId(String category) async {
-    final lastNumber = await _getLastNumberForCategory(category);
+    debugPrint('[generateQuestionId] Generating ID for category: $category');
     final prefix = _getPrefixFromCategory(category);
+
+    // 가장 최신의 질문 데이터를 가져옴
+    final questions = await fetchQuestions(category);
+    final lastNumber = questions
+        .map((q) => int.tryParse(q.questionId.substring(1)) ?? 0)
+        .fold(0, (max, value) => value > max ? value : max);
+
     final newNumber = (lastNumber + 1).toString().padLeft(5, '0'); // 5자리 패딩
     return '$prefix$newNumber';
   }
 
   /// 질문 데이터 저장
   Future<void> writeQuestionData(QuestionData questionData) async {
-    debugPrint('[writeQuestionData] Start writing question');
+    debugPrint('[writeQuestionData] Writing question data');
     if (questionData.questionId.isEmpty) {
       final newId = await generateQuestionId(questionData.category);
       questionData = questionData.copyWith(questionId: newId);
@@ -85,9 +85,14 @@ class QuestionOperation {
 
     final path =
         '$basePath/${questionData.category.toLowerCase()}/${questionData.questionId}';
-    await _dbService.writeDB(path, questionData.toJson());
-    debugPrint('[writeQuestionData] Question saved at path: $path');
-    debugPrint('[writeQuestionData] ${questionData.toJson()}');
+    try {
+      await _dbService.writeDB(path, questionData.toJson());
+      debugPrint(
+          '[writeQuestionData] Successfully wrote question data at path: $path');
+    } catch (error) {
+      debugPrint('[writeQuestionData] Error writing question data: $error');
+      rethrow;
+    }
   }
 
   /// 질문 데이터 업데이트
@@ -96,39 +101,43 @@ class QuestionOperation {
         '$basePath/${updatedQuestion.category.toLowerCase()}/${updatedQuestion.questionId}';
     try {
       await _dbService.updateDB(path, updatedQuestion.toJson());
-      debugPrint('[updateQuestionData] Question updated at path: $path');
+      debugPrint(
+          '[updateQuestionData] Successfully updated question at path: $path');
     } catch (error) {
-      debugPrint('[updateQuestionData] Error updating question: $error');
+      debugPrint('[updateQuestionData] Error updating question data: $error');
       rethrow;
     }
   }
 
   /// 특정 카테고리의 질문 가져오기
   Future<List<QuestionData>> fetchQuestions(
-      String category, int page, int pageSize) async {
+    String category, {
+    String? lastQuestionId, // 마지막으로 로드한 질문 ID
+  }) async {
     final path = '$basePath/${category.toLowerCase()}';
-
     try {
-      final data = await _dbService.fetchDB(
-        path,
-        orderByChild: 'createdAt', // createdAt 필드 기준으로 정렬
-        limitToLast: (page + 1) * pageSize, // 필요한 데이터만 가져오기
-      );
+      Query query = _dbService.database.ref(path).orderByKey();
 
-      if (data.isEmpty) {
+      if (lastQuestionId != null) {
+        query = query.endBefore(lastQuestionId);
+      }
+
+      query = query.limitToLast(10); // 기본 10개씩 로드
+
+      final snapshot = await query.get();
+
+      if (!snapshot.exists) {
         return [];
       }
 
-      // 최신순 정렬 및 페이징 처리
-      return data
-          .map((json) => QuestionData.fromJson(json))
+      return snapshot.children
+          .map((child) => QuestionData.fromJson(
+              Map<String, dynamic>.from(child.value as Map)))
           .toList()
-          .reversed // Firebase에서 oldest-to-newest로 반환되므로 최신순으로 정렬
-          .skip(page * pageSize) // 페이지 시작 위치
-          .take(pageSize) // 페이지 크기만큼 데이터 가져오기
+          .reversed
           .toList();
     } catch (error) {
-      debugPrint('[fetchQuestions] Error fetching paged questions: $error');
+      debugPrint('[fetchQuestions] Error: $error');
       return [];
     }
   }
