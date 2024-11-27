@@ -1,17 +1,39 @@
 import 'package:flutter/foundation.dart';
 import 'package:code_ground/src/services/database/datas/question_data.dart';
 import 'package:code_ground/src/services/database/operations/database_service.dart';
-import 'package:code_ground/src/services/database/datas/question_id_generator.dart';
 
 const basePath = 'Questions';
 
 class QuestionOperation {
   final DatabaseService _dbService = DatabaseService();
 
+  // 카테고리별 접두사
+  static const Map<String, String> _categoryPrefixes = {
+    'syntax': '1',
+    'debugging': '2',
+    'output': '3',
+    'blank': '4',
+    'sequencing': '5',
+  };
+
+  /// ID로 카테고리 추출
+  String? _getCategoryFromId(String questionId) {
+    final prefix = questionId.substring(0, 1);
+    final categoryEntry = _categoryPrefixes.entries.firstWhere(
+        (entry) => entry.value == prefix,
+        orElse: () => const MapEntry('', ''));
+    return categoryEntry.key.isNotEmpty ? categoryEntry.key : null;
+  }
+
+  /// 카테고리 접두사 가져오기
+  String _getPrefixFromCategory(String category) {
+    return _categoryPrefixes[category.toLowerCase()] ?? '0';
+  }
+
   /// 질문 ID로 질문 가져오기
   Future<QuestionData?> fetchQuestionById(String questionId) async {
     try {
-      final category = QuestionIdGenerator.getCategoryFromId(questionId);
+      final category = _getCategoryFromId(questionId);
       if (category == null) {
         debugPrint('[fetchQuestionById] Invalid question ID: $questionId');
         return null;
@@ -36,7 +58,7 @@ class QuestionOperation {
   Future<int> _getLastNumberForCategory(String category) async {
     debugPrint(
         '[getLastNumberForCategory] Fetching last number for category: $category');
-    final questions = await fetchQuestions(category, 0, 1, useQuery: true);
+    final questions = await fetchQuestions(category, 0, 1);
     if (questions.isEmpty) {
       return 0;
     }
@@ -48,8 +70,9 @@ class QuestionOperation {
   /// 새로운 질문 ID 생성
   Future<String> generateQuestionId(String category) async {
     final lastNumber = await _getLastNumberForCategory(category);
-    return QuestionIdGenerator.generateNewId(
-        category: category, lastNumber: lastNumber);
+    final prefix = _getPrefixFromCategory(category);
+    final newNumber = (lastNumber + 1).toString().padLeft(5, '0'); // 5자리 패딩
+    return '$prefix$newNumber';
   }
 
   /// 질문 데이터 저장
@@ -82,56 +105,30 @@ class QuestionOperation {
 
   /// 특정 카테고리의 질문 가져오기
   Future<List<QuestionData>> fetchQuestions(
-      String category, int page, int pageSize,
-      {bool useQuery = true}) async {
+      String category, int page, int pageSize) async {
     final path = '$basePath/${category.toLowerCase()}';
 
-    if (useQuery) {
-      try {
-        final data = await _dbService.fetchDB(
-          path,
-          orderByChild: 'createdAt',
-          limitToLast: (page + 1) * pageSize,
-        );
-
-        if (data.isEmpty) {
-          return [];
-        }
-
-        return data
-            .map((json) => QuestionData.fromJson(json))
-            .toList()
-            .reversed
-            .skip(page * pageSize)
-            .take(pageSize)
-            .toList();
-      } catch (error) {
-        debugPrint(
-            '[fetchQuestionsPaged] Error fetching paged questions: $error');
-        return [];
-      }
-    }
-
-    // 기존 방식: 모든 데이터 가져오기 후 클라이언트에서 정렬
     try {
-      final data = await _dbService.readDB(path);
-      if (data == null) {
+      final data = await _dbService.fetchDB(
+        path,
+        orderByChild: 'createdAt', // createdAt 필드 기준으로 정렬
+        limitToLast: (page + 1) * pageSize, // 필요한 데이터만 가져오기
+      );
+
+      if (data.isEmpty) {
         return [];
       }
 
-      final questions = data.entries
-          .map((entry) =>
-              QuestionData.fromJson(Map<String, dynamic>.from(entry.value)))
+      // 최신순 정렬 및 페이징 처리
+      return data
+          .map((json) => QuestionData.fromJson(json))
+          .toList()
+          .reversed // Firebase에서 oldest-to-newest로 반환되므로 최신순으로 정렬
+          .skip(page * pageSize) // 페이지 시작 위치
+          .take(pageSize) // 페이지 크기만큼 데이터 가져오기
           .toList();
-
-      questions.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      final startIndex = page * pageSize;
-      return startIndex < questions.length
-          ? questions.sublist(
-              startIndex, (startIndex + pageSize).clamp(0, questions.length))
-          : [];
     } catch (error) {
-      debugPrint('[fetchQuestionsPaged] Error fetching questions: $error');
+      debugPrint('[fetchQuestions] Error fetching paged questions: $error');
       return [];
     }
   }
