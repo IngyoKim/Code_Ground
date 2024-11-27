@@ -68,6 +68,7 @@ class QuestionViewModel with ChangeNotifier {
     try {
       final questions = await _questionOperation.fetchQuestions(
         category,
+        limit: 10,
         lastQuestionId: _categoryQuestions[category]?.last.questionId,
       );
 

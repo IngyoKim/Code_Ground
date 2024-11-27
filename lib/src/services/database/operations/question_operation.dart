@@ -113,16 +113,17 @@ class QuestionOperation {
   Future<List<QuestionData>> fetchQuestions(
     String category, {
     String? lastQuestionId, // 마지막으로 로드한 질문 ID
+    int limit = 10, // 로드할 데이터의 개수 (기본값: 10)
   }) async {
     final path = '$basePath/${category.toLowerCase()}';
     try {
       Query query = _dbService.database.ref(path).orderByKey();
 
       if (lastQuestionId != null) {
-        query = query.endBefore(lastQuestionId);
+        query = query.endBefore(lastQuestionId); // 페이징 처리
       }
 
-      query = query.limitToLast(10); // 기본 10개씩 로드
+      query = query.limitToLast(limit); // 로드할 데이터 개수 제한
 
       final snapshot = await query.get();
 
@@ -135,7 +136,7 @@ class QuestionOperation {
               Map<String, dynamic>.from(child.value as Map)))
           .toList()
           .reversed
-          .toList();
+          .toList(); // 역순 정렬 (Firebase는 기본적으로 오름차순 정렬)
     } catch (error) {
       debugPrint('[fetchQuestions] Error: $error');
       return [];

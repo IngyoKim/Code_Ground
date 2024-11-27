@@ -67,8 +67,8 @@ class ProgressOperation {
 
   Future<List<ProgressData>> fetchRankings({
     required String orderBy, // 정렬 기준 (exp 또는 score)
-    required int limit,
     int? lastValue,
+    int limit = 10,
   }) async {
     const path = basePath;
     debugPrint('[fetchRankings] Fetching rankings by $orderBy');
@@ -77,10 +77,10 @@ class ProgressOperation {
       Query query = _dbService.database.ref(path).orderByChild(orderBy);
 
       if (lastValue != null) {
-        query = query.endBefore(lastValue); // 페이징 처리
+        query = query.startAfter(lastValue); // startAfter로 변경
       }
 
-      query = query.limitToLast(limit);
+      query = query.limitToFirst(limit); // limitToFirst로 데이터 순서 유지
 
       final snapshot = await query.get();
       if (!snapshot.exists) {
@@ -91,11 +91,9 @@ class ProgressOperation {
       final data = snapshot.children
           .map((child) => ProgressData.fromJson(
               Map<String, dynamic>.from(child.value as Map)))
-          .toList()
-          .reversed
           .toList();
 
-      return data;
+      return data; // 역순 정렬 불필요
     } catch (error) {
       debugPrint('[fetchRankings] Error fetching rankings: $error');
       return [];
