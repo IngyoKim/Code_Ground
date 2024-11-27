@@ -36,7 +36,7 @@ class QuestionOperation {
   Future<int> _getLastNumberForCategory(String category) async {
     debugPrint(
         '[getLastNumberForCategory] Fetching last number for category: $category');
-    final questions = await fetchQuestions(category, 0, 1);
+    final questions = await fetchQuestions(category, 0, 1, useQuery: true);
     if (questions.isEmpty) {
       return 0;
     }
@@ -80,25 +80,59 @@ class QuestionOperation {
     }
   }
 
-  /// 특정 카테고리의 질문 가져오기 (페이징 기반)
+  /// 특정 카테고리의 질문 가져오기
   Future<List<QuestionData>> fetchQuestions(
-      String category, int page, int pageSize) async {
+      String category, int page, int pageSize,
+      {bool useQuery = true}) async {
     final path = '$basePath/${category.toLowerCase()}';
-    final data = await _dbService.readDB(path);
-    if (data == null) {
-      return [];
+
+    if (useQuery) {
+      try {
+        final data = await _dbService.fetchDB(
+          path,
+          orderByChild: 'createdAt',
+          limitToLast: (page + 1) * pageSize,
+        );
+
+        if (data.isEmpty) {
+          return [];
+        }
+
+        return data
+            .map((json) => QuestionData.fromJson(json))
+            .toList()
+            .reversed
+            .skip(page * pageSize)
+            .take(pageSize)
+            .toList();
+      } catch (error) {
+        debugPrint(
+            '[fetchQuestionsPaged] Error fetching paged questions: $error');
+        return [];
+      }
     }
 
-    final questions = data.entries
-        .map((entry) =>
-            QuestionData.fromJson(Map<String, dynamic>.from(entry.value)))
-        .toList();
+    // 기존 방식: 모든 데이터 가져오기 후 클라이언트에서 정렬
+    try {
+      final data = await _dbService.readDB(path);
+      if (data == null) {
+        return [];
+      }
 
-    questions.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    final startIndex = page * pageSize;
-    return startIndex < questions.length
-        ? questions.sublist(
-            startIndex, (startIndex + pageSize).clamp(0, questions.length))
-        : [];
+      final questions = data.entries
+          .map((entry) =>
+              QuestionData.fromJson(Map<String, dynamic>.from(entry.value)))
+          .toList();
+
+      questions.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      final startIndex = page * pageSize;
+      return startIndex < questions.length
+          ? questions.sublist(
+              startIndex, (startIndex + pageSize).clamp(0, questions.length))
+          : [];
+    } catch (error) {
+      debugPrint('[fetchQuestionsPaged] Error fetching questions: $error');
+      return [];
+    }
   }
 }
