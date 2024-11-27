@@ -5,7 +5,7 @@ import 'package:code_ground/src/services/database/operations/question_operation.
 class QuestionViewModel with ChangeNotifier {
   final QuestionOperation _questionOperation = QuestionOperation();
   Map<String, List<QuestionData>> _categoryQuestions = {};
-  Map<String, int> _categoryPages = {}; // 각 카테고리의 현재 페이지
+  Map<String, int?> _lastCreatedAt = {}; // 각 카테고리의 마지막 createdAt 값 (타임스탬프)
   bool _isFetching = false;
   bool _hasMoreData = true;
   QuestionData? _selectedQuestion; // 선택된 질문 데이터
@@ -25,7 +25,7 @@ class QuestionViewModel with ChangeNotifier {
   /// 모든 질문 초기화
   void clearQuestions() {
     _categoryQuestions = {};
-    _categoryPages = {};
+    _lastCreatedAt = {};
     _isFetching = false;
     _hasMoreData = true;
     _selectedQuestion = null;
@@ -35,7 +35,7 @@ class QuestionViewModel with ChangeNotifier {
   /// 카테고리 상태 초기화
   void resetCategoryState(String category) {
     _categoryQuestions[category] = [];
-    _categoryPages[category] = 0;
+    _lastCreatedAt[category] = null;
     _hasMoreData = true;
     notifyListeners();
   }
@@ -57,19 +57,10 @@ class QuestionViewModel with ChangeNotifier {
   }
 
   /// 특정 카테고리의 질문 불러오기 (페이징 기반)
-  Future<List<QuestionData>> fetchQuestionsByCategoryPaged({
+  Future<List<QuestionData>> fetchQuestions({
     required String category,
-    required int page,
-    required int pageSize,
   }) async {
-    if (_isFetching) {
-      debugPrint('[fetchQuestionsByCategoryPaged] Already fetching...');
-      return [];
-    }
-    if (!_hasMoreData) {
-      debugPrint('[fetchQuestionsByCategoryPaged] No more data to fetch.');
-      return [];
-    }
+    if (_isFetching || !_hasMoreData) return [];
 
     _isFetching = true;
     notifyListeners();
@@ -77,33 +68,24 @@ class QuestionViewModel with ChangeNotifier {
     try {
       final questions = await _questionOperation.fetchQuestions(
         category,
-        page,
-        pageSize,
+        limit: 10,
+        lastQuestionId: _categoryQuestions[category]?.last.questionId,
       );
 
-      if (!_categoryQuestions.containsKey(category)) {
-        _categoryQuestions[category] = [];
-      }
-
-      if (questions.isEmpty || questions.length < pageSize) {
-        debugPrint(
-            '[fetchQuestionsByCategoryPaged] No more questions available.');
+      if (questions.isEmpty) {
         _hasMoreData = false;
       } else {
-        _hasMoreData = true;
+        _categoryQuestions[category] ??= [];
+        _categoryQuestions[category]!.addAll(questions);
       }
-
-      _categoryQuestions[category]!.addAll(questions);
-      _categoryPages[category] = page + 1;
 
       notifyListeners();
       return questions;
     } catch (error) {
-      debugPrint('Error fetching questions for category $category: $error');
+      debugPrint('[fetchQuestions] Error: $error');
       return [];
     } finally {
       _isFetching = false;
-      notifyListeners();
     }
   }
 
