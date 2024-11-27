@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:code_ground/src/pages/features/quiz_page.dart';
+import 'package:code_ground/src/pages/features/social_page.dart';
 import 'package:code_ground/src/pages/features/home_page.dart';
 import 'package:code_ground/src/pages/features/profile_page.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';

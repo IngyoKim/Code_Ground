@@ -13,6 +13,10 @@ class UserViewModel with ChangeNotifier {
 
   get userData => null;
 
+  get nickname => _currentUserData!.nickname;
+
+  String get uid => uid;
+
   /// 현재 로그인된 유저의 데이터 가져오기
   Future<void> fetchCurrentUserData() async {
     try {
@@ -58,8 +62,17 @@ class UserViewModel with ChangeNotifier {
     }
   }
 
+  /// 닉네임 업데이트
   Future<void> updateNickname(String nickname) async {
-    _userOperation.updateUserData({'nickname': nickname});
+    // _currentUserData 객체의 nickname 갱신
+    if (_currentUserData != null) {
+      _currentUserData!.nickname = nickname;
+    }
+
+    // Firestore나 DB에 저장하는 작업을 처리
+    await _userOperation.updateUserData({'nickname': nickname});
+
+    // 상태 갱신 후, 화면을 다시 렌더링
     notifyListeners();
   }
 

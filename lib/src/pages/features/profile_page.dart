@@ -194,15 +194,29 @@ class _ProfilePageState extends State<ProfilePage> {
                         if (_isEditingNickname)
                           IconButton(
                             icon: const Icon(Icons.check),
-                            onPressed: () {
+                            onPressed: () async {
+                              if (_nicknameController.text.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text('Nickname cannot be empty!')),
+                                );
+                                return;
+                              }
+
+                              // 닉네임 업데이트
+                              await userViewModel
+                                  .updateNickname(_nicknameController.text);
+
+                              // 닉네임 변경 후 상태 갱신
                               setState(() {
-                                // 닉네임 수정 후 저장
-                                userViewModel
-                                    .updateNickname(_nicknameController.text);
-                                // 닉네임 수정 모드 종료
                                 _isEditingNickname = false;
+                                _nicknameController.text =
+                                    userViewModel.currentUserData?.nickname ??
+                                        'Guest';
                               });
-                              // 닉네임이 변경되었으므로 즉시 화면 갱신
+
+                              // 닉네임 변경 완료 메시지 표시
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text('Nickname updated!')),

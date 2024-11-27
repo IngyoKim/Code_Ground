@@ -19,7 +19,7 @@ class _HelpPageState extends State<HelpPage> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // 제목
+            /// Main title
             const Text(
               'How can we assist you?',
               style: TextStyle(
@@ -29,13 +29,13 @@ class _HelpPageState extends State<HelpPage> {
             ),
             const SizedBox(height: 20),
 
-            // 앱 사용법
+            /// Help section for app usage
             _buildHelpSection(
               context,
               title: 'How to use the app',
               subtitle: 'Learn how to use our app effectively with these tips.',
               onTap: () {
-                // 앱 사용법 페이지로 이동
+                /// Navigate to the app usage guide or show dialog with tips
                 showDialog(
                   context: context,
                   builder: (_) => const AlertDialog(
@@ -48,13 +48,13 @@ class _HelpPageState extends State<HelpPage> {
             ),
             const SizedBox(height: 10),
 
-            // 고객 지원
+            /// Help section for customer support
             _buildHelpSection(
               context,
               title: 'Customer Support',
               subtitle: 'Need assistance? Contact our support team.',
               onTap: () {
-                // 고객 지원 페이지로 이동
+                /// Show dialog with customer support contact information
                 showDialog(
                   context: context,
                   builder: (_) => const AlertDialog(
@@ -66,13 +66,13 @@ class _HelpPageState extends State<HelpPage> {
             ),
             const SizedBox(height: 10),
 
-            // Feedback
+            /// Help section for feedback
             _buildHelpSection(
               context,
               title: 'Send Feedback',
               subtitle: 'We value your feedback to improve the app.',
               onTap: () {
-                // 피드백 보내기 페이지로 이동
+                /// Show dialog for sending feedback
                 showDialog(
                   context: context,
                   builder: (_) => const AlertDialog(
@@ -89,7 +89,7 @@ class _HelpPageState extends State<HelpPage> {
     );
   }
 
-  // 도움말 섹션을 위한 헬퍼 함수
+  /// Helper function to build help section cards
   Widget _buildHelpSection(
     BuildContext context, {
     required String title,
@@ -98,13 +98,18 @@ class _HelpPageState extends State<HelpPage> {
   }) {
     return GestureDetector(
       onTap: onTap,
+
+      /// Trigger the onTap function when tapped
       child: Card(
         elevation: 3,
+
+        /// Card shadow elevation
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              /// Title of the help section
               Text(
                 title,
                 style: const TextStyle(
@@ -113,6 +118,8 @@ class _HelpPageState extends State<HelpPage> {
                 ),
               ),
               const SizedBox(height: 5),
+
+              /// Subtitle of the help section
               Text(
                 subtitle,
                 style: const TextStyle(

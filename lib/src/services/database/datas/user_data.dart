@@ -3,7 +3,7 @@ class UserData {
   final String name;
   final String email;
   final String photoUrl;
-  final String nickname; //여기 이거 고침
+  String nickname; //여기 이거 고침
   final String role;
 
   UserData({
