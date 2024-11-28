@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 Widget sequencingSubmit({
   required Map<String, String> codeSnippets,
-  required ValueChanged<List<int>> onSubmit,
+  required ValueChanged<List<String>>
+      onSubmit, // List<int> -> List<String>으로 수정
 }) {
   // 랜덤으로 순서를 섞기
   final List<MapEntry<String, String>> entries = codeSnippets.entries.toList();
@@ -56,7 +57,7 @@ Widget sequencingSubmit({
           ElevatedButton(
             onPressed: () {
               final orderedKeys =
-                  entries.map((entry) => int.parse(entry.key)).toList();
+                  entries.map((entry) => entry.key).toList(); // 그대로 String 사용
               onSubmit(orderedKeys);
             },
             child: const Text('Submit'),
