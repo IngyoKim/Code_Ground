@@ -2,6 +2,7 @@ import 'package:code_ground/src/services/database/datas/progress_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+<<<<<<< HEAD
 import 'package:code_ground/src/components/loading_indicator.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
 
@@ -90,6 +91,14 @@ class _SocialPageState extends State<SocialPage> {
   Widget build(BuildContext context) {
     final progressViewModel = Provider.of<ProgressViewModel>(context);
     final rankings = progressViewModel.rankings;
+=======
+class SocialPage extends StatelessWidget {
+  const SocialPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    /// List of programming languages with name, image path, and button color
+>>>>>>> 51d07d5ac81c51836d1081bbcfd0ea57e23b1a47
 
     return Scaffold(
       appBar: AppBar(

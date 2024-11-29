@@ -15,14 +15,17 @@ class QuestionDetailUtil {
     }
 
     // Sequencing 타입: 리스트 비교
-    final userAnswerList = userAnswer as List<int>;
-    final correctAnswerList = question.codeSnippets.keys
-        .map((key) => int.parse(key.substring(1)))
-        .toList();
+    final userAnswerList =
+        userAnswer as List<String>; // 사용자 답변이 String 리스트로 전달된다고 가정
+
+    // 코드 스니펫의 키를 알파벳 순으로 정렬
+    final correctAnswerList = question.codeSnippets.keys.toList()
+      ..sort(); // 숫자 변환 없이 바로 알파벳 순으로 정렬
 
     debugPrint("User Answer: $userAnswerList");
     debugPrint("Correct Answer: $correctAnswerList");
 
+    // 사용자의 답변과 올바른 답이 일치하는지 확인
     return ListEquality().equals(userAnswerList, correctAnswerList);
   }
 

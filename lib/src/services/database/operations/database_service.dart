@@ -52,26 +52,15 @@ class DatabaseService {
   }
 
   /// Generic fetch method for any data type
-  Future<List<Map<String, dynamic>>> fetchDB(
-    String path, {
-    String? orderByChild,
-    dynamic startAt,
-    dynamic endAt,
-    int? limitToFirst,
-    int? limitToLast,
+  Future<List<Map<String, dynamic>>> fetchDB({
+    required String path,
+    Query? query,
   }) async {
-    DatabaseReference ref = database.ref(path);
-    Query query = ref;
-
-    // Apply query parameters
-    if (orderByChild != null) query = query.orderByChild(orderByChild);
-    if (startAt != null) query = query.startAt(startAt);
-    if (endAt != null) query = query.endAt(endAt);
-    if (limitToFirst != null) query = query.limitToFirst(limitToFirst);
-    if (limitToLast != null) query = query.limitToLast(limitToLast);
-
     try {
-      final snapshot = await query.get();
+      final Query finalQuery =
+          query ?? database.ref(path); // Query가 없으면 기본 Query 사용
+      final snapshot = await finalQuery.get();
+
       if (snapshot.exists) {
         final data = snapshot.children
             .map((child) => Map<String, dynamic>.from(child.value as Map))
@@ -79,10 +68,11 @@ class DatabaseService {
 
         final formattedData = JsonEncoder.withIndent('  ').convert(data);
         debugPrint(
-            "[DatabaseService] Data fetched from $path with query:\n$formattedData");
+            "[DatabaseService] Data fetched from $path:\n$formattedData");
+
         return data;
       } else {
-        debugPrint("[DatabaseService] No data available with query at $path");
+        debugPrint("[DatabaseService] No data available at path: $path");
         return [];
       }
     } catch (error) {

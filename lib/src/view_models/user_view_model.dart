@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:code_ground/src/services/database/datas/user_data.dart';
 import 'package:code_ground/src/services/database/operations/user_operation.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth 사용
 
 class UserViewModel with ChangeNotifier {
   final UserOperation _userOperation = UserOperation();
@@ -10,12 +10,6 @@ class UserViewModel with ChangeNotifier {
 
   UserData? get currentUserData => _currentUserData;
   UserData? get otherUserData => _otherUserData;
-
-  get userData => null;
-
-  get nickname => _currentUserData!.nickname;
-
-  String get uid => uid;
 
   /// 현재 로그인된 유저의 데이터 가져오기
   Future<void> fetchCurrentUserData() async {
@@ -64,19 +58,15 @@ class UserViewModel with ChangeNotifier {
 
   /// 닉네임 업데이트
   Future<void> updateNickname(String nickname) async {
-    // _currentUserData 객체의 nickname 갱신
     if (_currentUserData != null) {
       _currentUserData!.nickname = nickname;
     }
 
-    // Firestore나 DB에 저장하는 작업을 처리
     await _userOperation.updateUserData({'nickname': nickname});
 
-    // 상태 갱신 후, 화면을 다시 렌더링
     notifyListeners();
   }
 
-  /// 다른 유저 데이터 초기화
   void clearOtherUserData() {
     _otherUserData = null;
     notifyListeners();
