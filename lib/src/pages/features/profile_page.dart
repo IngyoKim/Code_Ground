@@ -1,3 +1,4 @@
+import 'package:code_ground/src/pages/app_info/registrate_friend.dart';
 import 'package:code_ground/src/pages/questions/question_state_page.dart';
 import 'package:code_ground/src/services/messaging/custom_url.dart';
 import 'package:flutter/material.dart';
@@ -129,6 +130,18 @@ class _ProfilePageState extends State<ProfilePage> {
         'onTap': () async {
           final inviteUrl = await createCustomLink(userData!.uid);
           await kakaoMessaging.shareContent(userData.nickname, inviteUrl);
+        },
+      },
+      {
+        'icon': Icons.person,
+        'text': 'Friend',
+        'onTap': () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const RegistrateFriend(),
+            ),
+          );
         },
       },
     ];

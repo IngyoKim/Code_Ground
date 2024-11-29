@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:code_ground/src/services/database/datas/user_data.dart';
 import 'package:code_ground/src/services/database/operations/user_operation.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth 사용
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao_user;
 
 class UserViewModel with ChangeNotifier {
   final UserOperation _userOperation = UserOperation();
@@ -38,6 +39,8 @@ class UserViewModel with ChangeNotifier {
           photoUrl: firebaseUser?.photoURL ?? '',
           nickname: '',
           role: 'member',
+          friendCode: kakao_user.generateRandomString(8),
+          friend: [],
         );
 
         await _userOperation.writeUserData(_currentUserData!);
