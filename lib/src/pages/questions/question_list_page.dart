@@ -31,6 +31,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
   }
 
   /// 초기 페이지 세팅
+  /// 초기 페이지 세팅
   Future<void> _initializePage() async {
     final categoryViewModel =
         Provider.of<CategoryViewModel>(context, listen: false);
@@ -45,32 +46,26 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
     _questionListUtil.reset();
 
-    await questionViewModel.fetchQuestions(category: _categoryName);
+    // fetchQuestions를 build 완료 후 호출
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await questionViewModel.fetchQuestions(category: _categoryName);
 
-    // 로드된 데이터가 없으면 알림 출력
-    if (questionViewModel.categoryQuestions[_categoryName]?.isEmpty ?? true) {
-      debugPrint("No questions loaded for category: $_categoryName");
-      // 사용자에게 알림 표시
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('문제가 로드되지 않았습니다.')),
+      if (mounted) {
+        setState(() {
+          _isInitialLoading = false;
+        });
+      }
+
+      // 하나씩 로드 시작
+      await _questionListUtil.addItemsGradually(
+        questionViewModel.categoryQuestions[_categoryName] ?? [],
+        () {
+          if (mounted) {
+            setState(() {}); // UI 업데이트
+          }
+        },
       );
-    }
-
-    if (mounted) {
-      setState(() {
-        _isInitialLoading = false;
-      });
-    }
-
-    // 하나씩 로드 시작
-    await _questionListUtil.addItemsGradually(
-      questionViewModel.categoryQuestions[_categoryName] ?? [],
-      () {
-        if (mounted) {
-          setState(() {}); // UI 업데이트
-        }
-      },
-    );
+    });
   }
 
   /// 스크롤 이벤트 핸들러
@@ -87,25 +82,13 @@ class _QuestionListPageState extends State<QuestionListPage> {
     final questionViewModel =
         Provider.of<QuestionViewModel>(context, listen: false);
 
-    if (!questionViewModel.hasMoreData || questionViewModel.isFetching) {
-      debugPrint("No more data to load or currently fetching.");
-      return;
-    }
+    if (!questionViewModel.hasMoreData || questionViewModel.isFetching) return;
 
     setState(() {
       _isFetchingMore = true;
     });
 
     await questionViewModel.fetchQuestions(category: _categoryName);
-
-    // 로드된 데이터가 없으면 알림 출력
-    if (questionViewModel.categoryQuestions[_categoryName]?.isEmpty ?? true) {
-      debugPrint("No more questions loaded for category: $_categoryName");
-      // 사용자에게 알림 표시
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('추가 문제가 로드되지 않았습니다.')),
-      );
-    }
 
     if (mounted) {
       setState(() {

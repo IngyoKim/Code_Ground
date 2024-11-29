@@ -112,34 +112,22 @@ class QuestionOperation {
   /// 특정 카테고리의 질문 가져오기
   Future<List<QuestionData>> fetchQuestions(
     String category, {
-    String? lastQuestionId, // 마지막으로 로드한 질문 ID
-    int limit = 10, // 로드할 데이터의 개수 (기본값: 10)
+    String? lastQuestionId,
+    int limit = 10,
   }) async {
     final path = '$basePath/${category.toLowerCase()}';
-    try {
-      Query query = _dbService.database.ref(path).orderByKey();
 
-      if (lastQuestionId != null) {
-        query = query.endBefore(lastQuestionId); // 페이징 처리
-      }
-
-      query = query.limitToLast(limit); // 로드할 데이터 개수 제한
-
-      final snapshot = await query.get();
-
-      if (!snapshot.exists) {
-        return [];
-      }
-
-      return snapshot.children
-          .map((child) => QuestionData.fromJson(
-              Map<String, dynamic>.from(child.value as Map)))
-          .toList()
-          .reversed
-          .toList(); // 역순 정렬 (Firebase는 기본적으로 오름차순 정렬)
-    } catch (error) {
-      debugPrint('[fetchQuestions] Error: $error');
-      return [];
+    // Firebase Query 설정
+    Query query = _dbService.database.ref(path).orderByKey();
+    if (lastQuestionId != null) {
+      query = query.endBefore(lastQuestionId); // 페이징 처리
     }
+    query = query.limitToLast(limit);
+
+    // fetchDB 호출
+    final data = await _dbService.fetchDB(path: path, query: query);
+
+    // QuestionData로 변환
+    return data.map((json) => QuestionData.fromJson(json)).toList();
   }
 }
