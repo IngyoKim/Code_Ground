@@ -75,7 +75,7 @@ class ProgressViewModel with ChangeNotifier {
     if (_isFetchingRankings) return; // 중복 요청 방지
 
     _isFetchingRankings = true;
-    notifyListeners();
+    Future.microtask(() => notifyListeners());
 
     try {
       final fetchedRankings = await _progressOperation.fetchRankings(
@@ -91,8 +91,9 @@ class ProgressViewModel with ChangeNotifier {
         // 기존 데이터에 추가
         _rankings.addAll(fetchedRankings);
       }
+      print("Working fetchranking");
 
-      notifyListeners();
+      Future.microtask(() => notifyListeners());
     } catch (error) {
       debugPrint('Error fetching rankings: $error');
     } finally {

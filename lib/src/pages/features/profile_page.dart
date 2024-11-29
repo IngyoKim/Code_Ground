@@ -215,12 +215,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                     userViewModel.currentUserData?.nickname ??
                                         'Guest';
                               });
-
-                              // 닉네임 변경 완료 메시지 표시
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Nickname updated!')),
-                              );
                             },
                           ),
                         ElevatedButton(

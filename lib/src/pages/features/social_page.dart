@@ -1,64 +1,137 @@
+import 'package:code_ground/src/services/database/datas/progress_data.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class QuizPage extends StatelessWidget {
-  const QuizPage({super.key});
+import 'package:code_ground/src/components/loading_indicator.dart';
+import 'package:code_ground/src/view_models/progress_view_model.dart';
+
+class SocialPage extends StatefulWidget {
+  const SocialPage({super.key});
+
+  @override
+  State<SocialPage> createState() => _SocialPageState();
+}
+
+class _SocialPageState extends State<SocialPage> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isFetchingMore = false;
+  bool _isInitialLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializePage();
+    _scrollController.addListener(_onScroll);
+  }
+
+  /// 초기 데이터 로드
+  Future<void> _initializePage() async {
+    final progressViewModel =
+        Provider.of<ProgressViewModel>(context, listen: false);
+
+    setState(() {
+      _isInitialLoading = true;
+    });
+
+    await progressViewModel.fetchRankings(
+        orderBy: 'score'); // score에 따른 랭킹 불러오기
+
+    if (mounted) {
+      setState(() {
+        _isInitialLoading = false;
+      });
+    }
+    print("Rankings Loaded>>>>>>>> ${progressViewModel.rankings}");
+  }
+
+  /// 스크롤 이벤트 핸들러
+  void _onScroll() async {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
+        !_isFetchingMore) {
+      await _fetchMoreRankings();
+    }
+  }
+
+  /// 추가 랭킹 데이터를 로드
+  Future<void> _fetchMoreRankings() async {
+    final progressViewModel =
+        Provider.of<ProgressViewModel>(context, listen: false);
+
+    if (progressViewModel.isFetchingRankings) return;
+
+    setState(() {
+      _isFetchingMore = true;
+    });
+
+    final lastScore = progressViewModel.rankings.isNotEmpty
+        ? progressViewModel.rankings.last.score
+        : null;
+
+    await progressViewModel.fetchRankings(
+      orderBy: 'score',
+      lastValue: lastScore,
+    );
+
+    if (mounted) {
+      setState(() {
+        _isFetchingMore = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    /// List of programming languages with name, image path, and button color
-    final List<Map<String, dynamic>> languages = [
-      {
-        'name': 'C/C++',
-        'imagePath': 'assets/images/languages/c.png',
-        'color': const Color(0xFF003366)
-      },
-      {
-        'name': 'Java',
-        'imagePath': 'assets/images/languages/java.png',
-        'color': const Color(0xFFFFB84D)
-      },
-      {
-        'name': 'Python',
-        'imagePath': 'assets/images/languages/python.png',
-        'color': const Color(0xFF4B8BBE)
-      },
-      {
-        'name': 'HTML/CSS',
-        'imagePath': 'assets/images/languages/htmlcss.png',
-        'color': const Color(0xFFCC4400)
-      },
-      {
-        'name': 'JavaScript',
-        'imagePath': 'assets/images/languages/javascript.png',
-        'color': const Color(0xFFFFE135)
-      },
-      {
-        'name': 'Dart',
-        'imagePath': 'assets/images/languages/dart.png',
-        'color': const Color(0xFF01796F)
-      },
-      {
-        'name': 'SQL',
-        'imagePath': 'assets/images/languages/sql.png',
-        'color': const Color(0xFFB85C38)
-      },
-      {
-        'name': 'Ruby',
-        'imagePath': 'assets/images/languages/ruby.png',
-        'color': const Color(0xFF990000)
-      },
-    ];
+    final progressViewModel = Provider.of<ProgressViewModel>(context);
+    final rankings = progressViewModel.rankings;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Select Page'),
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
+        title: const Text('Social Rankings'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-      ),
+      body: _isInitialLoading
+          ? const Center(child: CircularProgressIndicator())
+          : rankings.isEmpty
+              ? const Center(child: Text('No rankings available.'))
+              : ListView.builder(
+                  controller: _scrollController,
+                  itemCount: rankings.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == rankings.length) {
+                      return _isFetchingMore
+                          ? const LoadingIndicator(isFetching: true)
+                          : const SizedBox.shrink();
+                    }
+
+                    final ranking = rankings[index];
+                    return ListTile(
+                      leading: Text(
+                        '#${index + 1}',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      title: Text(
+                        ranking.uid ?? 'Unknown User',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      subtitle: Text('Score: ${ranking.score}'),
+                      trailing: ranking.tier != null
+                          ? Text(
+                              ranking.tier!,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueAccent,
+                              ),
+                            )
+                          : null,
+                    );
+                  },
+                ),
     );
   }
 }

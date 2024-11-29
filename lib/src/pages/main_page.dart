@@ -41,7 +41,7 @@ class _MainPageState extends State<MainPage>
       body: TabBarView(
         controller: _tabController,
         children: [
-          const QuizPage(),
+          const SocialPage(),
           HomePage(),
           const ProfilePage(),
         ],
