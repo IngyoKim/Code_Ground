@@ -81,6 +81,12 @@ class UserOperation {
         throw Exception('User data not found.');
       }
 
+      // 자기 자신인지 확인
+      if (userData.friendCode == friendCode) {
+        debugPrint('[addFriend] You cannot add yourself as a friend.');
+        return; // 함수 종료
+      }
+
       // 이미 등록된 친구인지 확인
       if (userData.friend.contains(friendCode)) {
         debugPrint(
