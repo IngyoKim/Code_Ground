@@ -120,7 +120,7 @@ class QuestionOperation {
     // Firebase Query 설정
     Query query = _dbService.database.ref(path).orderByKey();
     if (lastQuestionId != null) {
-      query = query.endBefore(lastQuestionId); // 페이징 처리
+      query = query.startAfter(lastQuestionId); // 페이징 처리
     }
     query = query.limitToLast(limit);
 

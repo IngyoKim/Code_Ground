@@ -31,7 +31,6 @@ class _QuestionListPageState extends State<QuestionListPage> {
   }
 
   /// 초기 페이지 세팅
-  /// 초기 페이지 세팅
   Future<void> _initializePage() async {
     final categoryViewModel =
         Provider.of<CategoryViewModel>(context, listen: false);
@@ -46,26 +45,23 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
     _questionListUtil.reset();
 
-    // fetchQuestions를 build 완료 후 호출
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await questionViewModel.fetchQuestions(category: _categoryName);
+    await questionViewModel.fetchQuestions(category: _categoryName);
 
-      if (mounted) {
-        setState(() {
-          _isInitialLoading = false;
-        });
-      }
+    if (mounted) {
+      setState(() {
+        _isInitialLoading = false;
+      });
+    }
 
-      // 하나씩 로드 시작
-      await _questionListUtil.addItemsGradually(
-        questionViewModel.categoryQuestions[_categoryName] ?? [],
-        () {
-          if (mounted) {
-            setState(() {}); // UI 업데이트
-          }
-        },
-      );
-    });
+    // 하나씩 로드 시작
+    await _questionListUtil.addItemsGradually(
+      questionViewModel.categoryQuestions[_categoryName] ?? [],
+      () {
+        if (mounted) {
+          setState(() {}); // UI 업데이트
+        }
+      },
+    );
   }
 
   /// 스크롤 이벤트 핸들러
