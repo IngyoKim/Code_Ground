@@ -5,10 +5,10 @@ import 'package:code_ground/src/services/database/operations/question_operation.
 class QuestionViewModel with ChangeNotifier {
   final QuestionOperation _questionOperation = QuestionOperation();
   Map<String, List<QuestionData>> _categoryQuestions = {};
-  Map<String, int?> _lastCreatedAt = {}; // 각 카테고리의 마지막 createdAt 값 (타임스탬프)
+  Map<String, int?> _lastCreatedAt = {};
   bool _isFetching = false;
   bool _hasMoreData = true;
-  QuestionData? _selectedQuestion; // 선택된 질문 데이터
+  QuestionData? _selectedQuestion;
 
   /// 카테고리별 질문 데이터
   Map<String, List<QuestionData>> get categoryQuestions => _categoryQuestions;
@@ -29,6 +29,7 @@ class QuestionViewModel with ChangeNotifier {
     _isFetching = false;
     _hasMoreData = true;
     _selectedQuestion = null;
+    debugPrint('[clearQuestions] Cleared all questions.');
     notifyListeners();
   }
 
@@ -37,6 +38,7 @@ class QuestionViewModel with ChangeNotifier {
     _categoryQuestions[category] = [];
     _lastCreatedAt[category] = null;
     _hasMoreData = true;
+    debugPrint('[resetCategoryState] Reset state for: $category');
     notifyListeners();
   }
 
@@ -46,43 +48,51 @@ class QuestionViewModel with ChangeNotifier {
       final question = await _questionOperation.fetchQuestionById(questionId);
       if (question != null) {
         _selectedQuestion = question;
+        debugPrint('[fetchQuestionById] Fetched question: $questionId');
         notifyListeners();
-        debugPrint('Question fetched successfully for ID: $questionId');
       } else {
-        debugPrint('No question found for ID: $questionId');
+        debugPrint('[fetchQuestionById] No question found for ID: $questionId');
       }
     } catch (error) {
-      debugPrint('Error fetching question by ID: $error');
+      debugPrint('[fetchQuestionById] Error: $error');
     }
   }
 
   /// 특정 카테고리의 질문 불러오기 (페이징 기반)
-  Future<List<QuestionData>> fetchQuestions({
-    required String category,
-  }) async {
-    if (_isFetching || !_hasMoreData) return [];
+  Future<List<QuestionData>> fetchQuestions({required String category}) async {
+    if (_isFetching || !_hasMoreData) {
+      debugPrint('[fetchQuestions] Fetch skipped for: $category');
+      return [];
+    }
 
     _isFetching = true;
     notifyListeners();
 
     try {
+      final lastQuestionId = _categoryQuestions[category]?.last.questionId;
+      debugPrint(
+          '[fetchQuestions] Fetching for: $category, Last ID: $lastQuestionId');
+
       final questions = await _questionOperation.fetchQuestions(
         category,
+        lastQuestionId: lastQuestionId,
         limit: 10,
-        lastQuestionId: _categoryQuestions[category]?.last.questionId,
       );
 
       if (questions.isEmpty) {
+        debugPrint('[fetchQuestions] No more questions in: $category');
         _hasMoreData = false;
       } else {
         _categoryQuestions[category] ??= [];
         _categoryQuestions[category]!.addAll(questions);
+        debugPrint(
+            '[fetchQuestions] Total: ${_categoryQuestions[category]!.length} for $category');
       }
 
       notifyListeners();
       return questions;
     } catch (error) {
-      debugPrint('[fetchQuestions] Error: $error');
+      debugPrint('[fetchQuestions] Error for $category: $error');
       return [];
     } finally {
       _isFetching = false;
@@ -94,13 +104,12 @@ class QuestionViewModel with ChangeNotifier {
     try {
       await _questionOperation.writeQuestionData(questionData);
       final category = questionData.category.toLowerCase();
-      if (!_categoryQuestions.containsKey(category)) {
-        _categoryQuestions[category] = [];
-      }
+      _categoryQuestions[category] ??= [];
       _categoryQuestions[category]!.insert(0, questionData);
+      debugPrint('[addQuestion] Added question to $category');
       notifyListeners();
     } catch (error) {
-      debugPrint('Error adding question: $error');
+      debugPrint('[addQuestion] Error: $error');
     }
   }
 
@@ -108,30 +117,25 @@ class QuestionViewModel with ChangeNotifier {
   Future<void> updateQuestion(QuestionData updatedQuestion) async {
     try {
       await _questionOperation.updateQuestionData(updatedQuestion);
-
       final category = updatedQuestion.category.toLowerCase();
-      if (_categoryQuestions.containsKey(category)) {
-        final questionIndex = _categoryQuestions[category]!
-            .indexWhere((q) => q.questionId == updatedQuestion.questionId);
+      final questionIndex = _categoryQuestions[category]?.indexWhere(
+        (q) => q.questionId == updatedQuestion.questionId,
+      );
 
-        if (questionIndex != -1) {
-          _categoryQuestions[category]![questionIndex] = updatedQuestion;
-          notifyListeners();
-          debugPrint('Question updated successfully.');
-        } else {
-          debugPrint('Question not found in local cache.');
-        }
-      } else {
-        debugPrint('Category not found in local cache.');
+      if (questionIndex != null && questionIndex != -1) {
+        _categoryQuestions[category]![questionIndex] = updatedQuestion;
+        debugPrint('[updateQuestion] Updated question in $category');
+        notifyListeners();
       }
     } catch (error) {
-      debugPrint('Error updating question: $error');
+      debugPrint('[updateQuestion] Error: $error');
     }
   }
 
   /// 특정 질문 설정
   void setSelectedQuestion(QuestionData question) {
     _selectedQuestion = question;
+    debugPrint('[setSelectedQuestion] Selected: ${question.questionId}');
     notifyListeners();
   }
 }

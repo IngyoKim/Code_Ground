@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:code_ground/src/utils/permission_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
+import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/pages/questions/question_list_page.dart';
 import 'package:code_ground/src/pages/questions/add_question_page.dart';
 
@@ -113,9 +114,23 @@ class HomePage extends StatelessWidget {
                   ];
 
                   return GestureDetector(
-                    onTap: () {
-                      Provider.of<CategoryViewModel>(context, listen: false)
-                          .selectCategory(category['name']);
+                    onTap: () async {
+                      final categoryViewModel = Provider.of<CategoryViewModel>(
+                          context,
+                          listen: false);
+                      final questionViewModel = Provider.of<QuestionViewModel>(
+                          context,
+                          listen: false);
+
+                      // 카테고리 선택 및 상태 초기화
+                      categoryViewModel.selectCategory(
+                          category['name'], questionViewModel);
+
+                      // 새로운 질문 데이터를 로드
+                      await questionViewModel.fetchQuestions(
+                          category: category['name']);
+
+                      // 질문 페이지로 이동
                       Navigator.push(
                         context,
                         MaterialPageRoute(
