@@ -1,8 +1,8 @@
-import 'package:code_ground/src/services/database/operations/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:code_ground/src/services/database/datas/user_data.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:code_ground/src/services/database/operations/database_service.dart';
 
 const basePath = 'Users';
 
@@ -49,81 +49,49 @@ class UserOperation {
   }
 
   /// Update user data
-  Future<void> updateUserData(Map<String, dynamic> updates) async {
-    String? uid = FirebaseAuth.instance.currentUser?.uid;
+  Future<void> updateUserData(Map<String, dynamic> updates,
+      {String? uid}) async {
+    uid ??= FirebaseAuth.instance.currentUser?.uid;
+
     if (uid == null) {
-      debugPrint('[readUserData] No user is currently logged in.');
-      throw Exception('No user is currently logged in.');
+      debugPrint(
+          '[updateUserData] No user is currently logged in or UID is missing.');
+      throw Exception('No user is currently logged in or UID is missing.');
     }
+
     String path = '$basePath/$uid';
     debugPrint('[updateUserData] Updating user data at path: $path');
     try {
       await _dbService.updateDB(path, updates);
       debugPrint('[updateUserData] Successfully updated user data at $path');
     } catch (error) {
-      debugPrint('[updateUserData] Error updating user data: $error');
+      debugPrint('[updateUserData] Error updating user data at $path: $error');
       rethrow;
     }
   }
 
-  Future<void> addFriend(String friendCode) async {
-    String? uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) {
-      debugPrint('[addFriend] No user is currently logged in.');
-      throw Exception('No user is currently logged in.');
-    }
-
+  /// Fetch all users from the database
+  Future<List<UserData>> fetchUsers([int? limit]) async {
+    debugPrint('[fetchUsers] Fetching all users from database');
     try {
-      // 기존 friend 리스트 가져오기
-      final userData = await readUserData();
-      if (userData == null) {
-        debugPrint('[addFriend] No user data found for current user.');
-        throw Exception('User data not found.');
+      // Fetch all users or apply limit if specified
+      Query? query;
+      if (limit != null) {
+        query = FirebaseDatabase.instance.ref(basePath).limitToFirst(limit);
       }
+      final userList = await _dbService.fetchDB(
+        path: basePath,
+        query: query,
+      );
 
-      // 자기 자신인지 확인
-      if (userData.friendCode == friendCode) {
-        debugPrint('[addFriend] You cannot add yourself as a friend.');
-        return; // 함수 종료
-      }
+      // Convert raw data to UserData objects
+      final users =
+          userList.map((userMap) => UserData.fromJson(userMap)).toList();
 
-      // 이미 등록된 친구인지 확인
-      if (userData.friend.contains(friendCode)) {
-        debugPrint(
-            '[addFriend] This friend is already registered as a friend: $friendCode');
-        return; // 함수 종료
-      }
-
-      final allUsersData = await _dbService.readDB(basePath);
-      if (allUsersData == null) {
-        debugPrint('[addFriend] No users found in the database.');
-        throw Exception('No users found in the database.');
-      }
-
-      // friendCode가 존재하는 유저 검색
-      bool friendExists = false;
-      for (var entry in allUsersData.entries) {
-        final user = UserData.fromJson(Map<String, dynamic>.from(entry.value));
-        if (user.friendCode == friendCode) {
-          friendExists = true;
-          break;
-        }
-      }
-
-      if (!friendExists) {
-        debugPrint('[addFriend] User not found for friend code: $friendCode');
-        return; // 함수 종료
-      }
-
-      // friend 리스트에 friendCode 추가
-      final updatedFriendList = List<String>.from(userData.friend)
-        ..add(friendCode);
-      await updateUserData({'friend': updatedFriendList});
-
-      debugPrint(
-          '[addFriend] Successfully added friend with code: $friendCode');
+      debugPrint('[fetchUsers] Successfully fetched ${users.length} users');
+      return users;
     } catch (error) {
-      debugPrint('[addFriend] Error adding friend: $error');
+      debugPrint('[fetchUsers] Error fetching users: $error');
       rethrow;
     }
   }

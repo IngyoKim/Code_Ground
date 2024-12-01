@@ -39,6 +39,7 @@ dependencies:
   shared_preferences: ^2.3.2 # Local storage for simple key-value data.
   intl: ^0.19.0 # Internationalization and localization utilities.
   collection: ^1.18.0 # Collection utilities for Dart.
+  crypto: ^3.0.6
 
 # Development-only dependencies used for testing and linting.
 dev_dependencies:
