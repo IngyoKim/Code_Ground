@@ -3,8 +3,10 @@ class UserData {
   final String name;
   final String email;
   final String photoUrl;
-  String nickname; //여기 이거 고침
+  String nickname;
   final String role;
+  final String friendCode;
+  final List<String> friends;
 
   UserData({
     required this.uid,
@@ -13,6 +15,8 @@ class UserData {
     required this.photoUrl,
     required this.nickname,
     required this.role,
+    required this.friendCode,
+    required this.friends,
   });
 
   // JSON -> Object
@@ -24,6 +28,8 @@ class UserData {
       photoUrl: json['photoUrl'] ?? '', // 기본값 설정
       nickname: json['nickname'] ?? '', // 기본값 설정
       role: json['role'] ?? '', // 기본값 설정
+      friendCode: json['friendCode'] ?? '',
+      friends: List<String>.from(json['friends'] ?? []),
     );
   }
 
@@ -36,6 +42,8 @@ class UserData {
       'photoUrl': photoUrl,
       'nickname': nickname,
       'role': role,
+      'friendCode': friendCode,
+      'friends': friends,
     };
   }
 }
