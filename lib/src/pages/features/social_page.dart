@@ -1,10 +1,7 @@
+import 'dart:async'; // Timer를 사용하기 위한 import
 import 'package:code_ground/src/services/database/datas/progress_data.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-<<<<<<< HEAD
-import 'package:code_ground/src/components/loading_indicator.dart';
-import 'package:code_ground/src/view_models/progress_view_model.dart';
 
 class SocialPage extends StatefulWidget {
   const SocialPage({super.key});
@@ -14,133 +11,81 @@ class SocialPage extends StatefulWidget {
 }
 
 class _SocialPageState extends State<SocialPage> {
-  final ScrollController _scrollController = ScrollController();
-  bool _isFetchingMore = false;
-  bool _isInitialLoading = true;
+  final DatabaseReference _databaseRef =
+      FirebaseDatabase.instance.ref(); // Firebase 참조
+  List<ProgressData> _rankings = []; // 랭킹 데이터를 저장할 리스트
+  late Timer _timer; // Timer를 사용하여 10분마다 업데이트
 
   @override
   void initState() {
     super.initState();
-    _initializePage();
-    _scrollController.addListener(_onScroll);
-  }
-
-  /// 초기 데이터 로드
-  Future<void> _initializePage() async {
-    final progressViewModel =
-        Provider.of<ProgressViewModel>(context, listen: false);
-
-    setState(() {
-      _isInitialLoading = true;
+    _loadRankings(); // 초기 로딩
+    // 10분마다 _loadRankings()를 호출하는 타이머 설정
+    _timer = Timer.periodic(const Duration(minutes: 10), (timer) {
+      _loadRankings();
     });
-
-    await progressViewModel.fetchRankings(
-        orderBy: 'score'); // score에 따른 랭킹 불러오기
-
-    if (mounted) {
-      setState(() {
-        _isInitialLoading = false;
-      });
-    }
-    print("Rankings Loaded>>>>>>>> ${progressViewModel.rankings}");
   }
 
-  /// 스크롤 이벤트 핸들러
-  void _onScroll() async {
-    if (_scrollController.position.pixels >=
-            _scrollController.position.maxScrollExtent - 200 &&
-        !_isFetchingMore) {
-      await _fetchMoreRankings();
-    }
-  }
+  /// Firebase에서 랭킹 데이터 로드
+  Future<void> _loadRankings() async {
+    final DataSnapshot snapshot = await _databaseRef
+        .child("Progress") // progress 노드에서 데이터 가져오기
+        .orderByChild("score") // score 기준으로 정렬
+        .limitToLast(10) // 상위 10명 가져오기
+        .get();
 
-  /// 추가 랭킹 데이터를 로드
-  Future<void> _fetchMoreRankings() async {
-    final progressViewModel =
-        Provider.of<ProgressViewModel>(context, listen: false);
+    if (snapshot.exists) {
+      final data = snapshot.value as Map<dynamic, dynamic>;
+      List<ProgressData> rankings = [];
 
-    if (progressViewModel.isFetchingRankings) return;
-
-    setState(() {
-      _isFetchingMore = true;
-    });
-
-    final lastScore = progressViewModel.rankings.isNotEmpty
-        ? progressViewModel.rankings.last.score
-        : null;
-
-    await progressViewModel.fetchRankings(
-      orderBy: 'score',
-      lastValue: lastScore,
-    );
-
-    if (mounted) {
-      setState(() {
-        _isFetchingMore = false;
+      data.forEach((key, value) {
+        final progress =
+            ProgressData.fromJson(Map<String, dynamic>.from(value));
+        rankings.add(progress);
       });
+
+      // Firebase는 기본적으로 오름차순 정렬이므로, 내림차순으로 변환
+      rankings.sort((a, b) => b.score.compareTo(a.score));
+
+      setState(() {
+        _rankings = rankings;
+      });
+    } else {
+      print("NO DATA AVAILABLE FOR RANKINGS");
     }
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    // 화면이 닫힐 때 타이머를 취소
+    _timer.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final progressViewModel = Provider.of<ProgressViewModel>(context);
-    final rankings = progressViewModel.rankings;
-=======
-class SocialPage extends StatelessWidget {
-  const SocialPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    /// List of programming languages with name, image path, and button color
->>>>>>> 51d07d5ac81c51836d1081bbcfd0ea57e23b1a47
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Social Rankings'),
-      ),
-      body: _isInitialLoading
+      appBar: AppBar(title: const Text("Ranking System")),
+      body: _rankings.isEmpty
           ? const Center(child: CircularProgressIndicator())
-          : rankings.isEmpty
-              ? const Center(child: Text('No rankings available.'))
-              : ListView.builder(
-                  controller: _scrollController,
-                  itemCount: rankings.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == rankings.length) {
-                      return _isFetchingMore
-                          ? const LoadingIndicator(isFetching: true)
-                          : const SizedBox.shrink();
-                    }
-
-                    final ranking = rankings[index];
-                    return ListTile(
-                      leading: Text(
-                        '#${index + 1}',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      title: Text(
-                        ranking.uid ?? 'Unknown User',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      subtitle: Text('Score: ${ranking.score}'),
-                      trailing: ranking.tier != null
-                          ? Text(
-                              ranking.tier!,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blueAccent,
-                              ),
-                            )
-                          : null,
-                    );
-                  },
-                ),
+          : ListView.builder(
+              itemCount: _rankings.length,
+              itemBuilder: (context, index) {
+                final ranking = _rankings[index];
+                return ListTile(
+                  leading: Text("#${index + 1}"),
+                  title: Text(ranking.uid),
+                  subtitle: Text("Score: ${ranking.score}"),
+                  trailing: Text(
+                    ranking.tier,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                );
+              },
+            ),
     );
   }
 }
