@@ -65,8 +65,9 @@ class ProgressOperation {
     }
   }
 
+  // Fetch progress data
   Future<List<ProgressData>> fetchRankings({
-    required String orderBy, // 정렬 기준 (exp 또는 score)
+    required String orderBy, // 정렬 기준 (score 또는 exp)
     int? lastValue,
     int limit = 10,
   }) async {
@@ -77,23 +78,24 @@ class ProgressOperation {
       Query query = _dbService.database.ref(path).orderByChild(orderBy);
 
       if (lastValue != null) {
-        query = query.startAfter(lastValue); // startAfter로 변경
+        query = query.endBefore(lastValue); // lastValue 이후 데이터 가져오기
       }
 
-      query = query.limitToFirst(limit); // limitToFirst로 데이터 순서 유지
+      query = query.limitToFirst(limit); // 제한된 개수만 가져오기
 
-      final snapshot = await query.get();
-      if (!snapshot.exists) {
-        debugPrint('[fetchRankings] No data found.');
-        return [];
-      }
+      // fetchDB를 사용해 데이터 가져오기
+      final List<Map<String, dynamic>> rawData =
+          await _dbService.fetchDB(path: path, query: query);
 
-      final data = snapshot.children
-          .map((child) => ProgressData.fromJson(
-              Map<String, dynamic>.from(child.value as Map)))
-          .toList();
+      // ProgressData로 변환
+      final List<ProgressData> rankings =
+          rawData.map((data) => ProgressData.fromJson(data)).toList();
 
-      return data; // 역순 정렬 불필요
+      // 내림차순 정렬 (높은 점수/경험치 우선)
+      rankings
+          .sort((a, b) => b.toJson()[orderBy].compareTo(a.toJson()[orderBy]));
+
+      return rankings;
     } catch (error) {
       debugPrint('[fetchRankings] Error fetching rankings: $error');
       return [];

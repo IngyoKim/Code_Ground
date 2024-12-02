@@ -85,13 +85,11 @@ class ProgressViewModel with ChangeNotifier {
       );
 
       if (lastValue == null) {
-        // 첫 페이지인 경우 기존 데이터 초기화
         _rankings = fetchedRankings;
       } else {
-        // 기존 데이터에 추가
         _rankings.addAll(fetchedRankings);
       }
-      print("Working fetchranking");
+      debugPrint("Working fetchRanking");
 
       Future.microtask(() => notifyListeners());
     } catch (error) {
