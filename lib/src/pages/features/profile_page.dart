@@ -4,7 +4,7 @@ import 'package:code_ground/src/services/messaging/custom_url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/services/messaging/kakao_messaging.dart';
-
+import 'package:code_ground/src/pages/app_info/gettierimage.dart';
 import 'package:code_ground/src/pages/app_info/setting_page.dart';
 import 'package:code_ground/src/pages/app_info/about_page.dart';
 import 'package:code_ground/src/pages/app_info/help_page.dart';
@@ -248,39 +248,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center, // 중앙 정렬
                     children: <Widget>[
-                      Text(
-                        "Level: ${progressData?.level ?? 0}",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      // Tier에 따라 다른 이미지 표시
+                      Image.asset(
+                        getTierImage(progressData?.tier),
+                        width: 50, // 원하는 너비
+                        height: 50, // 원하는 높이
                       ),
                       const SizedBox(height: 8.0),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: LinearProgressIndicator(
-                          value: progressData?.exp != null
-                              ? (progressData!.exp / 100)
-                              : 0.0,
-                          backgroundColor: Colors.grey[300],
-                          valueColor:
-                              const AlwaysStoppedAnimation<Color>(Colors.blue),
-                          minHeight: 8.0,
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
-                      Text(
-                        progressData != null
-                            ? "EXP: ${progressData.exp}/100"
-                            : "EXP: 0/100",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
+                      // Tier
                       Text(
                         "Tier: ${progressData?.tier ?? 'Bronze'} ${progressData?.grade ?? 'V'}",
                         style: const TextStyle(
@@ -289,12 +266,50 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       const SizedBox(height: 8.0),
+                      // Score
                       Text(
                         "Score: ${progressData?.score ?? 0}",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      // Level
+                      Text(
+                        "Level: ${progressData?.level ?? 0}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      // EXP
+                      Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: LinearProgressIndicator(
+                              value: progressData?.exp != null
+                                  ? (progressData!.exp / 100)
+                                  : 0.0,
+                              backgroundColor: Colors.grey[300],
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Colors.blue),
+                              minHeight: 8.0,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            progressData != null
+                                ? "EXP: ${progressData.exp}/100"
+                                : "EXP: 0/100",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
