@@ -46,7 +46,7 @@ class UserViewModel with ChangeNotifier {
           name: firebaseUser?.displayName ?? 'Guest',
           email: firebaseUser?.email ?? '',
           photoUrl: firebaseUser?.photoURL ?? '',
-          nickname: '',
+          nickname: firebaseUser?.displayName ?? 'Guest',
           role: 'member',
           friendCode: generatedFriendCode,
           friends: [],
