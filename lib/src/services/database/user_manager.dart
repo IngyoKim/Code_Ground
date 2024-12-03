@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:code_ground/src/services/database/datas/user_data.dart';
-import 'package:code_ground/src/services/database/operations/database_service.dart';
+
+import 'package:code_ground/src/models/user_data.dart';
+import 'package:code_ground/src/services/database/database_service.dart';
 
 const basePath = 'Users';
 
-class UserOperation {
+class UserManager {
   final DatabaseService _dbService = DatabaseService();
 
   // Write user data

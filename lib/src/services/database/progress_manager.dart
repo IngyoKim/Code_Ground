@@ -1,12 +1,14 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:code_ground/src/services/database/datas/progress_data.dart';
-import 'package:code_ground/src/services/database/operations/database_service.dart';
+import 'package:firebase_database/firebase_database.dart';
+
+import 'package:code_ground/src/models/progress_data.dart';
+import 'package:code_ground/src/services/database/database_service.dart';
 
 const basePath = 'Progress';
 
-class ProgressOperation {
+class ProgressManager {
   final DatabaseService _dbService = DatabaseService();
 
   // Write progress data

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:code_ground/src/components/loading_indicator.dart';
-import 'package:code_ground/src/components/ranking_widget.dart';
+
 import 'package:code_ground/src/utils/ranking_utils.dart';
+import 'package:code_ground/src/components/ranking_widget.dart';
+import 'package:code_ground/src/components/loading_indicator.dart';
+
+import 'package:code_ground/src/models/progress_data.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
-import 'package:code_ground/src/services/database/datas/progress_data.dart';
 
 class SocialPage extends StatefulWidget {
   const SocialPage({super.key});

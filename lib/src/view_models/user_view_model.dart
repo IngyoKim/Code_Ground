@@ -3,11 +3,11 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:code_ground/src/services/database/datas/user_data.dart';
-import 'package:code_ground/src/services/database/operations/user_operation.dart';
+import 'package:code_ground/src/models/user_data.dart';
+import 'package:code_ground/src/services/database/user_manager.dart';
 
 class UserViewModel with ChangeNotifier {
-  final UserOperation _userOperation = UserOperation();
+  final UserManager _userManager = UserManager();
   UserData? _currentUserData;
   UserData? _otherUserData;
 
@@ -31,7 +31,7 @@ class UserViewModel with ChangeNotifier {
       }
 
       // 데이터베이스에서 현재 유저 데이터 가져오기
-      _currentUserData = await _userOperation.readUserData();
+      _currentUserData = await _userManager.readUserData();
 
       // 유저 데이터가 없을 경우 초기화
       if (_currentUserData == null) {
@@ -53,7 +53,7 @@ class UserViewModel with ChangeNotifier {
         );
 
         // 데이터베이스에 저장
-        await _userOperation.writeUserData(_currentUserData!);
+        await _userManager.writeUserData(_currentUserData!);
       }
       notifyListeners();
     } catch (error) {
@@ -66,7 +66,7 @@ class UserViewModel with ChangeNotifier {
   /// 특정 ID의 유저 데이터 가져오기 (다른 유저)
   Future<void> fetchOtherUserData(String uid) async {
     try {
-      _otherUserData = await _userOperation.readUserData(uid);
+      _otherUserData = await _userManager.readUserData(uid);
       notifyListeners();
     } catch (error) {
       debugPrint('Error fetching other user data: $error');
@@ -80,7 +80,7 @@ class UserViewModel with ChangeNotifier {
       _currentUserData!.nickname = nickname;
     }
 
-    await _userOperation.updateUserData({'nickname': nickname});
+    await _userManager.updateUserData({'nickname': nickname});
 
     notifyListeners();
   }
@@ -92,31 +92,26 @@ class UserViewModel with ChangeNotifier {
         throw Exception('Current user data is not loaded.');
       }
 
-      // 모든 사용자 데이터 가져오기 (효율성을 위해 특정 사용자 검색으로 대체 가능)
-      final users = await _userOperation.fetchUsers();
+      final users = await _userManager.fetchUsers();
 
-      // friendCode에 해당하는 사용자 찾기
       final friendUser = users.firstWhere(
         (user) => user.friendCode == friendCode,
         orElse: () => throw Exception('No user found with this friend code.'),
       );
 
-      // 자신을 친구로 추가하려는 경우 방지
       if (friendUser.uid == _currentUserData!.uid) {
         throw Exception('You cannot add yourself as a friend.');
       }
 
-      // 현재 유저의 friends 리스트 업데이트
       if (!_currentUserData!.friends.contains(friendUser.uid)) {
         _currentUserData!.friends.add(friendUser.uid);
-        await _userOperation
+        await _userManager
             .updateUserData({'friends': _currentUserData!.friends});
       }
 
-      // 친구 유저의 friends 리스트 업데이트
       if (!friendUser.friends.contains(_currentUserData!.uid)) {
         friendUser.friends.add(_currentUserData!.uid);
-        await _userOperation.updateUserData({'friends': friendUser.friends},
+        await _userManager.updateUserData({'friends': friendUser.friends},
             uid: friendUser.uid);
       }
 

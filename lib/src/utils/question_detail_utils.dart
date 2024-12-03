@@ -1,31 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
+
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:collection/collection.dart';
+
+import 'package:code_ground/src/models/tier_data.dart';
+import 'package:code_ground/src/models/question_data.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
-import 'package:code_ground/src/services/database/datas/question_data.dart';
-import 'package:code_ground/src/services/database/datas/tier_data.dart';
 
 class QuestionDetailUtil {
-  /// 사용자 답변 검증
   static bool verifyAnswer(dynamic userAnswer, QuestionData question) {
     if (question.questionType != 'Sequencing') {
       return userAnswer.toString().trim() == question.answer?.toString().trim();
     }
 
-    // Sequencing 타입: 리스트 비교
-    final userAnswerList =
-        userAnswer as List<String>; // 사용자 답변이 String 리스트로 전달된다고 가정
+    final userAnswerList = userAnswer as List<String>;
 
-    // 코드 스니펫의 키를 알파벳 순으로 정렬
-    final correctAnswerList = question.codeSnippets.keys.toList()
-      ..sort(); // 숫자 변환 없이 바로 알파벳 순으로 정렬
+    final correctAnswerList = question.codeSnippets.keys.toList()..sort();
 
     debugPrint("User Answer: $userAnswerList");
     debugPrint("Correct Answer: $correctAnswerList");
 
-    // 사용자의 답변과 올바른 답이 일치하는지 확인
     return ListEquality().equals(userAnswerList, correctAnswerList);
   }
 

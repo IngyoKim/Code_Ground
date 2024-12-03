@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:code_ground/src/services/database/datas/question_data.dart';
-import 'package:code_ground/src/services/database/operations/question_operation.dart';
+
+import 'package:code_ground/src/models/question_data.dart';
+import 'package:code_ground/src/services/database/question_manager.dart';
 
 class QuestionViewModel with ChangeNotifier {
-  final QuestionOperation _questionOperation = QuestionOperation();
+  final QuestionManager _questionManager = QuestionManager();
   Map<String, List<QuestionData>> _categoryQuestions = {};
   Map<String, int?> _lastCreatedAt = {}; // 각 카테고리의 마지막 createdAt 값 (타임스탬프)
   bool _isFetching = false;
@@ -43,7 +44,7 @@ class QuestionViewModel with ChangeNotifier {
   /// 특정 질문 ID로 질문 가져오기
   Future<void> fetchQuestionById(String questionId) async {
     try {
-      final question = await _questionOperation.fetchQuestionById(questionId);
+      final question = await _questionManager.fetchQuestionById(questionId);
       if (question != null) {
         _selectedQuestion = question;
         notifyListeners();
@@ -66,7 +67,7 @@ class QuestionViewModel with ChangeNotifier {
     notifyListeners();
 
     try {
-      final questions = await _questionOperation.fetchQuestions(
+      final questions = await _questionManager.fetchQuestions(
         category,
         limit: 10,
         lastQuestionId: _categoryQuestions[category]?.last.questionId,
@@ -92,7 +93,7 @@ class QuestionViewModel with ChangeNotifier {
   /// 질문 추가
   Future<void> addQuestion(QuestionData questionData) async {
     try {
-      await _questionOperation.writeQuestionData(questionData);
+      await _questionManager.writeQuestionData(questionData);
       final category = questionData.category.toLowerCase();
       if (!_categoryQuestions.containsKey(category)) {
         _categoryQuestions[category] = [];
@@ -107,7 +108,7 @@ class QuestionViewModel with ChangeNotifier {
   /// 질문 업데이트
   Future<void> updateQuestion(QuestionData updatedQuestion) async {
     try {
-      await _questionOperation.updateQuestionData(updatedQuestion);
+      await _questionManager.updateQuestionData(updatedQuestion);
 
       final category = updatedQuestion.category.toLowerCase();
       if (_categoryQuestions.containsKey(category)) {
