@@ -107,15 +107,27 @@ class UserViewModel with ChangeNotifier {
       }
 
       /// 친구 목록에 friendCode 추가
-      if (!_currentUserData!.friends.contains(friendUser.friendCode)) {
-        _currentUserData!.friends.add(friendUser.friendCode);
+      final friendMap = {
+        'uid': friendUser.uid,
+        'friendCode': friendUser.friendCode,
+      };
+      if (!_currentUserData!.friends.any((friend) =>
+          friend['uid'] == friendMap['uid'] &&
+          friend['friendCode'] == friendMap['friendCode'])) {
+        _currentUserData!.friends.add(friendMap);
         await _userManager
             .updateUserData({'friends': _currentUserData!.friends});
       }
 
       /// 상대방 친구 목록에도 현재 사용자의 friendCode 추가
-      if (!friendUser.friends.contains(_currentUserData!.friendCode)) {
-        friendUser.friends.add(_currentUserData!.friendCode);
+      final currentUserMap = {
+        'uid': _currentUserData!.uid,
+        'friendCode': _currentUserData!.friendCode,
+      };
+      if (!friendUser.friends.any((friend) =>
+          friend['uid'] == currentUserMap['uid'] &&
+          friend['friendCode'] == currentUserMap['friendCode'])) {
+        friendUser.friends.add(currentUserMap);
         await _userManager.updateUserData({'friends': friendUser.friends},
             uid: friendUser.uid);
       }

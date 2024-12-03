@@ -1,3 +1,5 @@
+import 'package:code_ground/src/services/database/database_service.dart';
+import 'package:code_ground/src/services/database/user_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
@@ -11,6 +13,8 @@ class RegistrateFriend extends StatefulWidget {
 
 class _RegistrateFriendState extends State<RegistrateFriend> {
   final TextEditingController _controller = TextEditingController();
+  final List<Map<String, String>> _friendsList = []; // 닉네임과 friendCode 저장
+  final UserManager _userManager = UserManager(); // UserManger 인스턴스 생성
 
   @override
   void initState() {
@@ -22,6 +26,45 @@ class _RegistrateFriendState extends State<RegistrateFriend> {
   void _fetchFriends() async {
     final userViewModel = context.read<UserViewModel>();
     await userViewModel.fetchCurrentUserData();
+    final friends = userViewModel.currentUserData?.friends ?? [];
+
+    List<Map<String, String>> updatedFriendsList = [];
+
+    for (final friend in friends) {
+      final uid = friend['uid'];
+      final friendCode = friend['friendCode'];
+
+      if (uid != null && friendCode != null) {
+        try {
+          // UID로 닉네임 가져오기
+          final userData = await _userManager.readUserData(uid);
+          if (userData != null) {
+            updatedFriendsList.add({
+              'nickname': userData.nickname,
+              'friendCode': friendCode,
+            });
+          } else {
+            updatedFriendsList.add({
+              'nickname': 'Unknown',
+              'friendCode': friendCode,
+            });
+          }
+        } catch (error) {
+          debugPrint('Error fetching nickname for $uid: $error');
+          updatedFriendsList.add({
+            'nickname': 'Error',
+            'friendCode': friendCode,
+          });
+        }
+      }
+    }
+
+    setState(() {
+      _friendsList.clear();
+      _friendsList.addAll(updatedFriendsList);
+    });
+
+    debugPrint('Updated Friends List: $_friendsList');
   }
 
   /// 친구 추가 처리
@@ -52,7 +95,7 @@ class _RegistrateFriendState extends State<RegistrateFriend> {
   @override
   Widget build(BuildContext context) {
     final userViewModel = context.watch<UserViewModel>();
-    final friendCodes = userViewModel.currentUserData?.friends ?? [];
+    final friends = userViewModel.currentUserData?.friends ?? [];
 
     return Scaffold(
       appBar: AppBar(
@@ -77,13 +120,17 @@ class _RegistrateFriendState extends State<RegistrateFriend> {
             ),
             const SizedBox(height: 16.0),
             Expanded(
-              child: friendCodes.isEmpty
+              child: friends.isEmpty
                   ? const Center(child: Text('No friends added yet.'))
                   : ListView.builder(
-                      itemCount: friendCodes.length,
+                      itemCount: _friendsList.length,
                       itemBuilder: (context, index) {
+                        final friend = _friendsList[index];
+                        final nickname = friend['nickname'] ?? 'Unknown';
+                        final friendCode = friend['friendCode'] ?? 'Unknown';
+
                         return ListTile(
-                          title: Text(friendCodes[index]),
+                          title: Text('$nickname($friendCode)'),
                         );
                       },
                     ),
