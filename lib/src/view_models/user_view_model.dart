@@ -92,30 +92,36 @@ class UserViewModel with ChangeNotifier {
         throw Exception('Current user data is not loaded.');
       }
 
+      /// 전체 사용자 데이터를 가져옴
       final users = await _userManager.fetchUsers();
 
+      /// friendCode로 사용자 찾기
       final friendUser = users.firstWhere(
         (user) => user.friendCode == friendCode,
         orElse: () => throw Exception('No user found with this friend code.'),
       );
 
-      if (friendUser.uid == _currentUserData!.uid) {
+      /// 자기 자신인지 확인
+      if (friendUser.friendCode == _currentUserData!.friendCode) {
         throw Exception('You cannot add yourself as a friend.');
       }
 
-      if (!_currentUserData!.friends.contains(friendUser.uid)) {
-        _currentUserData!.friends.add(friendUser.uid);
+      /// 친구 목록에 friendCode 추가
+      if (!_currentUserData!.friends.contains(friendUser.friendCode)) {
+        _currentUserData!.friends.add(friendUser.friendCode);
         await _userManager
             .updateUserData({'friends': _currentUserData!.friends});
       }
 
-      if (!friendUser.friends.contains(_currentUserData!.uid)) {
-        friendUser.friends.add(_currentUserData!.uid);
+      /// 상대방 친구 목록에도 현재 사용자의 friendCode 추가
+      if (!friendUser.friends.contains(_currentUserData!.friendCode)) {
+        friendUser.friends.add(_currentUserData!.friendCode);
         await _userManager.updateUserData({'friends': friendUser.friends},
             uid: friendUser.uid);
       }
 
-      debugPrint('[addFriend] Successfully added friend: ${friendUser.uid}');
+      debugPrint(
+          '[addFriend] Successfully added friend: ${friendUser.friendCode}');
       notifyListeners();
     } catch (error) {
       debugPrint('[addFriend] Error adding friend: $error');
