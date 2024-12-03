@@ -15,11 +15,22 @@ class _RegistrateFriendState extends State<RegistrateFriend> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> _friendsList = []; // 닉네임과 friendCode 저장
   final UserManager _userManager = UserManager(); // UserManger 인스턴스 생성
+  String _myFriendCode = ''; // 내 친구 코드 저장
 
   @override
   void initState() {
     super.initState();
     _fetchFriends(); // 초기 친구 목록 로드
+    _fetchMyFriendCode(); // 내 친구 코드 로드
+  }
+
+  /// 내 친구 코드 가져오기
+  void _fetchMyFriendCode() async {
+    final userViewModel = context.read<UserViewModel>();
+    await userViewModel.fetchCurrentUserData();
+    setState(() {
+      _myFriendCode = userViewModel.currentUserData?.friendCode ?? 'Unknown';
+    });
   }
 
   /// 친구 목록 가져오기
@@ -106,6 +117,21 @@ class _RegistrateFriendState extends State<RegistrateFriend> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // 내 친구 코드 표시
+            Container(
+              margin: const EdgeInsets.only(bottom: 16.0),
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Text(
+                'My Friend Code: $_myFriendCode',
+                style: const TextStyle(
+                    fontSize: 16.0, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
             TextField(
               controller: _controller,
               decoration: const InputDecoration(
