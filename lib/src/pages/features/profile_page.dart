@@ -169,8 +169,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               userData!.photoUrl.isNotEmpty)
                           ? Image.network(
                               userData.photoUrl,
-                              width: 50,
-                              height: 50,
+                              width: 60,
+                              height: 70,
                               fit: BoxFit.cover,
                             )
                           : const Icon(
@@ -244,6 +244,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
               /// Progress card
               Card(
+                //카드 색 바꿀까? 고민중
                 elevation: 2,
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
@@ -253,8 +254,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       // Tier에 따라 다른 이미지 표시
                       Image.asset(
                         getTierImage(progressData?.tier),
-                        width: 50, // 원하는 너비
-                        height: 50, // 원하는 높이
+                        width: 300, // 원하는 너비
+                        height: 300, // 원하는 높이
                       ),
                       const SizedBox(height: 8.0),
                       // Tier
