@@ -35,16 +35,16 @@ class HomePage extends StatelessWidget {
                 children: [
                   Image.asset(
                     'assets/logo/code_ground_logo.png',
-                    height: 80,
+                    height: 100,
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(width: 20),
                   const Text(
-                    'CODE GROUND',
+                    'CODEGROUND',
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      fontSize: 30,
+                      fontSize: 38,
                     ),
                   ),
                 ],

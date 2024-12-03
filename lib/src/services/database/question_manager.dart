@@ -1,11 +1,12 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:code_ground/src/services/database/datas/question_data.dart';
-import 'package:code_ground/src/services/database/operations/database_service.dart';
+
+import 'package:code_ground/src/models/question_data.dart';
+import 'package:code_ground/src/services/database/database_service.dart';
 
 const basePath = 'Questions';
 
-class QuestionOperation {
+class QuestionManager {
   final DatabaseService _dbService = DatabaseService();
 
   // 카테고리별 접두사

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:code_ground/src/services/database/datas/progress_data.dart';
-import 'package:code_ground/src/services/database/operations/progress_operation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:code_ground/src/models/progress_data.dart';
+import 'package:code_ground/src/services/database/progress_manager.dart';
+
 class ProgressViewModel with ChangeNotifier {
-  final ProgressOperation _progressOperation = ProgressOperation();
+  final ProgressManager _progressManager = ProgressManager();
 
   ProgressData? _progressData;
   List<ProgressData> _rankings = [];
@@ -23,7 +24,7 @@ class ProgressViewModel with ChangeNotifier {
         throw Exception('User ID is null and no user is logged in.');
       }
 
-      _progressData = await _progressOperation.readProgressData(currentUserId);
+      _progressData = await _progressManager.readProgressData(currentUserId);
 
       if (_progressData == null) {
         _progressData = ProgressData(
@@ -35,7 +36,7 @@ class ProgressViewModel with ChangeNotifier {
           grade: 'V',
           questionState: {},
         );
-        await _progressOperation.writeProgressData(_progressData!);
+        await _progressManager.writeProgressData(_progressData!);
       }
 
       notifyListeners();
@@ -56,10 +57,10 @@ class ProgressViewModel with ChangeNotifier {
         throw Exception('User ID is null and no user is logged in.');
       }
 
-      await _progressOperation.updateProgressData(currentUserId, updates);
+      await _progressManager.updateProgressData(currentUserId, updates);
 
       // Fetch the updated data
-      _progressData = await _progressOperation.readProgressData(currentUserId);
+      _progressData = await _progressManager.readProgressData(currentUserId);
       notifyListeners();
     } catch (error) {
       debugPrint('Error updating progress data: $error');
@@ -78,20 +79,18 @@ class ProgressViewModel with ChangeNotifier {
     Future.microtask(() => notifyListeners());
 
     try {
-      final fetchedRankings = await _progressOperation.fetchRankings(
+      final fetchedRankings = await _progressManager.fetchRankings(
         orderBy: orderBy,
         lastValue: lastValue,
         limit: limit,
       );
 
       if (lastValue == null) {
-        // 첫 페이지인 경우 기존 데이터 초기화
         _rankings = fetchedRankings;
       } else {
-        // 기존 데이터에 추가
         _rankings.addAll(fetchedRankings);
       }
-      print("Working fetchranking");
+      debugPrint("Working fetchRanking");
 
       Future.microtask(() => notifyListeners());
     } catch (error) {

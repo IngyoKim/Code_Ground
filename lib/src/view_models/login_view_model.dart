@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:code_ground/src/services/logins/social_login.dart';
-import 'package:code_ground/src/services/logins/login_preference.dart';
+import 'package:code_ground/src/services/auth/social_login.dart';
+import 'package:code_ground/src/services/auth/login_preference.dart';
 
 class LoginViewModel extends ChangeNotifier {
   final LoginPreference _loginPreference = LoginPreference();
@@ -12,12 +12,10 @@ class LoginViewModel extends ChangeNotifier {
   User? user;
 
   LoginViewModel() {
-    /// Initialize login type during ViewModel creation.
     _initialize();
   }
 
   Future<void> _initialize() async {
-    /// Fetch the previously saved login type.
     _socialLogin = await _loginPreference.getLoginType();
     notifyListeners();
   }

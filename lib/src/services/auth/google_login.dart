@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:code_ground/src/services/logins/social_login.dart';
+import 'package:code_ground/src/services/auth/social_login.dart';
 
 class GoogleLogin implements SocialLogin {
   @override
@@ -40,19 +40,19 @@ class GoogleLogin implements SocialLogin {
   @override
   Future<void> logout() async {
     try {
-      debugPrint("Google 로그아웃 시도 중...");
+      debugPrint("Attempting to sign out from Google...");
       await GoogleSignIn().signOut();
-      debugPrint("Google 로그아웃 성공");
+      debugPrint("Successfully signed out from Google.");
     } catch (error) {
-      debugPrint("Google 로그아웃 실패: $error");
+      debugPrint("Failed to sign out from Google: $error");
     }
 
     try {
-      debugPrint("Firebase 로그아웃 시도 중...");
+      debugPrint("Attempting to sign out from Firebase...");
       await FirebaseAuth.instance.signOut();
-      debugPrint("Firebase 로그아웃 성공");
+      debugPrint("Successfully signed out from Firebase.");
     } catch (error) {
-      debugPrint("Firebase 로그아웃 실패: $error");
+      debugPrint("Failed to sign out from Firebase: $error");
     }
   }
 }

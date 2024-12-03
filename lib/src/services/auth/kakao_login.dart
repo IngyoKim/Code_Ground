@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 
-import 'package:code_ground/src/services/logins/social_login.dart';
-import 'package:code_ground/src/services/logins/firebase_auth_data.dart';
+import 'package:code_ground/src/services/auth/social_login.dart';
+import 'package:code_ground/src/services/auth/firebase_auth_data.dart';
 
 class KakaoLogin implements SocialLogin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -71,19 +71,19 @@ class KakaoLogin implements SocialLogin {
   @override
   Future<void> logout() async {
     try {
-      debugPrint("Kakao 연결 끊기 시도 중...");
+      debugPrint("Attempting to unlink Kakao account...");
       await kakao.UserApi.instance.unlink();
-      debugPrint("Kakao 연결 끊기 성공");
+      debugPrint("Successfully unlinked Kakao account.");
     } catch (error) {
-      debugPrint("Kakao 연결 끊기 실패: $error");
+      debugPrint("Failed to unlink Kakao account: $error");
     }
 
     try {
-      debugPrint("Firebase 로그아웃 시도 중...");
+      debugPrint("Attempting to sign out from Firebase...");
       await _auth.signOut();
-      debugPrint("Firebase 로그아웃 성공");
+      debugPrint("Successfully signed out from Firebase.");
     } catch (error) {
-      debugPrint("Firebase 로그아웃 실패: $error");
+      debugPrint("Failed to sign out from Firebase: $error");
     }
   }
 }

@@ -6,8 +6,8 @@ import 'package:code_ground/src/components/login_widgets/login_button.dart';
 import 'package:code_ground/src/components/login_widgets/login_header.dart';
 import 'package:code_ground/src/components/login_widgets/login_footer.dart';
 
-import 'package:code_ground/src/services/logins/google_login.dart';
-import 'package:code_ground/src/services/logins/kakao_login.dart';
+import 'package:code_ground/src/services/auth/google_login.dart';
+import 'package:code_ground/src/services/auth/kakao_login.dart';
 import 'package:code_ground/src/view_models/login_view_model.dart';
 
 class LoginPage extends StatefulWidget {

@@ -1,7 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:code_ground/src/services/logins/social_login.dart';
-import 'package:code_ground/src/services/logins/kakao_login.dart';
-import 'package:code_ground/src/services/logins/google_login.dart';
+
+import 'package:code_ground/src/services/auth/social_login.dart';
+import 'package:code_ground/src/services/auth/kakao_login.dart';
+import 'package:code_ground/src/services/auth/google_login.dart';
 
 class LoginPreference {
   static const String loginTypeKey = 'loginType';

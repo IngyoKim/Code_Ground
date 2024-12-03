@@ -37,45 +37,56 @@ class _MainPageState extends State<MainPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          const SocialPage(),
-          HomePage(),
-          const ProfilePage(),
-        ],
-      ),
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        child: TabBar(
+    return PopScope(
+      canPop: _tabController.index == 1, // Allow pop only if on HomePage
+      onPopInvoked: (didPop) {
+        if (!didPop && _tabController.index != 1) {
+          // Navigate to HomePage if not already there
+          setState(() {
+            _tabController.index = 1;
+          });
+        }
+      },
+      child: Scaffold(
+        body: TabBarView(
           controller: _tabController,
-          indicatorColor: Colors.black,
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.grey,
-          tabs: [
-            Tab(
-              icon: Icon(
-                Icons.group,
-                size: 24,
-              ),
-              text: "Social",
-            ),
-            Tab(
-              icon: Icon(
-                Icons.home,
-                size: 24,
-              ),
-              text: "Home",
-            ),
-            Tab(
-              icon: Icon(
-                Icons.person,
-                size: 24,
-              ),
-              text: "Profile",
-            ),
+          children: [
+            const SocialPage(),
+            HomePage(),
+            const ProfilePage(),
           ],
+        ),
+        bottomNavigationBar: Container(
+          color: Colors.white,
+          child: TabBar(
+            controller: _tabController,
+            indicatorColor: Colors.black,
+            labelColor: Colors.black,
+            unselectedLabelColor: Colors.grey,
+            tabs: [
+              Tab(
+                icon: Icon(
+                  Icons.group,
+                  size: 24,
+                ),
+                text: "Social",
+              ),
+              Tab(
+                icon: Icon(
+                  Icons.home,
+                  size: 24,
+                ),
+                text: "Home",
+              ),
+              Tab(
+                icon: Icon(
+                  Icons.person,
+                  size: 24,
+                ),
+                text: "Profile",
+              ),
+            ],
+          ),
         ),
       ),
     );

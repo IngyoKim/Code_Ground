@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:code_ground/src/services/database/datas/tier_data.dart'; // Tier 데이터 import
+import 'package:code_ground/src/models/tier_data.dart';
 
 class TierInput extends StatelessWidget {
   final Tier selectedTier;

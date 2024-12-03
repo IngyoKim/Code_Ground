@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:code_ground/src/utils/toast_message.dart';
+import 'package:code_ground/src/models/tier_data.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 
-import 'package:code_ground/src/services/database/datas/tier_data.dart';
-import 'package:code_ground/src/components/add_question_widgets/header/title_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/header/description_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/body/tier_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/footer/question_type_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/body/language_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/body/code_snippet_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/footer/subjective_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/footer/objective_answer_input.dart';
-import 'package:code_ground/src/components/add_question_widgets/body/hint_input.dart';
-import 'package:code_ground/src/utils/toast_message.dart';
+import 'package:code_ground/src/components/question_form_widgets/header/title_input.dart';
+import 'package:code_ground/src/components/question_form_widgets/header/description_input.dart';
+import 'package:code_ground/src/components/question_form_widgets/body/tier_input.dart';
+import 'package:code_ground/src/components/question_form_widgets/body/language_input.dart';
+import 'package:code_ground/src/components/question_form_widgets/body/code_snippet_input.dart';
+import 'package:code_ground/src/components/question_form_widgets/body/hint_input.dart';
+import 'package:code_ground/src/components/question_form_widgets/footer/question_type_input.dart';
+import 'package:code_ground/src/components/question_form_widgets/footer/subjective_input.dart';
+import 'package:code_ground/src/components/question_form_widgets/footer/objective_answer_input.dart';
 
 class EditQuestionPage extends StatefulWidget {
   const EditQuestionPage({super.key});
