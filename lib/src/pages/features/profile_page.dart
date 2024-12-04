@@ -1,9 +1,6 @@
-import 'package:code_ground/src/pages/app_info/registrate_friend.dart';
 import 'package:code_ground/src/pages/questions/question_state_page.dart';
-import 'package:code_ground/src/services/messaging/custom_url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:code_ground/src/services/messaging/kakao_messaging.dart';
 import 'package:code_ground/src/utils/gettierimage.dart';
 import 'package:code_ground/src/pages/app_info/setting_page.dart';
 import 'package:code_ground/src/pages/app_info/about_page.dart';
@@ -36,7 +33,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final KakaoMessaging kakaoMessaging = KakaoMessaging();
     final userViewModel = context.watch<UserViewModel>();
     final progressViewModel = context.watch<ProgressViewModel>();
 
@@ -127,26 +123,6 @@ class _ProfilePageState extends State<ProfilePage> {
             context,
             MaterialPageRoute(
               builder: (context) => const FAQPage(),
-            ),
-          );
-        },
-      },
-      {
-        'icon': Icons.person_add,
-        'text': 'Invite',
-        'onTap': () async {
-          final inviteUrl = await createCustomLink(userData!.uid);
-          await kakaoMessaging.shareContent(userData.nickname, inviteUrl);
-        },
-      },
-      {
-        'icon': Icons.person,
-        'text': 'Friend',
-        'onTap': () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const RegistrateFriend(),
             ),
           );
         },
