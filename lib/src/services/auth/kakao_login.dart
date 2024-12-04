@@ -72,6 +72,7 @@ class KakaoLogin implements SocialLogin {
       /// Update user information
       return userCredential.user;
     } catch (error) {
+      //로그인 프로세스 중 오류 발생
       debugPrint("Kakao login failed. $error");
       return null;
     }
