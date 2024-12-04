@@ -8,6 +8,7 @@ import 'package:code_ground/src/services/auth/social_login.dart';
 import 'package:code_ground/src/services/auth/firebase_auth_data.dart';
 
 class KakaoLogin implements SocialLogin {
+  // Firebase 인증 객체
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseAuthData _firebaseAuthData = FirebaseAuthData();
 
