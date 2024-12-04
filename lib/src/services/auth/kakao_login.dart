@@ -67,7 +67,7 @@ class KakaoLogin implements SocialLogin {
       /// Firebase login
       UserCredential userCredential =
           await _auth.signInWithCustomToken(customToken);
-      await _auth.currentUser?.reload();
+      await _auth.currentUser?.reload(); //Firebase 인증 상태 갱신
 
       /// Update user information
       return userCredential.user;
