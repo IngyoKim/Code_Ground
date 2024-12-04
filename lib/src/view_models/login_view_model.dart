@@ -23,6 +23,7 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //로그인 타입 설정 및 저장
   Future<void> setLoginType(SocialLogin socialLogin) async {
     _socialLogin = socialLogin;
 
