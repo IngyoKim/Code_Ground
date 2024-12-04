@@ -5,7 +5,7 @@ class SettingPage extends StatefulWidget {
   final String initialNickname;
   final String role;
   final String friendData;
-  final dynamic userData; // userData 객체 추가
+  final dynamic userData;
 
   const SettingPage({
     super.key,
