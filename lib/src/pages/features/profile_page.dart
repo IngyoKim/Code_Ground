@@ -335,12 +335,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(item['icon'], color: item['iconColor']), // 아이콘
+                          Icon(item['icon'], color: item['iconColor']),
                           const SizedBox(width: 10),
                           Text(
                             item['text'],
-                            style:
-                                const TextStyle(color: Colors.black), // 텍스트 색상
+                            style: const TextStyle(color: Colors.black),
                           ),
                         ],
                       ),
