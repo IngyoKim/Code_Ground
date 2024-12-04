@@ -32,6 +32,7 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //로그인 프로세스 실행
   Future<void> login() async {
     if (_socialLogin == null) {
       debugPrint("Login type not selected.");
