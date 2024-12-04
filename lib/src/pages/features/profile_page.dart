@@ -239,7 +239,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center, // 중앙 정렬
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       // Tier에 따라 다른 이미지 표시
                       Image.asset(
