@@ -14,6 +14,7 @@ class KakaoLogin implements SocialLogin {
   final FirebaseAuthData _firebaseAuthData = FirebaseAuthData();
 
   @override
+  //로그인 타입 지정 (카카오)
   String loginType = "Kakao";
 
   @override
@@ -23,6 +24,7 @@ class KakaoLogin implements SocialLogin {
       if (await kakao.isKakaoTalkInstalled()) {
         debugPrint("KakaoTalk is installed.");
         try {
+          //KakaoTalk을 이용한 로그인
           await kakao.UserApi.instance.loginWithKakaoTalk();
           debugPrint("Successed to login with KakaoTalk.");
         } catch (error) {
