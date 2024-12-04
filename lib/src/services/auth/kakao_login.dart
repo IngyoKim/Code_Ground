@@ -93,7 +93,7 @@ class KakaoLogin implements SocialLogin {
     try {
       // Firebase 로그아웃 처리
       debugPrint("Attempting to sign out from Firebase...");
-      await _auth.signOut();
+      await _auth.signOut(); //Firebase 에서 로그아웃
       debugPrint("Successfully signed out from Firebase.");
     } catch (error) {
       debugPrint("Failed to sign out from Firebase: $error");
