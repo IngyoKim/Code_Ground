@@ -10,6 +10,7 @@ import 'package:code_ground/src/services/auth/firebase_auth_data.dart';
 class KakaoLogin implements SocialLogin {
   // Firebase 인증 객체
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  // Firebase 커스텀 토큰 생성에 필요한 클래스
   final FirebaseAuthData _firebaseAuthData = FirebaseAuthData();
 
   @override
