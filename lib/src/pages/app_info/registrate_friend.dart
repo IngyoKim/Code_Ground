@@ -1,8 +1,7 @@
-import 'package:code_ground/src/services/database/database_service.dart';
-import 'package:code_ground/src/services/database/user_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
+import 'package:code_ground/src/services/database/user_manager.dart';
 
 class RegistrateFriend extends StatefulWidget {
   const RegistrateFriend({super.key});
