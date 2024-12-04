@@ -257,7 +257,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       const SizedBox(height: 8.0),
-                      // Score
+
                       Text(
                         "Score: ${progressData?.score ?? 0}",
                         style: const TextStyle(
@@ -266,7 +266,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       const SizedBox(height: 8.0),
-                      // Level
+
                       Text(
                         "Level: ${progressData?.level ?? 0}",
                         style: const TextStyle(
@@ -275,7 +275,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       const SizedBox(height: 8.0),
-                      // EXP
+
                       Column(
                         children: [
                           ClipRRect(
