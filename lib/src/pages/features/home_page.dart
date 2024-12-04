@@ -7,9 +7,14 @@ import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/pages/questions/question_list_page.dart';
 import 'package:code_ground/src/pages/questions/add_question_page.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final List<Map<String, dynamic>> categories = [
     {'name': 'Syntax', 'icon': Icons.code},
     {'name': 'Debugging', 'icon': Icons.bug_report},

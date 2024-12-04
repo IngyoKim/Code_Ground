@@ -169,8 +169,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               userData!.photoUrl.isNotEmpty)
                           ? Image.network(
                               userData.photoUrl,
-                              width: 60,
-                              height: 70,
+                              width: 50,
+                              height: 50,
                               fit: BoxFit.cover,
                             )
                           : const Icon(
@@ -190,6 +190,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             userData?.nickname.isNotEmpty == true
                                 ? userData!.nickname
                                 : userData?.name ?? 'Guest',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                     subtitle: Text(userData?.name ?? 'enter your name'),
                     trailing: Row(
