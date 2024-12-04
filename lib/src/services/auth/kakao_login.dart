@@ -54,7 +54,7 @@ class KakaoLogin implements SocialLogin {
         'email': user.kakaoAccount?.email ?? '',
         'photoURL': user.kakaoAccount?.profile?.profileImageUrl ?? '',
       });
-
+      //Firebase로부터 받은 JSON 응답에서 토큰 추출
       final tokenData = jsonDecode(response);
       final customToken = tokenData['token'] ?? '';
 
