@@ -82,15 +82,15 @@ class _SettingPageState extends State<SettingPage> {
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: Text(
-                'Role: ${widget.role}', // 역할 정보
+                'Role: ${widget.role}',
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
-            const SizedBox(height: 8.0), // 줄 간격 추가
+            const SizedBox(height: 8.0),
             Padding(
-              padding: const EdgeInsets.only(left: 16.0), // 오른쪽으로 당기기
+              padding: const EdgeInsets.only(left: 16.0),
               child: Text(
-                'FriendCode: ${widget.friendData}', // 역할 정보
+                'FriendCode: ${widget.friendData}',
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
