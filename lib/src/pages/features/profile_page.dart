@@ -46,24 +46,30 @@ class _ProfilePageState extends State<ProfilePage> {
     final List<Map<String, dynamic>> learningMenuItems = [
       {
         'icon': Icons.check_circle,
+        'iconColor': Colors.green.shade500,
         'text': 'Solved Questions',
+        'color': Colors.grey.shade300, // 초록색
         'onTap': () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const QuestionStatePage(),
+              builder: (context) =>
+                  const QuestionStatePage(), // Solved Questions 페이지로 네비게이션
             ),
           );
         },
       },
       {
         'icon': Icons.error,
+        'iconColor': Colors.red,
         'text': 'Failed Questions',
+        'color': Colors.grey.shade300, // 붉은색
         'onTap': () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const QuestionStatePage(),
+              builder: (context) =>
+                  const QuestionStatePage(), // Failed Questions 페이지로 네비게이션
             ),
           );
         },
@@ -330,7 +336,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 endIndent: 20.0,
               ),
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: Alignment.center,
                 child: const Text(
                   "Learning Data",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -340,23 +346,28 @@ class _ProfilePageState extends State<ProfilePage> {
               ...learningMenuItems.map(
                 (item) => Column(
                   children: [
-                    ListTile(
-                      leading: Icon(
-                        item['icon'],
-                        color: Colors.black,
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: item['color'], // 색상 지정
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 20.0),
                       ),
-                      title: Text(item['text']),
-                      onTap: item['onTap'],
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.black,
+                      onPressed: item['onTap'],
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(item['icon'], color: item['iconColor']), // 아이콘
+                          const SizedBox(width: 10),
+                          Text(
+                            item['text'],
+                            style:
+                                const TextStyle(color: Colors.black), // 텍스트 색상
+                          ),
+                        ],
                       ),
                     ),
-                    const Divider(
+                    SizedBox(
                       height: 10.0,
-                      color: Colors.grey,
-                      thickness: 0.5,
-                      endIndent: 20.0,
                     ),
                   ],
                 ),
