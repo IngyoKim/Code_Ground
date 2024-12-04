@@ -38,7 +38,7 @@ class LoginViewModel extends ChangeNotifier {
       debugPrint("Login type not selected.");
       return;
     }
-
+    // 소셜 로그인 프로세스 실행
     user = await _socialLogin!.login();
     debugPrint("User Id: ${user?.uid}");
     await FirebaseAuth.instance.currentUser?.reload();
