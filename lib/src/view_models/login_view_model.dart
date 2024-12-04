@@ -7,11 +7,8 @@ import 'package:code_ground/src/services/auth/social_login.dart';
 import 'package:code_ground/src/services/auth/login_preference.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  //로그인 타입을 저장하고 관리하는 클레스
   final LoginPreference _loginPreference = LoginPreference();
-  //현재 로그인 방식(예: Google, kakao)
   SocialLogin? _socialLogin;
-  //현재 로그인된 사용자
   User? user;
 
   LoginViewModel() {
