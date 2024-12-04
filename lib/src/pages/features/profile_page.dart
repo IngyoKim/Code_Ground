@@ -83,6 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 role: userData?.role ?? 'member',
                 nickname: userData?.nickname ?? 'Guest',
                 userData: userData,
+                friendData: userData?.friendCode ?? '',
               ),
             ),
           );

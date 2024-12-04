@@ -1,4 +1,3 @@
-import 'package:code_ground/src/services/database/database_service.dart';
 import 'package:code_ground/src/services/database/user_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

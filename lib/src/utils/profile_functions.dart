@@ -23,13 +23,15 @@ void navigateToSettingPage(BuildContext context, UserViewModel userViewModel) {
 
   var role;
   var userData; //만약 문제 생기면 여기 확인하기
+  var friendData;
   Navigator.push(
     context,
     MaterialPageRoute(
       builder: (context) => SettingPage(
         nickname: nickname, // null일 경우 'Guest'로 기본값 설정
         initialNickname: nickname, role: role,
-        userData: userData, // initialNickname을 nickname과 동일하게 설정
+        userData: userData,
+        friendData: friendData, // initialNickname을 nickname과 동일하게 설정
       ),
     ),
   );
