@@ -1,9 +1,9 @@
-import 'package:code_ground/src/pages/app_info/registrate_friend.dart';
+//import 'package:code_ground/src/pages/app_info/registrate_friend.dart';
 import 'package:code_ground/src/pages/questions/question_state_page.dart';
-import 'package:code_ground/src/services/messaging/custom_url.dart';
+//import 'package:code_ground/src/services/messaging/custom_url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:code_ground/src/services/messaging/kakao_messaging.dart';
+//import 'package:code_ground/src/services/messaging/kakao_messaging.dart';
 import 'package:code_ground/src/utils/gettierimage.dart';
 import 'package:code_ground/src/pages/app_info/setting_page.dart';
 import 'package:code_ground/src/pages/app_info/about_page.dart';
@@ -36,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final KakaoMessaging kakaoMessaging = KakaoMessaging();
+    //final KakaoMessaging kakaoMessaging = KakaoMessaging();
     final userViewModel = context.watch<UserViewModel>();
     final progressViewModel = context.watch<ProgressViewModel>();
 
@@ -244,8 +244,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       // Tier에 따라 다른 이미지 표시
                       Image.asset(
                         getTierImage(progressData?.tier),
-                        width: 300, // 원하는 너비
-                        height: 300, // 원하는 높이
+                        width: 300,
+                        height: 300,
                       ),
                       const SizedBox(height: 8.0),
                       // Tier
@@ -327,7 +327,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: item['color'], // 색상 지정
+                        backgroundColor: item['color'],
                         padding: const EdgeInsets.symmetric(
                             vertical: 15.0, horizontal: 20.0),
                       ),
