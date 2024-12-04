@@ -64,7 +64,9 @@ class QuestionViewModel with ChangeNotifier {
     if (_isFetching || !_hasMoreData) return [];
 
     _isFetching = true;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final questions = await _questionManager.fetchQuestions(
@@ -80,7 +82,10 @@ class QuestionViewModel with ChangeNotifier {
         _categoryQuestions[category]!.addAll(questions);
       }
 
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+
       return questions;
     } catch (error) {
       debugPrint('[fetchQuestions] Error: $error');

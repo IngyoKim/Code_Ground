@@ -111,6 +111,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(context.toString());
     final questions = _questionListUtil.items;
 
     return Scaffold(

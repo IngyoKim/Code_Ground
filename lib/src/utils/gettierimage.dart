@@ -2,7 +2,7 @@
 String getTierImage(String? tier) {
   switch (tier) {
     case 'Bronze':
-      return 'assets/images/Bronz.png'; // 수정된 파일 이름
+      return 'assets/images/Bronze.png'; // 수정된 파일 이름
     case 'Silver':
       return 'assets/images/Silver.png';
     case 'Gold':

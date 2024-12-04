@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 import 'package:code_ground/src/services/database/user_manager.dart';
+=======
+>>>>>>> 41e2e32580c5911d23655a81b0540f7396cc29e5
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
+import 'package:code_ground/src/services/database/user_manager.dart';
 
 class RegistrateFriend extends StatefulWidget {
   const RegistrateFriend({super.key});
