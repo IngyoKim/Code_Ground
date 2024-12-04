@@ -1,4 +1,4 @@
-import 'package:code_ground/src/pages/app_info/gettierimage.dart';
+import 'package:code_ground/src/utils/gettierimage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
