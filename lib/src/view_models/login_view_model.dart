@@ -13,7 +13,7 @@ class LoginViewModel extends ChangeNotifier {
   SocialLogin? _socialLogin;
   //현재 로그인된 사용자 정보
   User? user;
-
+  //생성자: 초기화 메서드 호출
   LoginViewModel() {
     _initialize();
   }
