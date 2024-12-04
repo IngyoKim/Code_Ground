@@ -86,6 +86,7 @@ class KakaoLogin implements SocialLogin {
       await kakao.UserApi.instance.unlink();
       debugPrint("Successfully unlinked Kakao account.");
     } catch (error) {
+      // 카카오 계정 연결 해제 실패
       debugPrint("Failed to unlink Kakao account: $error");
     }
 
