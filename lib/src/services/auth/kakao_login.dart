@@ -59,6 +59,7 @@ class KakaoLogin implements SocialLogin {
       final customToken = tokenData['token'] ?? '';
 
       if (customToken.isEmpty) {
+        //커스텀 토큰 생성
         debugPrint("Failed to retrieve custom token.");
         return null;
       }
