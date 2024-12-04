@@ -17,7 +17,7 @@ class LoginViewModel extends ChangeNotifier {
   LoginViewModel() {
     _initialize();
   }
-
+  //초기화: 저장된 로그인 타입을 불러옴
   Future<void> _initialize() async {
     _socialLogin = await _loginPreference.getLoginType();
     notifyListeners();
