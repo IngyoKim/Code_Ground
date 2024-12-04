@@ -40,6 +40,7 @@ class LoginViewModel extends ChangeNotifier {
     }
     // 소셜 로그인 프로세스 실행
     user = await _socialLogin!.login();
+    // 사용자 ID 출력(디버깅용)
     debugPrint("User Id: ${user?.uid}");
     await FirebaseAuth.instance.currentUser?.reload();
     notifyListeners();
