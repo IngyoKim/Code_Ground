@@ -6,7 +6,7 @@ class UserData {
   String nickname;
   final String role;
   final String friendCode;
-  final List<String> friends;
+  final List<Map<String, String>> friends;
 
   UserData({
     required this.uid,
@@ -29,7 +29,10 @@ class UserData {
       nickname: json['nickname'] ?? '', // 기본값 설정
       role: json['role'] ?? '', // 기본값 설정
       friendCode: json['friendCode'] ?? '',
-      friends: List<String>.from(json['friends'] ?? []),
+      friends: List<Map<String, String>>.from(json['friends']?.map((friend) {
+            return Map<String, String>.from(friend);
+          }) ??
+          []),
     );
   }
 
@@ -43,7 +46,8 @@ class UserData {
       'nickname': nickname,
       'role': role,
       'friendCode': friendCode,
-      'friends': friends,
+      'friends':
+          friends.map((friend) => Map<String, String>.from(friend)).toList(),
     };
   }
 }

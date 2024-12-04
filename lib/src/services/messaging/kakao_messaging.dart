@@ -12,16 +12,16 @@ class KakaoMessaging {
         imageUrl: Uri.parse(
             'https://raw.githubusercontent.com/IngyoKim/Code_Ground/refs/heads/main/assets/logo/code_ground_logo.png'),
         link: Link(
-          webUrl: Uri.parse(customUrl), // Use the custom URL here
-          mobileWebUrl: Uri.parse(customUrl),
+          mobileWebUrl: Uri.parse(
+              'https://drive.google.com/file/d/1O377mE3UU9LzCQzFzdP9vUR7Pj2jkrDQ/view?usp=sharing'),
         ),
       ),
       buttons: [
         Button(
           title: '지금 시작하기',
           link: Link(
-            webUrl: Uri.parse(customUrl),
-            mobileWebUrl: Uri.parse(customUrl),
+            mobileWebUrl: Uri.parse(
+                'https://drive.google.com/file/d/1O377mE3UU9LzCQzFzdP9vUR7Pj2jkrDQ/view?usp=sharing'),
           ),
         ),
       ],
