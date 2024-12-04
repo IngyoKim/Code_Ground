@@ -11,19 +11,18 @@ class LoginViewModel extends ChangeNotifier {
   final LoginPreference _loginPreference = LoginPreference();
   //현재 로그인 방식(예: Google, kakao)
   SocialLogin? _socialLogin;
-  //현재 로그인된 사용자 정보
+  //현재 로그인된 사용자
   User? user;
-  //생성자: 초기화 메서드 호출
+
   LoginViewModel() {
     _initialize();
   }
-  //초기화: 저장된 로그인 타입을 불러옴
+
   Future<void> _initialize() async {
     _socialLogin = await _loginPreference.getLoginType();
     notifyListeners();
   }
 
-  //로그인 타입 설정 및 저장
   Future<void> setLoginType(SocialLogin socialLogin) async {
     _socialLogin = socialLogin;
 
@@ -32,7 +31,6 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //로그인 프로세스 실행
   Future<void> login() async {
     if (_socialLogin == null) {
       debugPrint("Login type not selected.");
