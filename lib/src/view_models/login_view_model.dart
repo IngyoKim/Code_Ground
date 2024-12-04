@@ -11,6 +11,7 @@ class LoginViewModel extends ChangeNotifier {
   final LoginPreference _loginPreference = LoginPreference();
   //현재 로그인 방식(예: Google, kakao)
   SocialLogin? _socialLogin;
+  //현재 로그인된 사용자 정보
   User? user;
 
   LoginViewModel() {
