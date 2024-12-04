@@ -47,6 +47,7 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //로그아웃 프로세스 실행
   Future<void> logout() async {
     if (_socialLogin != null) {
       await _socialLogin!.logout();
