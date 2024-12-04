@@ -91,6 +91,7 @@ class KakaoLogin implements SocialLogin {
     }
 
     try {
+      // Firebase 로그아웃 처리
       debugPrint("Attempting to sign out from Firebase...");
       await _auth.signOut();
       debugPrint("Successfully signed out from Firebase.");
