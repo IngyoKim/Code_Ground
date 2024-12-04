@@ -48,7 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
         'icon': Icons.check_circle,
         'iconColor': Colors.green.shade500,
         'text': 'Solved Questions',
-        'color': Colors.grey.shade300, // 초록색
+        'color': Colors.grey.shade300,
         'onTap': () {
           Navigator.push(
             context,
@@ -63,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
         'icon': Icons.error,
         'iconColor': Colors.red,
         'text': 'Failed Questions',
-        'color': Colors.grey.shade300, // 붉은색
+        'color': Colors.grey.shade300,
         'onTap': () {
           Navigator.push(
             context,
@@ -127,26 +127,6 @@ class _ProfilePageState extends State<ProfilePage> {
             context,
             MaterialPageRoute(
               builder: (context) => const FAQPage(),
-            ),
-          );
-        },
-      },
-      {
-        'icon': Icons.person_add,
-        'text': 'Invite',
-        'onTap': () async {
-          final inviteUrl = await createCustomLink(userData!.uid);
-          await kakaoMessaging.shareContent(userData.nickname, inviteUrl);
-        },
-      },
-      {
-        'icon': Icons.person,
-        'text': 'Friend',
-        'onTap': () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const RegistrateFriend(),
             ),
           );
         },
