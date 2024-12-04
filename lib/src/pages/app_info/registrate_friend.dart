@@ -144,22 +144,22 @@ class _RegistrateFriendState extends State<RegistrateFriend> {
               child: const Text('Add Friend'),
             ),
             const SizedBox(height: 16.0),
-            Expanded(
-              child: friends.isEmpty
-                  ? const Center(child: Text('No friends added yet.'))
-                  : ListView.builder(
-                      itemCount: _friendsList.length,
-                      itemBuilder: (context, index) {
-                        final friend = _friendsList[index];
-                        final nickname = friend['nickname'] ?? 'Unknown';
-                        final friendCode = friend['friendCode'] ?? 'Unknown';
+            // Expanded(
+            //   child: friends.isEmpty
+            //       ? const Center(child: Text('No friends added yet.'))
+            //       : ListView.builder(
+            //           itemCount: _friendsList.length,
+            //           itemBuilder: (context, index) {
+            //             final friend = _friendsList[index];
+            //             final nickname = friend['nickname'] ?? 'Unknown';
+            //             final friendCode = friend['friendCode'] ?? 'Unknown';
 
-                        return ListTile(
-                          title: Text('$nickname($friendCode)'),
-                        );
-                      },
-                    ),
-            ),
+            //             return ListTile(
+            //               title: Text('$nickname($friendCode)'),
+            //             );
+            //           },
+            //         ),
+            // ),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:code_ground/src/pages/app_info/registrate_friend.dart';
 import 'package:flutter/material.dart';
 
 class SettingPage extends StatefulWidget {
@@ -121,14 +122,13 @@ class _SettingPageState extends State<SettingPage> {
                 fontSize: 20.0,
               ),
             ),
-            trailing: Switch(
-              value: _notificationsEnabled,
-              onChanged: (bool value) {
-                setState(() {
-                  _notificationsEnabled = value;
-                });
-              },
-            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const RegistrateFriend()),
+              );
+            },
           ),
           const Divider(),
         ],
