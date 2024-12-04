@@ -81,6 +81,7 @@ class KakaoLogin implements SocialLogin {
   @override
   Future<void> logout() async {
     try {
+      // 카카오 계정 연결 해제
       debugPrint("Attempting to unlink Kakao account...");
       await kakao.UserApi.instance.unlink();
       debugPrint("Successfully unlinked Kakao account.");
