@@ -32,6 +32,7 @@ class KakaoLogin implements SocialLogin {
           debugPrint("Fail to login with KakaoTalk.\n$error");
         }
       } else {
+        //KakaoTalk 미설치 확인
         debugPrint("KakaoTalk isn't installed.");
         try {
           await kakao.UserApi.instance.loginWithKakaoAccount();
