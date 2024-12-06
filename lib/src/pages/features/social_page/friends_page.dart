@@ -3,18 +3,18 @@ import 'package:provider/provider.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/services/database/user_manager.dart';
 
-class RegistrateFriend extends StatefulWidget {
-  const RegistrateFriend({super.key});
+class RegistrateFriends extends StatefulWidget {
+  const RegistrateFriends({super.key});
 
   @override
-  State<RegistrateFriend> createState() => _RegistrateFriendState();
+  State<RegistrateFriends> createState() => _RegistrateFriendsState();
 }
 
-class _RegistrateFriendState extends State<RegistrateFriend> {
+class _RegistrateFriendsState extends State<RegistrateFriends> {
   final TextEditingController _controller = TextEditingController();
-  final List<Map<String, String>> _friendsList = []; // 닉네임과 friendCode 저장
-  final UserManager _userManager = UserManager(); // UserManger 인스턴스 생성
-  String _myFriendCode = ''; // 내 친구 코드 저장
+  final List<Map<String, String>> _friendsList = [];
+  final UserManager _userManager = UserManager();
+  String _myFriendCode = '';
 
   @override
   void initState() {

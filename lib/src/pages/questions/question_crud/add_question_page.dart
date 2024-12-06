@@ -8,16 +8,16 @@ import 'package:code_ground/src/models/question_data.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 
-import 'package:code_ground/src/components/question_form_widgets/header/title_input.dart';
-import 'package:code_ground/src/components/question_form_widgets/header/description_input.dart';
-import 'package:code_ground/src/components/question_form_widgets/body/category_input.dart';
-import 'package:code_ground/src/components/question_form_widgets/body/tier_input.dart';
-import 'package:code_ground/src/components/question_form_widgets/body/language_input.dart';
-import 'package:code_ground/src/components/question_form_widgets/body/code_snippet_input.dart';
-import 'package:code_ground/src/components/question_form_widgets/body/hint_input.dart';
-import 'package:code_ground/src/components/question_form_widgets/footer/question_type_input.dart';
-import 'package:code_ground/src/components/question_form_widgets/footer/subjective_input.dart';
-import 'package:code_ground/src/components/question_form_widgets/footer/objective_answer_input.dart';
+import 'package:code_ground/src/pages/questions/question_crud/widgets/header/title_input.dart';
+import 'package:code_ground/src/pages/questions/question_crud/widgets/header/description_input.dart';
+import 'package:code_ground/src/pages/questions/question_crud/widgets/body/category_input.dart';
+import 'package:code_ground/src/pages/questions/question_crud/widgets/body/tier_input.dart';
+import 'package:code_ground/src/pages/questions/question_crud/widgets/body/language_input.dart';
+import 'package:code_ground/src/pages/questions/question_crud/widgets/body/code_snippet_input.dart';
+import 'package:code_ground/src/pages/questions/question_crud/widgets/body/hint_input.dart';
+import 'package:code_ground/src/pages/questions/question_crud/widgets/footer/question_type_input.dart';
+import 'package:code_ground/src/pages/questions/question_crud/widgets/footer/subjective_input.dart';
+import 'package:code_ground/src/pages/questions/question_crud/widgets/footer/objective_answer_input.dart';
 
 class AddQuestionPage extends StatefulWidget {
   const AddQuestionPage({super.key});

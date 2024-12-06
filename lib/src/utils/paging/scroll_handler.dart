@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:code_ground/src/utils/paging_controller.dart';
+import 'package:code_ground/src/utils/paging/paging_controller.dart';
 
 class ScrollHandler {
   /// 스크롤 이벤트 처리

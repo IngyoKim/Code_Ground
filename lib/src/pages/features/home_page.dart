@@ -4,8 +4,8 @@ import 'package:code_ground/src/utils/permission_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
-import 'package:code_ground/src/pages/questions/question_list_page.dart';
-import 'package:code_ground/src/pages/questions/add_question_page.dart';
+import 'package:code_ground/src/pages/questions/question_list/question_list_page.dart';
+import 'package:code_ground/src/pages/questions/question_crud/add_question_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});

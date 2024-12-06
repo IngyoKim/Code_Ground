@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/components/loading_indicator.dart';
-import 'package:code_ground/src/components/question_list_widget.dart';
-import 'package:code_ground/src/pages/questions/question_detail_page.dart';
+import 'package:code_ground/src/pages/questions/question_list/question_list_widget.dart';
+import 'package:code_ground/src/pages/questions/question_detail/question_detail_page.dart';
 
-import 'package:code_ground/src/utils/question_list_utils.dart';
+import 'package:code_ground/src/pages/questions/question_list/question_list_utils.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 
