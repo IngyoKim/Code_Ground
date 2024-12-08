@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:code_ground/src/pages/friend_page.dart';
-import 'package:code_ground/src/pages/ranking_page.dart';
+import 'package:code_ground/src/pages/features/social_page/friends_page.dart';
+import 'package:code_ground/src/pages/features/social_page/ranking/ranking_page.dart';
 
 class SocialPage extends StatelessWidget {
   const SocialPage({super.key});
@@ -15,11 +15,9 @@ class SocialPage extends StatelessWidget {
           bottom: const TabBar(
             tabs: [
               Tab(
-                icon: Icon(Icons.leaderboard),
                 text: "Ranking",
               ),
               Tab(
-                icon: Icon(Icons.group),
                 text: "Friends",
               ),
             ],
@@ -29,7 +27,7 @@ class SocialPage extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(), // 슬라이드 금지
           children: const [
             RankingPage(), // 랭킹 페이지
-            RegistrateFriend(), // 친구 관리 페이지
+            RegistrateFriends(), // 친구 관리 페이지
           ],
         ),
       ),

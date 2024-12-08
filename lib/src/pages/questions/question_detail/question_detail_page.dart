@@ -3,20 +3,20 @@ import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/utils/toast_message.dart';
 import 'package:code_ground/src/utils/permission_utils.dart';
-import 'package:code_ground/src/utils/question_detail_utils.dart';
-import 'package:code_ground/src/pages/questions/edit_question_page.dart';
+import 'package:code_ground/src/pages/questions/question_detail/question_detail_utils.dart';
+import 'package:code_ground/src/pages/questions/question_crud/edit_question_page.dart';
 
 import 'package:code_ground/src/models/user_data.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 
 import 'package:code_ground/src/components/loading_indicator.dart';
-import 'package:code_ground/src/components/question_detail_widgets/contents/question_header.dart';
-import 'package:code_ground/src/components/question_detail_widgets/contents/language_selector.dart';
-import 'package:code_ground/src/components/question_detail_widgets/contents/code_snippet.dart';
-import 'package:code_ground/src/components/question_detail_widgets/submit/subjective_submit.dart';
-import 'package:code_ground/src/components/question_detail_widgets/submit/objective_submit.dart';
-import 'package:code_ground/src/components/question_detail_widgets/submit/sequencing_submit.dart';
+import 'package:code_ground/src/pages/questions/question_detail/widgets/contents/question_header.dart';
+import 'package:code_ground/src/pages/questions/question_detail/widgets/contents/language_selector.dart';
+import 'package:code_ground/src/pages/questions/question_detail/widgets/contents/code_snippet.dart';
+import 'package:code_ground/src/pages/questions/question_detail/widgets/submit/subjective_submit.dart';
+import 'package:code_ground/src/pages/questions/question_detail/widgets/submit/objective_submit.dart';
+import 'package:code_ground/src/pages/questions/question_detail/widgets/submit/sequencing_submit.dart';
 
 class QuestionDetailPage extends StatefulWidget {
   const QuestionDetailPage({super.key});

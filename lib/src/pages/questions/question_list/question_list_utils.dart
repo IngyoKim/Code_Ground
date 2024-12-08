@@ -1,13 +1,13 @@
-import 'package:code_ground/src/utils/paging_controller.dart';
+import 'package:code_ground/src/utils/paging/paging_controller.dart';
 
-class RankingUtils<T> {
+class QuestionListUtil<T> {
   final List<T> _visibleItems = [];
   bool _isAdding = false;
 
-  /// 현재 화면에 표시되는 랭킹 데이터
+  /// 현재 화면에 표시되는 질문
   List<T> get items => List.unmodifiable(_visibleItems);
 
-  /// 데이터를 점진적으로 추가
+  /// 질문을 하나씩 추가
   Future<void> addItemsGradually(
     List<T> newItems,
     void Function() refreshCallback,
@@ -21,7 +21,7 @@ class RankingUtils<T> {
           newItems.where((item) => !_visibleItems.contains(item)).toList();
       for (var item in itemsToAdd) {
         _visibleItems.add(item);
-        refreshCallback(); // UI 갱신
+        refreshCallback(); // UI 업데이트
         await Future.delayed(const Duration(milliseconds: 200)); // 애니메이션 효과
       }
     } finally {
@@ -29,34 +29,26 @@ class RankingUtils<T> {
     }
   }
 
-  /// 데이터를 즉시 추가
-  void addItems(List<T> newItems) {
-    final List<T> itemsToAdd =
-        newItems.where((item) => !_visibleItems.contains(item)).toList();
-    _visibleItems.addAll(itemsToAdd);
-  }
-
-  /// 데이터 초기화
+  /// 리스트 초기화
   void reset() {
     _visibleItems.clear();
     _isAdding = false;
   }
 
-  /// 다음 페이지 데이터를 로드하고 추가
+  /// 페이징 상태 초기화
+  void resetPagingState(PagingController<T> pagingController) {
+    pagingController.reset();
+    reset();
+  }
+
+  /// 다음 페이지 로드 및 아이템 추가
   Future<void> loadNextPageAndAddItems({
     required PagingController<T> pagingController,
     required void Function() refreshCallback,
-    bool gradual = false, // 점진적 추가 여부
   }) async {
     if (pagingController.isFetching) return;
 
     await pagingController.loadNextPage();
-
-    if (gradual) {
-      await addItemsGradually(pagingController.items, refreshCallback);
-    } else {
-      addItems(pagingController.items);
-      refreshCallback(); // UI 갱신
-    }
+    await addItemsGradually(pagingController.items, refreshCallback);
   }
 }

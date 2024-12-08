@@ -80,7 +80,7 @@ class ProgressManager {
       Query query = _dbService.database.ref(path).orderByChild(orderBy);
 
       if (lastValue != null) {
-        query = query.endBefore(lastValue); // lastValue 이후 데이터 가져오기
+        query = query.startAfter(lastValue); // lastValue 이후 데이터 가져오기
       }
 
       query = query.limitToFirst(limit); // 제한된 개수만 가져오기
