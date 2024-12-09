@@ -1,5 +1,8 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+import 'dart:async';
 
 class FlutterLocalNotification {
   FlutterLocalNotification._();
@@ -29,6 +32,14 @@ class FlutterLocalNotification {
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
+
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
+  }
+
+  static void printCurrentTime() {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    print('현재 시간: ${now.toString()}');
   }
 
   /// 알림 권한 요청 함수 (Android 13 이상)
@@ -51,6 +62,27 @@ class FlutterLocalNotification {
         iOS: DarwinNotificationDetails(badgeNumber: 1));
 
     await flutterLocalNotificationsPlugin.show(
-        0, 'test title', 'test body', notificationDetails);
+      0,
+      'Code Ground',
+      '코딩 공부 할 시간!! Code Ground에 접속하세요!',
+      notificationDetails,
+    );
+  }
+
+  /// 오후 7시를 감지하는 함수
+  static void scheduleDailyCheck() {
+    void checkTime() {
+      final now = tz.TZDateTime.now(tz.local);
+      print('현재 시간: ${now.hour}:${now.minute}:${now.second}');
+
+      if (now.hour == 7 && now.minute == 00) {
+        showNotification();
+      }
+
+      // 1분 후에 다시 체크
+      Future.delayed(const Duration(seconds: 60), checkTime);
+    }
+
+    checkTime(); // 처음 호출
   }
 }

@@ -43,6 +43,7 @@ dependencies:
 
   flutter_local_notifications:
   permission_handler:
+  timezone:
 
 # Development-only dependencies used for testing and linting.
 dev_dependencies:

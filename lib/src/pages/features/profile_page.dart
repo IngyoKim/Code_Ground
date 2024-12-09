@@ -136,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
         'icon': Icons.notifications,
         'text': 'Notifications Test',
         'onTap': () {
-          FlutterLocalNotification.showNotification();
+          FlutterLocalNotification.printCurrentTime();
         },
       },
     ];
