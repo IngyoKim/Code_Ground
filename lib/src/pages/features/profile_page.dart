@@ -9,6 +9,7 @@ import 'package:code_ground/src/pages/app_info/setting_page.dart';
 import 'package:code_ground/src/pages/app_info/about_page.dart';
 import 'package:code_ground/src/pages/app_info/help_page.dart';
 import 'package:code_ground/src/pages/app_info/faq_page.dart';
+import 'package:code_ground/notifications.dart';
 
 import 'package:code_ground/src/components/logout_dialog.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
@@ -129,6 +130,13 @@ class _ProfilePageState extends State<ProfilePage> {
               builder: (context) => const FAQPage(),
             ),
           );
+        },
+      },
+      {
+        'icon': Icons.notifications,
+        'text': 'Notifications Test',
+        'onTap': () {
+          FlutterLocalNotification.showNotification();
         },
       },
     ];
