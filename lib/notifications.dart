@@ -75,7 +75,7 @@ class FlutterLocalNotification {
       final now = tz.TZDateTime.now(tz.local);
       print('현재 시간: ${now.hour}:${now.minute}:${now.second}');
 
-      if (now.hour == 7 && now.minute == 00) {
+      if (now.hour == 19 && now.minute == 00) {
         showNotification();
       }
 
