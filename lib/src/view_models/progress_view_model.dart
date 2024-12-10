@@ -17,6 +17,8 @@ class ProgressViewModel with ChangeNotifier {
 
   get allQuestions => null;
 
+  get questionState => null;
+
   /// Fetch progress data for a specific user or the current user if userId is null
   Future<void> fetchProgressData([String? userId]) async {
     try {

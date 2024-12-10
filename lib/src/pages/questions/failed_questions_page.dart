@@ -29,15 +29,24 @@ class _FailedQuestionsPageState extends State<FailedQuestionsPage> {
 
   void _filterFailedQuestions() {
     final progressViewModel = context.read<ProgressViewModel>();
-    final questionState = progressViewModel.progressData?.questionState ?? {};
+    final questionState = progressViewModel.questionState;
 
     setState(() {
+      // 로그 추가: questionState 상태 확인
+      print('Current questionState: $questionState');
+
       // allQuestions가 null일 경우 빈 리스트를 사용
       _failedQuestions = (progressViewModel.allQuestions ?? [])
-          .cast<QuestionData>()
+          .cast<QuestionData>() // dynamic -> QuestionData로 변환
           .where((question) {
-        return questionState[question.questionId] == 'failed'; // 실패한 문제만 필터링
+        // 로그 추가: 각 문제의 상태 확인
+        print(
+            'Checking question ${question.questionId} state: ${questionState[question.questionId]}');
+        return questionState[question.questionId] == 'failed';
       }).toList();
+
+      // 로그 추가: 최종 필터된 결과 확인
+      print('Filtered failed questions: $_failedQuestions');
     });
   }
 
@@ -65,7 +74,7 @@ class _FailedQuestionsPageState extends State<FailedQuestionsPage> {
                 itemBuilder: (context, index) {
                   final question = _failedQuestions[index];
                   return CommonListTile(
-                    leading: const Icon(Icons.cancel, color: Colors.red),
+                    leading: const Icon(Icons.error, color: Colors.red),
                     title: question.title,
                     subtitle: question.languages.join(', '),
                     trailing: Text(
@@ -76,6 +85,7 @@ class _FailedQuestionsPageState extends State<FailedQuestionsPage> {
                       ),
                     ),
                     onTap: () {
+                      // 탭 이벤트
                       debugPrint('Tapped on question: ${question.title}');
                     },
                   );
