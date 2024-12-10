@@ -76,7 +76,6 @@ class _RankingWidgetState extends State<RankingWidget> {
         getTierImage(widget.rankingData.tier),
         width: 40,
         height: 40,
-        fit: BoxFit.cover,
       ),
     );
   }
