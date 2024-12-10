@@ -15,6 +15,8 @@ class ProgressViewModel with ChangeNotifier {
   List<ProgressData> get rankings => _rankings;
   bool get isFetchingRankings => _isFetchingRankings;
 
+  get allQuestions => null;
+
   /// Fetch progress data for a specific user or the current user if userId is null
   Future<void> fetchProgressData([String? userId]) async {
     try {
@@ -100,4 +102,6 @@ class ProgressViewModel with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void updateSignal(String s) {}
 }

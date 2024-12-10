@@ -1,9 +1,7 @@
-//import 'package:code_ground/src/pages/app_info/registrate_friend.dart';
 import 'package:code_ground/src/pages/questions/question_state_page.dart';
-//import 'package:code_ground/src/services/messaging/custom_url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-//import 'package:code_ground/src/services/messaging/kakao_messaging.dart';
+
 import 'package:code_ground/src/utils/gettierimage.dart';
 import 'package:code_ground/src/pages/app_info/setting_page.dart';
 import 'package:code_ground/src/pages/app_info/about_page.dart';
@@ -17,8 +15,12 @@ import 'package:code_ground/src/view_models/progress_view_model.dart';
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
+  get currentSignal => null;
+
   @override
   State<ProfilePage> createState() => _ProfilePageState();
+
+  void clearSignal() {}
 }
 
 class _ProfilePageState extends State<ProfilePage> {
@@ -49,13 +51,13 @@ class _ProfilePageState extends State<ProfilePage> {
         'iconColor': Colors.green.shade500,
         'text': 'Solved Questions',
         'color': Colors.grey.shade300,
-        'onTap': () {
+        'onTap': (BuildContext context) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  const QuestionStatePage(), // Solved Questions 페이지로 네비게이션
-            ),
+                builder: (context) =>
+                    const QuestionStatePage(), // Solved Questions 페이지로 네비게이션
+                settings: RouteSettings(arguments: 'Correct')),
           );
         },
       },
@@ -64,13 +66,13 @@ class _ProfilePageState extends State<ProfilePage> {
         'iconColor': Colors.red,
         'text': 'Failed Questions',
         'color': Colors.grey.shade300,
-        'onTap': () {
+        'onTap': (BuildContext context) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  const QuestionStatePage(), // Failed Questions 페이지로 네비게이션
-            ),
+                builder: (context) =>
+                    const QuestionStatePage(), // Failed Questions 페이지로 네비게이션
+                settings: RouteSettings(arguments: 'Failed')),
           );
         },
       },
@@ -331,7 +333,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 15.0, horizontal: 20.0),
                       ),
-                      onPressed: item['onTap'],
+                      onPressed: () {
+                        item['onTap']!(context); // null safety를 위해 ! 사용
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
