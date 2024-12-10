@@ -25,7 +25,7 @@ class Tier {
   }
 
   /// 다음 티어까지 접근 가능한지 확인하는 메서드
-  bool canAccessNextTier(String currentTierName) {
+  bool accessibleTier(String currentTierName) {
     final tierOrder = [
       'Bronze',
       'Silver',
@@ -41,7 +41,7 @@ class Tier {
 
     return currentIndex != -1 &&
         targetIndex != -1 &&
-        currentIndex >= targetIndex + 1;
+        targetIndex <= currentIndex + 1;
   }
 }
 

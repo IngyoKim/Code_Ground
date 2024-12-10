@@ -152,7 +152,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
                     final requiredTier = Tier.getTierByName(requiredTierName);
 
                     if (requiredTier != null &&
-                        requiredTier.canAccessNextTier(currentTierName)) {
+                        requiredTier.accessibleTier(currentTierName)) {
                       questionViewModel.setSelectedQuestion(question);
                       Navigator.push(
                         context,
@@ -163,7 +163,7 @@ class _QuestionListPageState extends State<QuestionListPage> {
                     } else {
                       // 접근 불가 시 토스트 메시지 표시
                       ToastMessage.show(
-                        'You need to be at least $requiredTierName tier to access this question.',
+                        'You have not reached the required tier to access this question.',
                       );
                     }
                   },
