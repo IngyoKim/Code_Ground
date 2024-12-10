@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:code_ground/src/models/progress_data.dart';
+import 'package:code_ground/src/models/tier_data.dart';
 import 'package:code_ground/src/services/database/progress_manager.dart';
 
 class ProgressViewModel with ChangeNotifier {
@@ -28,6 +29,7 @@ class ProgressViewModel with ChangeNotifier {
         throw Exception('User ID is null and no user is logged in.');
       }
 
+      _updateTier();
       _progressData = await _progressManager.readProgressData(currentUserId);
 
       if (_progressData == null) {
@@ -65,9 +67,45 @@ class ProgressViewModel with ChangeNotifier {
 
       // Fetch the updated data
       _progressData = await _progressManager.readProgressData(currentUserId);
+
+      _updateTier();
+
       notifyListeners();
     } catch (error) {
       debugPrint('Error updating progress data: $error');
+    }
+  }
+
+  /// Tier 및 Grade 업데이트
+  void _updateTier() {
+    if (_progressData == null) return;
+
+    final currentScore = _progressData!.score;
+    String? newTier;
+    String? newGrade;
+
+    for (final tier in tiers.reversed) {
+      for (final grade in tier.grades.reversed) {
+        if (currentScore >= grade.minScore) {
+          newTier = tier.name;
+          newGrade = grade.name;
+          break;
+        }
+      }
+      if (newTier != null && newGrade != null) {
+        break;
+      }
+    }
+
+    // 현재 티어와 등급이 변경될 필요가 있을 때만 업데이트
+    if (newTier != null && newGrade != null) {
+      if (_progressData!.tier != newTier || _progressData!.grade != newGrade) {
+        debugPrint('Updated tier to $newTier and grade to $newGrade');
+        updateProgressData({
+          'tier': newTier,
+          'grade': newGrade,
+        });
+      }
     }
   }
 
