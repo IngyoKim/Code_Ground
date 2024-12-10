@@ -88,12 +88,32 @@ class _QuestionStatePageState extends State<QuestionStatePage> {
                     ),
                   );
                 }
-
                 return ListView.builder(
                   itemCount: filteredQuestions.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(filteredQuestions[index]),
+                      contentPadding: EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 3), // 패딩 조정
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.start, // 아이콘 왼쪽 정렬
+                        children: [
+                          // successed 상태에 따라 아이콘 변경
+                          Icon(
+                            widget.state == 'successed'
+                                ? Icons.check_circle // successed일 때는 체크 아이콘
+                                : Icons.error, // 아니면 에러 아이콘
+                            color: widget.state == 'successed'
+                                ? Colors.green
+                                : Colors.red, // 색상도 다르게 설정
+                            size: 24, // 아이콘 크기
+                          ),
+                          SizedBox(width: 20), // 아이콘과 텍스트 사이의 간격
+                          Text(
+                            filteredQuestions[index],
+                            style: TextStyle(fontSize: 20), // 글씨 크기
+                          ),
+                        ],
+                      ),
                     );
                   },
                 );
