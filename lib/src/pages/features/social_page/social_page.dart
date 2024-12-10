@@ -12,6 +12,7 @@ class SocialPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Social"),
+          toolbarHeight: 40,
           bottom: const TabBar(
             tabs: [
               Tab(
@@ -24,10 +25,10 @@ class SocialPage extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          physics: const NeverScrollableScrollPhysics(), // 슬라이드 금지
+          physics: const NeverScrollableScrollPhysics(),
           children: const [
-            RankingPage(), // 랭킹 페이지
-            RegistrateFriends(), // 친구 관리 페이지
+            RankingPage(),
+            RegistrateFriends(),
           ],
         ),
       ),

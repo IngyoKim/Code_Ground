@@ -90,7 +90,7 @@ class QuestionDetailUtil {
       final currentState = progressData.questionState[questionId] ?? '';
       final updates = <String, dynamic>{};
 
-      if (currentState == 'correct') {
+      if (currentState == 'successed') {
         Fluttertoast.showToast(
           msg: "You already solved this question.",
           toastLength: Toast.LENGTH_SHORT,

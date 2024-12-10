@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:code_ground/src/view_models/progress_view_model.dart';
-import 'package:code_ground/src/components/loading_indicator.dart'; // LoadingIndicator 임포트
+import 'package:code_ground/src/view_models/question_view_model.dart';
+import 'package:code_ground/src/components/loading_indicator.dart';
+import 'package:code_ground/src/pages/questions/question_detail/question_detail_page.dart';
 
 class QuestionStatePage extends StatefulWidget {
   final String state; // 'successed' or 'failed'
@@ -14,7 +17,7 @@ class QuestionStatePage extends StatefulWidget {
 
 class _QuestionStatePageState extends State<QuestionStatePage> {
   bool _isLoading = true;
-  bool _isAscending = true; // 정렬 순서를 관리하는 상태 변수
+  bool _isAscending = true;
 
   @override
   void initState() {
@@ -43,7 +46,7 @@ class _QuestionStatePageState extends State<QuestionStatePage> {
                 Icon(_isAscending ? Icons.arrow_downward : Icons.arrow_upward),
             onPressed: () {
               setState(() {
-                _isAscending = !_isAscending; // 정렬 순서 변경
+                _isAscending = !_isAscending;
               });
             },
           ),
@@ -51,7 +54,7 @@ class _QuestionStatePageState extends State<QuestionStatePage> {
       ),
       body: Column(
         children: [
-          LoadingIndicator(isFetching: _isLoading), // LoadingIndicator 사용
+          LoadingIndicator(isFetching: _isLoading),
           Expanded(
             child: Consumer<ProgressViewModel>(
               builder: (context, progressViewModel, child) {
@@ -76,7 +79,6 @@ class _QuestionStatePageState extends State<QuestionStatePage> {
                     .map((entry) => entry.key)
                     .toList();
 
-                // 정렬: questionId를 기준으로 정렬 (오름차순 또는 내림차순)
                 filteredQuestions.sort(
                     (a, b) => _isAscending ? a.compareTo(b) : b.compareTo(a));
 
@@ -88,32 +90,48 @@ class _QuestionStatePageState extends State<QuestionStatePage> {
                     ),
                   );
                 }
+
                 return ListView.builder(
                   itemCount: filteredQuestions.length,
                   itemBuilder: (context, index) {
+                    final questionId = filteredQuestions[index];
                     return ListTile(
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 3), // 패딩 조정
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 3),
                       title: Row(
-                        mainAxisAlignment: MainAxisAlignment.start, // 아이콘 왼쪽 정렬
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          // successed 상태에 따라 아이콘 변경
                           Icon(
                             widget.state == 'successed'
-                                ? Icons.check_circle // successed일 때는 체크 아이콘
-                                : Icons.error, // 아니면 에러 아이콘
+                                ? Icons.check_circle
+                                : Icons.error,
                             color: widget.state == 'successed'
                                 ? Colors.green
-                                : Colors.red, // 색상도 다르게 설정
-                            size: 24, // 아이콘 크기
+                                : Colors.red,
+                            size: 24,
                           ),
-                          SizedBox(width: 20), // 아이콘과 텍스트 사이의 간격
+                          const SizedBox(width: 20),
                           Text(
-                            filteredQuestions[index],
-                            style: TextStyle(fontSize: 20), // 글씨 크기
+                            questionId,
+                            style: const TextStyle(fontSize: 20),
                           ),
                         ],
                       ),
+                      onTap: () async {
+                        final questionViewModel =
+                            Provider.of<QuestionViewModel>(context,
+                                listen: false);
+
+                        await questionViewModel.fetchQuestionById(questionId);
+
+                        Navigator.push(
+                          // ignore: use_build_context_synchronously
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const QuestionDetailPage(),
+                          ),
+                        );
+                      },
                     );
                   },
                 );

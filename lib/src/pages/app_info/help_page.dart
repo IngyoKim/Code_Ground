@@ -110,6 +110,7 @@ class _HelpPageState extends State<HelpPage> {
           fontWeight: FontWeight.bold,
         ),
       ),
+      trailing: const Icon(Icons.arrow_drop_down),
       children: [
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -121,8 +122,7 @@ class _HelpPageState extends State<HelpPage> {
             ),
           ),
         ),
-      ],
-      trailing: const Icon(Icons.arrow_drop_down), // 아래로 향하는 삼각형 아이콘
+      ], // 아래로 향하는 삼각형 아이콘
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:code_ground/src/view_models/progress_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -55,7 +56,6 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
     try {
       setState(() => _isLoading = true);
 
-      // 질문 데이터 갱신
       await questionViewModel.fetchQuestionById(question.questionId);
       await userViewModel.fetchOtherUserData(question.writer);
 
@@ -70,9 +70,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       // 언어 초기화
       final updatedQuestion = questionViewModel.selectedQuestion;
       if (updatedQuestion?.codeSnippets.isNotEmpty == true) {
-        setState(() {
-          _selectedLanguage = updatedQuestion!.codeSnippets.keys.first;
-        });
+        _selectedLanguage = updatedQuestion!.codeSnippets.keys.first;
       }
     } catch (error) {
       debugPrint('Error fetching question detail: $error');
@@ -90,7 +88,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
   @override
   Widget build(BuildContext context) {
     final questionViewModel = Provider.of<QuestionViewModel>(context);
-
+    final progressViewModel = Provider.of<ProgressViewModel>(context);
     final question = questionViewModel.selectedQuestion;
 
     if (question == null) {
@@ -101,6 +99,9 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
         body: const Center(child: Text('No question selected.')),
       );
     }
+
+    final state =
+        progressViewModel.progressData?.questionState[question.questionId];
 
     return Scaffold(
       appBar: AppBar(
@@ -113,8 +114,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const EditQuestionPage(),
-                  ),
+                      builder: (context) => const EditQuestionPage()),
                 );
                 await _fetchQuestionDetail();
               },
@@ -128,8 +128,28 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
               child: ListView(
                 children: [
                   questionHeader(question, _writer),
-                  if (question.category != 'Sequencing') ...[
-                    if (question.codeSnippets.isNotEmpty)
+                  const SizedBox(height: 20),
+                  if (state == 'successed') ...[
+                    codeSnippet(
+                      MapEntry(
+                        'Answer',
+                        question.questionType != 'Sequencing'
+                            ? question.answer ?? ''
+                            : question.codeSnippets.values.join('\n'),
+                      ),
+                    )
+                  ] else if (question.questionType == 'Sequencing') ...[
+                    sequencingSubmit(
+                      codeSnippets: question.codeSnippets,
+                      onSubmit: (orderedKeys) {
+                        final isCorrect = QuestionDetailUtil.verifyAnswer(
+                            orderedKeys, question);
+                        QuestionDetailUtil.showAnswerResult(context, isCorrect);
+                      },
+                    ),
+                  ] else ...[
+                    if (question.codeSnippets.isNotEmpty &&
+                        _selectedLanguage != null) ...[
                       languageSelector(
                         languages: question.codeSnippets.keys.toList(),
                         selectedLanguage: _selectedLanguage!,
@@ -139,53 +159,46 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                           });
                         },
                       ),
-                    const SizedBox(height: 16),
-                    if (_selectedLanguage != null)
-                      filterdCodeSnippets(
+                      const SizedBox(height: 16),
+                      filteredCodeSnippets(
                         codeSnippets: question.codeSnippets,
                         selectedLanguage: _selectedLanguage!,
                       ),
+                    ],
+                    const SizedBox(height: 20),
+                    if (question.questionType == 'Subjective')
+                      subjectiveSubmit(
+                        context: context,
+                        controller: _answerController,
+                        onAnswerSubmitted: (answer) {
+                          final isCorrect =
+                              QuestionDetailUtil.verifyAnswer(answer, question);
+                          QuestionDetailUtil.showAnswerResult(
+                              context, isCorrect);
+                        },
+                      )
+                    else if (question.questionType == 'Objective')
+                      objectiveSubmit(
+                        context: context,
+                        answerList: question.answerList!,
+                        selectedAnswer: _selectedAnswer,
+                        onAnswerSelected: (answer) {
+                          setState(() {
+                            _selectedAnswer = answer;
+                          });
+                        },
+                        onSubmit: () {
+                          if (_selectedAnswer == null) {
+                            ToastMessage.show('Please select an answer.');
+                            return;
+                          }
+                          final isCorrect = QuestionDetailUtil.verifyAnswer(
+                              _selectedAnswer!, question);
+                          QuestionDetailUtil.showAnswerResult(
+                              context, isCorrect);
+                        },
+                      ),
                   ],
-                  const SizedBox(height: 20),
-                  if (question.questionType == 'Subjective')
-                    subjectiveSubmit(
-                      context: context,
-                      controller: _answerController,
-                      onAnswerSubmitted: (answer) {
-                        final isCorrect =
-                            QuestionDetailUtil.verifyAnswer(answer, question);
-                        QuestionDetailUtil.showAnswerResult(context, isCorrect);
-                      },
-                    )
-                  else if (question.questionType == 'Objective')
-                    objectiveSubmit(
-                      context: context,
-                      answerList: question.answerList!,
-                      selectedAnswer: _selectedAnswer,
-                      onAnswerSelected: (answer) {
-                        setState(() {
-                          _selectedAnswer = answer;
-                        });
-                      },
-                      onSubmit: () {
-                        if (_selectedAnswer == null) {
-                          ToastMessage.show('Please select an answer.');
-                          return;
-                        }
-                        final isCorrect = QuestionDetailUtil.verifyAnswer(
-                            _selectedAnswer!, question);
-                        QuestionDetailUtil.showAnswerResult(context, isCorrect);
-                      },
-                    )
-                  else if (question.questionType == 'Sequencing')
-                    sequencingSubmit(
-                      codeSnippets: question.codeSnippets,
-                      onSubmit: (orderedKeys) {
-                        final isCorrect = QuestionDetailUtil.verifyAnswer(
-                            orderedKeys, question);
-                        QuestionDetailUtil.showAnswerResult(context, isCorrect);
-                      },
-                    ),
                 ],
               ),
             ),
