@@ -8,13 +8,16 @@ import 'package:code_ground/src/models/question_data.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 
+import 'package:code_ground/src/pages/questions/question_crud/widgets/header/question_id_input.dart';
 import 'package:code_ground/src/pages/questions/question_crud/widgets/header/title_input.dart';
 import 'package:code_ground/src/pages/questions/question_crud/widgets/header/description_input.dart';
+
 import 'package:code_ground/src/pages/questions/question_crud/widgets/body/category_input.dart';
 import 'package:code_ground/src/pages/questions/question_crud/widgets/body/tier_input.dart';
 import 'package:code_ground/src/pages/questions/question_crud/widgets/body/language_input.dart';
 import 'package:code_ground/src/pages/questions/question_crud/widgets/body/code_snippet_input.dart';
 import 'package:code_ground/src/pages/questions/question_crud/widgets/body/hint_input.dart';
+
 import 'package:code_ground/src/pages/questions/question_crud/widgets/footer/question_type_input.dart';
 import 'package:code_ground/src/pages/questions/question_crud/widgets/footer/subjective_input.dart';
 import 'package:code_ground/src/pages/questions/question_crud/widgets/footer/objective_answer_input.dart';
@@ -27,6 +30,7 @@ class AddQuestionPage extends StatefulWidget {
 }
 
 class _AddQuestionPageState extends State<AddQuestionPage> {
+  final _questionIdController = TextEditingController();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _hintController = TextEditingController();
@@ -74,17 +78,19 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
     }
 
     try {
+      String questionId = _questionIdController.text.trim();
+
       final questionData = QuestionData(
-        questionId: '', // ViewModel에서 자동 생성
+        questionId: questionId,
         title: _titleController.text.trim(),
         writer: user.uid,
         category: _selectedCategory,
         questionType: _selectedType,
         description: _descriptionController.text.trim(),
         languages: _selectedCategory == 'Sequencing'
-            ? [_selectedLanguage] // Sequencing의 경우 단일 언어
+            ? [_selectedLanguage]
             : _codeSnippets.keys.toList(),
-        codeSnippets: _codeSnippets, // 이미 재정렬된 상태로 사용
+        codeSnippets: _codeSnippets,
         hint: _hintController.text.isNotEmpty
             ? _hintController.text.trim()
             : null,
@@ -97,8 +103,6 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
-
-      debugPrint('Uploading QuestionData: ${questionData.toJson()}');
 
       await questionViewModel.addQuestion(questionData);
 
@@ -119,6 +123,11 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+          QuestionIdInput(
+            controller: _questionIdController,
+            categoryPrefix: _selectedCategory,
+          ), // QuestionIdInput 컴포넌트 사용
+          const SizedBox(height: 16),
           TitleInput(titleController: _titleController),
           DescriptionInput(descriptionController: _descriptionController),
           CategoryInput(

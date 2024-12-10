@@ -98,15 +98,17 @@ class QuestionViewModel with ChangeNotifier {
   /// 질문 추가
   Future<void> addQuestion(QuestionData questionData) async {
     try {
-      await _questionManager.writeQuestionData(questionData);
-      final category = questionData.category.toLowerCase();
-      if (!_categoryQuestions.containsKey(category)) {
-        _categoryQuestions[category] = [];
+      if (questionData.questionId.isEmpty) {
+        final generatedId =
+            await _questionManager.generateQuestionId(questionData.category);
+        questionData = questionData.copyWith(questionId: generatedId);
       }
-      _categoryQuestions[category]!.insert(0, questionData);
+
+      await _questionManager.writeQuestionData(questionData);
       notifyListeners();
     } catch (error) {
       debugPrint('Error adding question: $error');
+      rethrow;
     }
   }
 
@@ -132,6 +134,16 @@ class QuestionViewModel with ChangeNotifier {
       }
     } catch (error) {
       debugPrint('Error updating question: $error');
+    }
+  }
+
+  Future<bool> doesQuestionIdExist(String questionId) async {
+    try {
+      final question = await _questionManager.fetchQuestionById(questionId);
+      return question != null;
+    } catch (error) {
+      debugPrint('[doesQuestionIdExist] Error checking question ID: $error');
+      return false;
     }
   }
 

@@ -5,7 +5,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 import 'package:code_ground/app.dart';
 import 'package:code_ground/firebase_options.dart';
-import 'package:code_ground/notifications.dart';
+import 'package:code_ground/src/services/messaging/notifications.dart';
 
 void main() async {
   /// Initializes the Flutter core engine.

@@ -1,10 +1,9 @@
-import 'package:code_ground/notifications.dart';
+import 'package:code_ground/src/services/messaging/notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:code_ground/src/pages/main_page.dart';
 import 'package:code_ground/src/pages/login_page/login_page.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class BasePage extends StatefulWidget {
   const BasePage({super.key});
