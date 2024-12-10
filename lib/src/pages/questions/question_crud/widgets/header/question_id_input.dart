@@ -50,6 +50,7 @@ class _QuestionIdInputState extends State<QuestionIdInput> {
       decoration: InputDecoration(
         labelText: 'Question ID (optional)',
         hintText: 'Enter up to 5 digits (prefix: $_categoryPrefix)',
+        prefixText: _categoryPrefix,
       ),
     );
   }

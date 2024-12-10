@@ -35,10 +35,22 @@ class QuestionDetailUtil {
     final questionViewModel =
         Provider.of<QuestionViewModel>(context, listen: false);
     final question = questionViewModel.selectedQuestion;
+    final uid = progressViewModel.progressData?.uid;
 
     if (question == null) {
       Fluttertoast.showToast(
         msg: "Error: Question not found.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
+    }
+
+    if (uid == null) {
+      Fluttertoast.showToast(
+        msg: "Error: User not found.",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
@@ -107,6 +119,13 @@ class QuestionDetailUtil {
           backgroundColor: Colors.green,
           textColor: Colors.white,
         );
+
+        // 유저가 이미 solvers에 없으면 추가
+        if (!question.solvers.contains(uid)) {
+          final updatedSolvers = List<String>.from(question.solvers)..add(uid);
+          final updatedQuestion = question.copyWith(solvers: updatedSolvers);
+          await questionViewModel.updateQuestion(updatedQuestion);
+        }
       } else {
         updates['questionState'] = {
           ...progressData.questionState,
