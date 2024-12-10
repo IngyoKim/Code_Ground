@@ -50,7 +50,7 @@ class _HelpPageState extends State<HelpPage> {
                 );
               },
             ),
-            const SizedBox(height: 10),
+            const Divider(), // 섹션 구분을 위한 Divider 추가
 
             /// Help section for customer support
             _buildHelpSection(
@@ -69,7 +69,7 @@ class _HelpPageState extends State<HelpPage> {
                 );
               },
             ),
-            const SizedBox(height: 10),
+            const Divider(), // 섹션 구분을 위한 Divider 추가
 
             /// Help section for feedback
             _buildHelpSection(
@@ -88,7 +88,7 @@ class _HelpPageState extends State<HelpPage> {
                 );
               },
             ),
-            const SizedBox(height: 10),
+            const Divider(), // 섹션 구분을 위한 Divider 추가
           ],
         ),
       ),
