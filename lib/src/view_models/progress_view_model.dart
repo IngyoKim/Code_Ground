@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:code_ground/src/models/progress_data.dart';
 import 'package:code_ground/src/models/tier_data.dart';
+import 'package:code_ground/src/models/level_data.dart';
+import 'package:code_ground/src/models/progress_data.dart';
 import 'package:code_ground/src/services/database/progress_manager.dart';
 
 class ProgressViewModel with ChangeNotifier {
   final ProgressManager _progressManager = ProgressManager();
 
   ProgressData? _progressData;
-  List<ProgressData> _rankings = [];
+  final List<ProgressData> _rankings = [];
   bool _isFetchingRankings = false;
   bool _hasMoreData = true;
   // ignore: unused_field
@@ -48,6 +49,7 @@ class ProgressViewModel with ChangeNotifier {
         await _progressManager.writeProgressData(_progressData!);
       }
 
+      _updateLevel();
       _updateTier();
 
       notifyListeners();
@@ -73,11 +75,29 @@ class ProgressViewModel with ChangeNotifier {
       // Fetch the updated data
       _progressData = await _progressManager.readProgressData(currentUserId);
 
+      _updateLevel();
       _updateTier();
 
       notifyListeners();
     } catch (error) {
       debugPrint('Error updating progress data: $error');
+    }
+  }
+
+  /// 경험치에 따라 레벨을 업데이트하는 메서드
+  Future<void> _updateLevel() async {
+    if (_progressData == null) return;
+
+    final currentExp = _progressData!.exp;
+    final levels = generateLevels();
+
+    final currentLevelData = getCurrentLevel(levels, currentExp);
+    final newLevel = currentLevelData.level;
+
+    if (_progressData!.level != newLevel) {
+      debugPrint('Updated level to $newLevel');
+
+      await updateProgressData({'level': newLevel});
     }
   }
 

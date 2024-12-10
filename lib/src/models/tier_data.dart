@@ -73,7 +73,7 @@ final List<Tier> tiers = [
   Tier(
     name: 'Platinum',
     bonusScore: 100, // 플래티넘 보너스 스코어
-    bonusExp: 300, // 플래티넘 보너스 경험치
+    bonusExp: 500, // 플래티넘 보너스 경험치
     grades: [
       Grade(name: 'V', minScore: 5000),
       Grade(name: 'IV', minScore: 6000),
@@ -97,7 +97,7 @@ final List<Tier> tiers = [
   Tier(
     name: 'Master',
     bonusScore: 500, // 마스터 보너스 스코어
-    bonusExp: 10000, // 마스터 보너스 경험치
+    bonusExp: 5000, // 마스터 보너스 경험치
     grades: [
       Grade(name: '', minScore: 30000),
     ],
