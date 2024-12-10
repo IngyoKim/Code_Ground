@@ -21,6 +21,7 @@ class RankingWidget extends StatefulWidget {
 }
 
 class _RankingWidgetState extends State<RankingWidget> {
+  static final Map<String, String?> _nicknameCache = {};
   String? nickname;
   bool isLoading = true;
 
@@ -31,6 +32,14 @@ class _RankingWidgetState extends State<RankingWidget> {
   }
 
   Future<void> _fetchNickname() async {
+    if (_nicknameCache.containsKey(widget.rankingData.uid)) {
+      setState(() {
+        nickname = _nicknameCache[widget.rankingData.uid];
+        isLoading = false;
+      });
+      return;
+    }
+
     final userViewModel = context.read<UserViewModel>();
     await userViewModel.fetchOtherUserData(widget.rankingData.uid);
     final userData = userViewModel.otherUserData;
@@ -38,6 +47,7 @@ class _RankingWidgetState extends State<RankingWidget> {
     if (mounted) {
       setState(() {
         nickname = userData?.nickname;
+        _nicknameCache[widget.rankingData.uid] = nickname;
         isLoading = false;
       });
     }
@@ -47,7 +57,7 @@ class _RankingWidgetState extends State<RankingWidget> {
   Widget build(BuildContext context) {
     return CommonListTile(
       leading: Transform.translate(
-        offset: const Offset(-8, -2), // 왼쪽으로 10px, 위로 5px 이동
+        offset: const Offset(-8, -2),
         child: CircleAvatar(
           backgroundColor: Colors.orange.shade300,
           child: Text(
@@ -59,14 +69,14 @@ class _RankingWidgetState extends State<RankingWidget> {
           ),
         ),
       ),
-      title: nickname ?? 'Unknown',
+      title: nickname ?? '',
       subtitle:
           "Score: ${widget.rankingData.score} | Exp: ${widget.rankingData.exp}",
       trailing: Image.asset(
-        getTierImage(widget.rankingData.tier), // 티어에 맞는 이미지를 가져옴
-        width: 40, // 이미지 크기 조정 (필요시)
-        height: 40, // 이미지 크기 조정 (필요시)
-        //fit: BoxFit.cover, // 이미지 비율 맞추기
+        getTierImage(widget.rankingData.tier),
+        width: 40,
+        height: 40,
+        fit: BoxFit.cover,
       ),
     );
   }
