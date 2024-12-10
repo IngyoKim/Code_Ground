@@ -48,6 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final progress = progressData != null
         ? (progressData.exp - currentLevel.requiredExp) /
             (nextLevel.requiredExp - currentLevel.requiredExp)
+                .clamp(1, double.infinity)
         : 0;
     final List<Map<String, dynamic>> learningMenuItems = [
       {
