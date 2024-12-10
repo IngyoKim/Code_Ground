@@ -1,3 +1,4 @@
+import 'package:code_ground/src/services/messaging/notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -12,6 +13,15 @@ class BasePage extends StatefulWidget {
 }
 
 class _BasePageState extends State<BasePage> {
+  @override
+  void initState() {
+    super.initState();
+    FlutterLocalNotification.init();
+    Future.delayed(const Duration(seconds: 3), () {
+      FlutterLocalNotification.requestNotificationPermission();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     debugPrint(context.toString());

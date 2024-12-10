@@ -1,62 +1,107 @@
-import 'package:code_ground/src/pages/questions/failed_questions_page.dart';
+//import 'package:code_ground/src/pages/questions/failed_questions_page.dart';
 import 'package:flutter/material.dart';
-import 'package:code_ground/src/pages/questions/correct_question_page.dart';
+import 'package:provider/provider.dart';
+import 'package:code_ground/src/view_models/progress_view_model.dart';
+import 'package:code_ground/src/components/loading_indicator.dart'; // LoadingIndicator 임포트
 
 class QuestionStatePage extends StatefulWidget {
-  const QuestionStatePage({super.key});
+  final String state; // 'successed' or 'failed'
+
+  const QuestionStatePage({super.key, required this.state});
 
   @override
   State<QuestionStatePage> createState() => _QuestionStatePageState();
 }
 
 class _QuestionStatePageState extends State<QuestionStatePage> {
-  String? signal;
-  bool _signalHandled = false; // signal 처리 여부를 추적
+  bool _isLoading = true;
+  bool _isAscending = true; // 정렬 순서를 관리하는 상태 변수
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // ModalRoute.of(context)에서 signal 값을 가져옴
-    signal = ModalRoute.of(context)?.settings.arguments as String?;
-    _handleSignal(); // signal을 받으면 처리
+  void initState() {
+    super.initState();
+    _fetchData();
   }
 
-  void _handleSignal() {
-    // signal이 null이 아니고, signal이 아직 처리되지 않은 경우에만 처리
-    if (signal != null && !_signalHandled) {
-      if (signal == 'Correct') {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-                builder: (context) => const CorrectQuestionsPage()),
-          );
-        });
-      } else if (signal == 'Failed') {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-                builder: (context) =>
-                    const FailedQuestionsPage()), // Failed로 이동
-          );
-        });
-      }
-
-      // signal이 처리되었음을 표시
-      _signalHandled = true;
-    }
+  Future<void> _fetchData() async {
+    await Provider.of<ProgressViewModel>(context, listen: false)
+        .fetchProgressData();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Question State Page'),
+        title: Text(widget.state == 'successed'
+            ? 'Solved Questions'
+            : 'Failed Questions'),
+        actions: [
+          IconButton(
+            icon:
+                Icon(_isAscending ? Icons.arrow_downward : Icons.arrow_upward),
+            onPressed: () {
+              setState(() {
+                _isAscending = !_isAscending; // 정렬 순서 변경
+              });
+            },
+          ),
+        ],
       ),
-      body: const Center(
-        child: Text(
-          'Waiting for signal...',
-          style: TextStyle(fontSize: 18, color: Colors.grey),
-        ),
+      body: Column(
+        children: [
+          LoadingIndicator(isFetching: _isLoading), // LoadingIndicator 사용
+          Expanded(
+            child: Consumer<ProgressViewModel>(
+              builder: (context, progressViewModel, child) {
+                if (_isLoading) return const SizedBox.shrink();
+
+                final progressData = progressViewModel.progressData;
+
+                if (progressData == null ||
+                    progressData.questionState.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'No ${widget.state} questions found.',
+                      style: const TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                  );
+                }
+
+                final filteredQuestions = progressData.questionState.entries
+                    .where((entry) => widget.state == 'successed'
+                        ? entry.value == 'successed'
+                        : entry.value != 'successed')
+                    .map((entry) => entry.key)
+                    .toList();
+
+                // 정렬: questionId를 기준으로 정렬 (오름차순 또는 내림차순)
+                filteredQuestions.sort(
+                    (a, b) => _isAscending ? a.compareTo(b) : b.compareTo(a));
+
+                if (filteredQuestions.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'No ${widget.state} questions found.',
+                      style: const TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: filteredQuestions.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(filteredQuestions[index]),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

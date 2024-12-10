@@ -1,20 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:code_ground/src/pages/questions/question_state_page.dart';
 import 'package:code_ground/src/pages/app_info/setting_page.dart';
 import 'package:code_ground/src/pages/app_info/about_page.dart';
 import 'package:code_ground/src/pages/app_info/help_page.dart';
 import 'package:code_ground/src/pages/app_info/faq_page.dart';
 import 'package:code_ground/src/components/logout_dialog.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
-
-void navigateToQuestionStatePage(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => const QuestionStatePage(),
-    ),
-  );
-}
 
 void navigateToSettingPage(BuildContext context, UserViewModel userViewModel) {
   // userViewModel.currentUserData가 null일 경우 기본값 처리

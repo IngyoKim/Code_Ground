@@ -59,10 +59,13 @@ class _FAQPageState extends State<FAQPage> {
                   children: [
                     const Icon(Icons.question_answer),
                     const SizedBox(width: 8.0),
-                    Text(
-                      faq['question']!,
-                      style: const TextStyle(
-                        fontSize: 18.0,
+                    Flexible(
+                      // 남은 공간에 맞게 텍스트 너비 조정
+                      child: Text(
+                        faq['question']!,
+                        style: const TextStyle(
+                          fontSize: 18.0,
+                        ),
                       ),
                     ),
                   ],

@@ -97,7 +97,7 @@ class QuestionDetailUtil {
         updates['score'] = progressData.score + scoreGain;
         updates['questionState'] = {
           ...progressData.questionState,
-          questionId: 'correct',
+          questionId: 'successed',
         };
 
         Fluttertoast.showToast(
@@ -110,7 +110,7 @@ class QuestionDetailUtil {
       } else {
         updates['questionState'] = {
           ...progressData.questionState,
-          questionId: 'wrong',
+          questionId: 'failed',
         };
 
         Fluttertoast.showToast(

@@ -41,6 +41,10 @@ dependencies:
   collection: ^1.18.0 # Collection utilities for Dart.
   crypto: ^3.0.6
 
+  flutter_local_notifications:
+  permission_handler:
+  timezone:
+
 # Development-only dependencies used for testing and linting.
 dev_dependencies:
   flutter_test:

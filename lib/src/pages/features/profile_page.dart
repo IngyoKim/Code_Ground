@@ -7,6 +7,7 @@ import 'package:code_ground/src/pages/app_info/setting_page.dart';
 import 'package:code_ground/src/pages/app_info/about_page.dart';
 import 'package:code_ground/src/pages/app_info/help_page.dart';
 import 'package:code_ground/src/pages/app_info/faq_page.dart';
+import 'package:code_ground/src/services/messaging/notifications.dart';
 
 import 'package:code_ground/src/components/logout_dialog.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
@@ -55,8 +56,9 @@ class _ProfilePageState extends State<ProfilePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    const QuestionStatePage(), // Solved Questions 페이지로 네비게이션
+                builder: (context) => const QuestionStatePage(
+                      state: '',
+                    ), // Solved Questions 페이지로 네비게이션
                 settings: RouteSettings(arguments: 'Correct')),
           );
         },
@@ -70,8 +72,9 @@ class _ProfilePageState extends State<ProfilePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    const QuestionStatePage(), // Failed Questions 페이지로 네비게이션
+                builder: (context) => const QuestionStatePage(
+                      state: '',
+                    ), // Failed Questions 페이지로 네비게이션
                 settings: RouteSettings(arguments: 'Failed')),
           );
         },
@@ -131,6 +134,13 @@ class _ProfilePageState extends State<ProfilePage> {
               builder: (context) => const FAQPage(),
             ),
           );
+        },
+      },
+      {
+        'icon': Icons.notifications,
+        'text': 'Notifications Test',
+        'onTap': () {
+          FlutterLocalNotification.printCurrentTime();
         },
       },
     ];
