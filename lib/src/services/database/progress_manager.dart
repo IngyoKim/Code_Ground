@@ -69,7 +69,7 @@ class ProgressManager {
 
   // Fetch progress data
   Future<List<ProgressData>> fetchRankings({
-    required String orderBy, // 정렬 기준 (score 또는 exp)
+    required String orderBy,
     int? lastValue,
     int limit = 10,
   }) async {
@@ -80,22 +80,23 @@ class ProgressManager {
       Query query = _dbService.database.ref(path).orderByChild(orderBy);
 
       if (lastValue != null) {
-        query = query.startAfter(lastValue); // lastValue 이후 데이터 가져오기
+        query = query.endAt(lastValue);
       }
 
-      query = query.limitToFirst(limit); // 제한된 개수만 가져오기
+      query = query.limitToLast(limit + 1);
 
-      // fetchDB를 사용해 데이터 가져오기
       final List<Map<String, dynamic>> rawData =
           await _dbService.fetchDB(path: path, query: query);
 
-      // ProgressData로 변환
       final List<ProgressData> rankings =
           rawData.map((data) => ProgressData.fromJson(data)).toList();
 
-      // 내림차순 정렬 (높은 점수/경험치 우선)
       rankings
           .sort((a, b) => b.toJson()[orderBy].compareTo(a.toJson()[orderBy]));
+
+      if (lastValue != null && rankings.isNotEmpty) {
+        rankings.removeWhere((data) => data.toJson()[orderBy] == lastValue);
+      }
 
       return rankings;
     } catch (error) {

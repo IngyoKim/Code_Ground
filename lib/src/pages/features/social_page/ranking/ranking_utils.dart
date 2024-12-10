@@ -56,7 +56,7 @@ class RankingUtils<T> {
       await addItemsGradually(pagingController.items, refreshCallback);
     } else {
       addItems(pagingController.items);
-      refreshCallback(); // UI 갱신
+      refreshCallback();
     }
   }
 }

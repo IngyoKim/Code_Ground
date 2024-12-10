@@ -11,10 +11,14 @@ class ProgressViewModel with ChangeNotifier {
   ProgressData? _progressData;
   List<ProgressData> _rankings = [];
   bool _isFetchingRankings = false;
+  bool _hasMoreData = true;
+  // ignore: unused_field
+  int? _lastFetchedValue;
 
   ProgressData? get progressData => _progressData;
   List<ProgressData> get rankings => _rankings;
   bool get isFetchingRankings => _isFetchingRankings;
+  bool get hasMoreData => _hasMoreData;
 
   /// Fetch progress data for a specific user or the current user if userId is null
   Future<void> fetchProgressData([String? userId]) async {
@@ -25,7 +29,6 @@ class ProgressViewModel with ChangeNotifier {
         throw Exception('User ID is null and no user is logged in.');
       }
 
-      _updateTier();
       _progressData = await _progressManager.readProgressData(currentUserId);
 
       if (_progressData == null) {
@@ -40,6 +43,8 @@ class ProgressViewModel with ChangeNotifier {
         );
         await _progressManager.writeProgressData(_progressData!);
       }
+
+      _updateTier();
 
       notifyListeners();
     } catch (error) {
@@ -107,14 +112,14 @@ class ProgressViewModel with ChangeNotifier {
 
   /// Fetch rankings by score or exp with pagination
   Future<void> fetchRankings({
-    required String orderBy, // 'score' or 'exp'
+    required String orderBy,
     int? lastValue,
     int limit = 10,
   }) async {
-    if (_isFetchingRankings) return; // 중복 요청 방지
+    if (_isFetchingRankings || !_hasMoreData) return;
 
     _isFetchingRankings = true;
-    Future.microtask(() => notifyListeners());
+    notifyListeners();
 
     try {
       final fetchedRankings = await _progressManager.fetchRankings(
@@ -123,19 +128,29 @@ class ProgressViewModel with ChangeNotifier {
         limit: limit,
       );
 
-      if (lastValue == null) {
-        _rankings = fetchedRankings;
+      if (fetchedRankings.isEmpty) {
+        _hasMoreData = false;
       } else {
+        // 마지막으로 가져온 `score` 값 업데이트
+        _lastFetchedValue = fetchedRankings.last.score;
+
         _rankings.addAll(fetchedRankings);
       }
-      debugPrint("Working fetchRanking");
 
-      Future.microtask(() => notifyListeners());
+      debugPrint("Successfully fetched ${fetchedRankings.length} rankings");
     } catch (error) {
       debugPrint('Error fetching rankings: $error');
     } finally {
       _isFetchingRankings = false;
       notifyListeners();
     }
+  }
+
+  /// Reset the rankings and pagination state
+  void resetRankings() {
+    _rankings.clear();
+    _hasMoreData = true;
+    _lastFetchedValue = null;
+    notifyListeners();
   }
 }
