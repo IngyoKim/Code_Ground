@@ -125,7 +125,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
         children: [
           QuestionIdInput(
             controller: _questionIdController,
-            categoryPrefix: _selectedCategory,
+            category: _selectedCategory,
           ), // QuestionIdInput 컴포넌트 사용
           const SizedBox(height: 16),
           TitleInput(titleController: _titleController),
@@ -138,17 +138,20 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
                 _codeSnippets.clear();
                 _answerChoices.clear();
                 _selectedAnswer = null;
-
+                _selectedLanguage = 'C';
                 if (_selectedCategory == 'Blank') {
                   _selectedType = 'Objective';
                 } else if (_selectedCategory == 'Output') {
                   _selectedType = 'Subjective';
                 } else if (_selectedCategory == 'Sequencing') {
                   _selectedType = 'Sequencing';
+                } else {
+                  _selectedType = 'Subjective';
                 }
               });
             },
           ),
+
           TierInput(
             selectedTier: _selectedTier,
             onTierChanged: (value) => setState(() => _selectedTier = value!),
