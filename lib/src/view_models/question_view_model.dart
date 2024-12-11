@@ -95,7 +95,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 질문 추가
+  /// question add
   Future<void> addQuestion(QuestionData questionData) async {
     try {
       if (questionData.questionId.isEmpty) {
