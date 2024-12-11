@@ -58,7 +58,7 @@ class UserViewModel with ChangeNotifier {
           friends: [],
         );
 
-        // 데이터베이스에 저장
+        /// Save to database
         await _userManager.writeUserData(_currentUserData!);
       }
       notifyListeners();
