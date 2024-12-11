@@ -107,7 +107,7 @@ class UserViewModel with ChangeNotifier {
         orElse: () => throw Exception('No user found with this friend code.'),
       );
 
-      /// 자기 자신인지 확인
+      /// Make sure you're yourself
       if (friendUser.friendCode == _currentUserData!.friendCode) {
         throw Exception('You cannot add yourself as a friend.');
       }
