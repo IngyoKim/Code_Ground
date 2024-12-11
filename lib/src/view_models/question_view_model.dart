@@ -6,12 +6,12 @@ import 'package:code_ground/src/services/database/question_manager.dart';
 class QuestionViewModel with ChangeNotifier {
   final QuestionManager _questionManager = QuestionManager();
   Map<String, List<QuestionData>> _categoryQuestions = {};
-  Map<String, int?> _lastCreatedAt = {}; // 각 카테고리의 마지막 createdAt 값 (타임스탬프)
+  Map<String, int?> _lastCreatedAt = {};
   bool _isFetching = false;
   bool _hasMoreData = true;
-  QuestionData? _selectedQuestion; // 선택된 질문 데이터
+  QuestionData? _selectedQuestion;
 
-  /// 카테고리별 질문 데이터
+  /// Question data by category
   Map<String, List<QuestionData>> get categoryQuestions => _categoryQuestions;
 
   /// 로딩 상태
