@@ -11,19 +11,19 @@ class QuestionViewModel with ChangeNotifier {
   bool _hasMoreData = true;
   QuestionData? _selectedQuestion;
 
-  // Question data by category
+  /// Question data by category
   Map<String, List<QuestionData>> get categoryQuestions => _categoryQuestions;
 
-  // Loading Status
+  /// Loading Status
   bool get isFetching => _isFetching;
 
-  // Do you have more data to import
+  /// Do you have more data to import
   bool get hasMoreData => _hasMoreData;
 
-  // Import Selected Questions
+  /// Import Selected Questions
   QuestionData? get selectedQuestion => _selectedQuestion;
 
-  /// Initialize all questions
+  // Initialize all questions
   void clearQuestions() {
     _categoryQuestions = {};
     _lastCreatedAt = {};
@@ -33,7 +33,7 @@ class QuestionViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// catagory
+  // catagory
   void resetCategoryState(String category) {
     _categoryQuestions[category] = [];
     _lastCreatedAt[category] = null;
@@ -41,7 +41,7 @@ class QuestionViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // 특정 질문 ID로 질문 가져오기
+  /// 특정 질문 ID로 질문 가져오기
   Future<void> fetchQuestionById(String questionId) async {
     try {
       final question = await _questionManager.fetchQuestionById(questionId);
@@ -112,7 +112,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// question update
+  // question update
   Future<void> updateQuestion(QuestionData updatedQuestion) async {
     try {
       await _questionManager.updateQuestionData(updatedQuestion);
@@ -147,7 +147,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  // certain question setting
+  /// certain question setting
   void setSelectedQuestion(QuestionData question) {
     _selectedQuestion = question;
     notifyListeners();
