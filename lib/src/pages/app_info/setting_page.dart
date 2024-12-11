@@ -73,7 +73,7 @@ class _SettingPageState extends State<SettingPage> {
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: Text(
-                'NickName: $_nickname',
+                '닉네임: $_nickname',
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
