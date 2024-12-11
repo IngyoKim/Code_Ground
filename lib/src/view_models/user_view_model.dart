@@ -46,7 +46,7 @@ class UserViewModel with ChangeNotifier {
         /// Create a new friend invitation code
         final generatedFriendCode = generateFriendCode(currentUserId);
 
-        // 유저 데이터 초기화
+        /// Initialize user data
         _currentUserData = UserData(
           uid: currentUserId,
           name: firebaseUser?.displayName ?? 'Guest',
