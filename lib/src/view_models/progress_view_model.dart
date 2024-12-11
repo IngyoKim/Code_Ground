@@ -14,7 +14,7 @@ class ProgressViewModel with ChangeNotifier {
   bool _isFetchingRankings = false;
   bool _hasMoreData = true;
 
-  /// ignore: unused_field
+  // ignore: unused_field
   int? _lastFetchedValue;
 
   ProgressData? get progressData => _progressData;
@@ -26,7 +26,7 @@ class ProgressViewModel with ChangeNotifier {
 
   get questionState => null;
 
-  /// Fetch progress data for a specific user or the current user if userId is null
+  // Fetch progress data for a specific user or the current user if userId is null
   Future<void> fetchProgressData([String? userId]) async {
     try {
       final currentUserId = userId ?? FirebaseAuth.instance.currentUser?.uid;
@@ -61,7 +61,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
-  /// Update progress data for a specific user or the current user if userId is null
+  // Update progress data for a specific user or the current user if userId is null
   Future<void> updateProgressData(Map<String, dynamic> updates,
       [String? userId]) async {
     try {
@@ -73,7 +73,7 @@ class ProgressViewModel with ChangeNotifier {
 
       await _progressManager.updateProgressData(currentUserId, updates);
 
-      /// Fetch the updated data
+      // Fetch the updated data
       _progressData = await _progressManager.readProgressData(currentUserId);
 
       _updateLevel();
@@ -85,7 +85,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
-  /// Method to update level based on experience
+  // Method to update level based on experience
   Future<void> _updateLevel() async {
     if (_progressData == null) return;
 
@@ -102,7 +102,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
-  /// Tier and Grade update
+  // Tier and Grade update
   void _updateTier() {
     if (_progressData == null) return;
 
@@ -123,7 +123,7 @@ class ProgressViewModel with ChangeNotifier {
       }
     }
 
-    ///Update only when the current tier and rating need to be changed
+    //Update only when the current tier and rating need to be changed
     if (newTier != null && newGrade != null) {
       if (_progressData!.tier != newTier || _progressData!.grade != newGrade) {
         debugPrint('Updated tier to $newTier and grade to $newGrade');
@@ -135,7 +135,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
-  /// Fetch rankings by score or exp with pagination
+  // Fetch rankings by score or exp with pagination
   Future<void> fetchRankings({
     required String orderBy,
     int? lastValue,
@@ -171,7 +171,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
-  /// Reset the rankings and pagination state
+  // Reset the rankings and pagination state
   void resetRankings() {
     _rankings.clear();
     _hasMoreData = true;
