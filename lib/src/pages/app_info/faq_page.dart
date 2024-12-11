@@ -70,8 +70,9 @@ class _FAQPageState extends State<FAQPage> {
                     ),
                   ],
                 ),
-                initiallyExpanded: _isExpanded[
-                    index], // Set Open/Close to Existing Status Values
+                initiallyExpanded: _isExpanded[index],
+
+                /// Set Open/Close to Existing Status Values
                 onExpansionChanged: (bool expanded) {
                   setState(() {
                     _isExpanded[index] = expanded;
