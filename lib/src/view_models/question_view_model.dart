@@ -14,7 +14,7 @@ class QuestionViewModel with ChangeNotifier {
   /// Question data by category
   Map<String, List<QuestionData>> get categoryQuestions => _categoryQuestions;
 
-  /// 로딩 상태
+  /// Loading Status
   bool get isFetching => _isFetching;
 
   /// 더 가져올 데이터가 있는지 여부
