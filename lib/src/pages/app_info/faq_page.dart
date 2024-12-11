@@ -60,7 +60,7 @@ class _FAQPageState extends State<FAQPage> {
                     const Icon(Icons.question_answer),
                     const SizedBox(width: 8.0),
                     Flexible(
-                      // Adjust text width for remaining space
+                      /// Adjust text width for remaining space
                       child: Text(
                         faq['question']!,
                         style: const TextStyle(
