@@ -20,7 +20,7 @@ class QuestionViewModel with ChangeNotifier {
   /// Do you have more data to import
   bool get hasMoreData => _hasMoreData;
 
-  /// 선택된 질문 가져오기
+  /// Import Selected Questions
   QuestionData? get selectedQuestion => _selectedQuestion;
 
   /// 모든 질문 초기화
