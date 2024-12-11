@@ -21,7 +21,7 @@ class _HelpPageState extends State<HelpPage> {
           children: [
             /// Main title
             const Padding(
-              padding: EdgeInsets.only(left: 8.0), // 왼쪽으로 4픽셀 이동
+              padding: EdgeInsets.only(left: 8.0), // Move 4 pixels to the left
               child: Text(
                 'How can we assist you?',
                 style: TextStyle(
