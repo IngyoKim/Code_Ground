@@ -69,7 +69,9 @@ class _HelpPageState extends State<HelpPage> {
                 );
               },
             ),
-            const Divider(), // Adding a divider for sectioning
+            const Divider(),
+
+            /// Adding a divider for sectioning
 
             /// Help section for feedback
             _buildHelpSection(
