@@ -8,7 +8,7 @@ class FAQPage extends StatefulWidget {
 }
 
 class _FAQPageState extends State<FAQPage> {
-  // FAQ 질문 및 답변 목록
+  /// FAQ Questions and Answers List
   final List<Map<String, String>> faqs = [
     {
       'question': 'How do I reset my password?',
@@ -37,7 +37,7 @@ class _FAQPageState extends State<FAQPage> {
     },
   ];
 
-  // FAQ 목록에 대한 선택 상태를 추적
+  /// Track selection status for FAQ lists
   final List<bool> _isExpanded = List.generate(5, (_) => false);
 
   @override
@@ -60,7 +60,7 @@ class _FAQPageState extends State<FAQPage> {
                     const Icon(Icons.question_answer),
                     const SizedBox(width: 8.0),
                     Flexible(
-                      // 남은 공간에 맞게 텍스트 너비 조정
+                      /// Adjust text width for remaining space
                       child: Text(
                         faq['question']!,
                         style: const TextStyle(
@@ -70,10 +70,14 @@ class _FAQPageState extends State<FAQPage> {
                     ),
                   ],
                 ),
-                initiallyExpanded: _isExpanded[index], // 기존 상태값에 맞춰서 열림/닫힘 설정
+                initiallyExpanded: _isExpanded[index],
+
+                /// Set Open/Close to Existing Status Values
                 onExpansionChanged: (bool expanded) {
                   setState(() {
-                    _isExpanded[index] = expanded; // 열림/닫힘 상태 갱신
+                    _isExpanded[index] = expanded;
+
+                    /// Update Open/Closed Status
                   });
                 },
                 children: [

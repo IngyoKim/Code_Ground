@@ -21,7 +21,9 @@ class _HelpPageState extends State<HelpPage> {
           children: [
             /// Main title
             const Padding(
-              padding: EdgeInsets.only(left: 8.0), // 왼쪽으로 4픽셀 이동
+              padding: EdgeInsets.only(left: 8.0),
+
+              /// Move 4 pixels to the left
               child: Text(
                 'How can we assist you?',
                 style: TextStyle(
@@ -50,7 +52,7 @@ class _HelpPageState extends State<HelpPage> {
                 );
               },
             ),
-            const Divider(), // 섹션 구분을 위한 Divider 추가
+            const Divider(), // Adding a divider for sectioning
 
             /// Help section for customer support
             _buildHelpSection(
@@ -69,7 +71,9 @@ class _HelpPageState extends State<HelpPage> {
                 );
               },
             ),
-            const Divider(), // 섹션 구분을 위한 Divider 추가
+            const Divider(),
+
+            /// Adding a divider for sectioning
 
             /// Help section for feedback
             _buildHelpSection(
@@ -88,7 +92,9 @@ class _HelpPageState extends State<HelpPage> {
                 );
               },
             ),
-            const Divider(), // 섹션 구분을 위한 Divider 추가
+            const Divider(),
+
+            /// Adding a divider for sectioning
           ],
         ),
       ),
@@ -122,7 +128,9 @@ class _HelpPageState extends State<HelpPage> {
             ),
           ),
         ),
-      ], // 아래로 향하는 삼각형 아이콘
+      ],
+
+      /// 아래로 향하는 삼각형 아이콘
     );
   }
 }

@@ -9,7 +9,7 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
-  // 5명의 개발자 정보를 리스트로 관리
+  // Manage 5 developer information as a list
   final List<Map<String, String>> developers = [
     {
       'name': '김인교',
@@ -71,10 +71,11 @@ class _AboutPageState extends State<AboutPage> {
               ),
               const SizedBox(height: 8),
 
-              /// 개발자 정보를 표시하는 리스트
+              /// List displaying developer information
               ListView.builder(
-                shrinkWrap: true, // ListView 크기 고정
-                physics: const NeverScrollableScrollPhysics(), // 내부 스크롤 비활성화
+                shrinkWrap: true, // Fix ListView Size
+                physics:
+                    const NeverScrollableScrollPhysics(), // Disable internal scrolling
                 itemCount: developers.length,
                 itemBuilder: (context, index) {
                   final developer = developers[index];
@@ -117,7 +118,7 @@ class _AboutPageState extends State<AboutPage> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  // ToastMessage를 통해 메시지 표시
+                  // Display messages through ToastMessage
                   ToastMessage.show(
                       'Open in browser functionality can be added.');
                 },
