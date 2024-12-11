@@ -27,7 +27,7 @@ class UserViewModel with ChangeNotifier {
     /// Use Top 12 Characters Only
   }
 
-  /// 현재 로그인된 유저의 데이터 가져오기
+  /// Import data from the currently logged-in user
   Future<void> fetchCurrentUserData() async {
     try {
       final currentUserId = FirebaseAuth.instance.currentUser?.uid;
