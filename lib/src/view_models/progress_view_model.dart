@@ -122,7 +122,7 @@ class ProgressViewModel with ChangeNotifier {
       }
     }
 
-    // Update only when the current tier and rating need to be changed
+    //Update
     if (newTier != null && newGrade != null) {
       if (_progressData!.tier != newTier || _progressData!.grade != newGrade) {
         debugPrint('Updated tier to $newTier and grade to $newGrade');
