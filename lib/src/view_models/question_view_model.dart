@@ -11,16 +11,16 @@ class QuestionViewModel with ChangeNotifier {
   bool _hasMoreData = true;
   QuestionData? _selectedQuestion;
 
-  /// Question data by category
+  // Question data by category
   Map<String, List<QuestionData>> get categoryQuestions => _categoryQuestions;
 
-  /// Loading Status
+  // Loading Status
   bool get isFetching => _isFetching;
 
-  /// Do you have more data to import
+  // Do you have more data to import
   bool get hasMoreData => _hasMoreData;
 
-  /// Import Selected Questions
+  // Import Selected Questions
   QuestionData? get selectedQuestion => _selectedQuestion;
 
   /// Initialize all questions
