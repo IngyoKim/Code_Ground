@@ -101,7 +101,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
-  /// Tier 및 Grade 업데이트
+  /// Tier and Grade update
   void _updateTier() {
     if (_progressData == null) return;
 
@@ -122,7 +122,7 @@ class ProgressViewModel with ChangeNotifier {
       }
     }
 
-    //Update
+    //Update only when the current tier and rating need to be changed
     if (newTier != null && newGrade != null) {
       if (_progressData!.tier != newTier || _progressData!.grade != newGrade) {
         debugPrint('Updated tier to $newTier and grade to $newGrade');
