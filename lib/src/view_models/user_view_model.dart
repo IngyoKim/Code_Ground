@@ -19,7 +19,9 @@ class UserViewModel with ChangeNotifier {
     final bytes = utf8.encode(uid);
 
     /// Converting UID to Bytes
-    final hash = sha256.convert(bytes); // SHA-256 해싱
+    final hash = sha256.convert(bytes);
+
+    /// SHA-256 hashing
     return hash.toString().substring(0, 12).toUpperCase(); // 상위 12자만 사용
   }
 
