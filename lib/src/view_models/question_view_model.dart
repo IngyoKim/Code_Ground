@@ -147,7 +147,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 특정 질문 설정
+  /// 특정 질문 setting
   void setSelectedQuestion(QuestionData question) {
     _selectedQuestion = question;
     notifyListeners();
