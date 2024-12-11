@@ -73,7 +73,7 @@ class _AboutPageState extends State<AboutPage> {
 
               /// List displaying developer information
               ListView.builder(
-                shrinkWrap: true, // ListView 크기 고정
+                shrinkWrap: true, // Fix ListView Size
                 physics: const NeverScrollableScrollPhysics(), // 내부 스크롤 비활성화
                 itemCount: developers.length,
                 itemBuilder: (context, index) {
