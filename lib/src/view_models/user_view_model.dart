@@ -16,7 +16,7 @@ class UserViewModel with ChangeNotifier {
 
   /// Hashes 'uid' to generate 12-digit unique friend code
   String generateFriendCode(String uid) {
-    final bytes = utf8.encode(uid); // UID를 바이트로 변환
+    final bytes = utf8.encode(uid); // Converting UID to Bytes
     final hash = sha256.convert(bytes); // SHA-256 해싱
     return hash.toString().substring(0, 12).toUpperCase(); // 상위 12자만 사용
   }
