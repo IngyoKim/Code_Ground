@@ -127,7 +127,10 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
               padding: const EdgeInsets.all(16.0),
               child: ListView(
                 children: [
-                  questionHeader(question, _writer),
+                  QuestionHeader(
+                    question: question,
+                    writer: _writer,
+                  ),
                   const SizedBox(height: 20),
                   if (state == 'successed') ...[
                     codeSnippet(

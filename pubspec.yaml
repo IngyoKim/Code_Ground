@@ -44,6 +44,7 @@ dependencies:
   flutter_local_notifications:
   permission_handler:
   timezone:
+  google_mobile_ads: ^5.2.0
 
 # Development-only dependencies used for testing and linting.
 dev_dependencies:

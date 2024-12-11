@@ -2,8 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools">
     
     <!-- 인터넷 권한 -->
-    <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
     <application
         android:label="code_ground"
         android:name="${applicationName}"
@@ -62,5 +63,8 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+    android:value="ca-app-pub-9706242792410543~3935237583"/>
     </application>
 </manifest>
