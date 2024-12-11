@@ -57,7 +57,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 특정 카테고리의 질문 불러오기
+  /// 특정 카테고리의 question 불러오기
   Future<List<QuestionData>> fetchQuestions({
     required String category,
   }) async {
