@@ -118,7 +118,7 @@ class _AboutPageState extends State<AboutPage> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  // ToastMessage를 통해 메시지 표시
+                  // Display messages through ToastMessage
                   ToastMessage.show(
                       'Open in browser functionality can be added.');
                 },
