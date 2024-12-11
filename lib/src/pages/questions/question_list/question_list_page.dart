@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:code_ground/src/utils/toast_message.dart';
 import 'package:code_ground/src/components/loading_indicator.dart';
-import 'package:code_ground/src/components/question_list_widget.dart';
-import 'package:code_ground/src/pages/questions/question_detail_page.dart';
+import 'package:code_ground/src/pages/questions/question_list/question_list_widget.dart';
+import 'package:code_ground/src/pages/questions/question_detail/question_detail_page.dart';
+import 'package:code_ground/src/pages/questions/question_list/question_list_utils.dart';
 
-import 'package:code_ground/src/utils/question_list_utils.dart';
+import 'package:code_ground/src/models/tier_data.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
+import 'package:code_ground/src/view_models/progress_view_model.dart';
 
 class QuestionListPage extends StatefulWidget {
   const QuestionListPage({super.key});
@@ -53,12 +56,11 @@ class _QuestionListPageState extends State<QuestionListPage> {
       });
     }
 
-    // 하나씩 로드 시작
     await _questionListUtil.addItemsGradually(
       questionViewModel.categoryQuestions[_categoryName] ?? [],
       () {
         if (mounted) {
-          setState(() {}); // UI 업데이트
+          setState(() {});
         }
       },
     );
@@ -92,12 +94,11 @@ class _QuestionListPageState extends State<QuestionListPage> {
       });
     }
 
-    // 추가 데이터 하나씩 로드
     await _questionListUtil.addItemsGradually(
       questionViewModel.categoryQuestions[_categoryName] ?? [],
       () {
         if (mounted) {
-          setState(() {}); // UI 업데이트
+          setState(() {});
         }
       },
     );
@@ -134,18 +135,37 @@ class _QuestionListPageState extends State<QuestionListPage> {
                 }
 
                 final question = questions[index];
+
                 return QuestionListWidget(
                   question: question,
                   onTap: () {
                     final questionViewModel =
                         Provider.of<QuestionViewModel>(context, listen: false);
-                    questionViewModel.setSelectedQuestion(question);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const QuestionDetailPage(),
-                      ),
-                    );
+                    final progressViewModel =
+                        Provider.of<ProgressViewModel>(context, listen: false);
+
+                    final question = questions[index];
+                    final currentTierName =
+                        progressViewModel.progressData?.tier ?? 'Bronze';
+                    final requiredTierName = question.tier ?? 'Bronze';
+
+                    final requiredTier = Tier.getTierByName(requiredTierName);
+
+                    if (requiredTier != null &&
+                        requiredTier.accessibleTier(currentTierName)) {
+                      questionViewModel.setSelectedQuestion(question);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const QuestionDetailPage(),
+                        ),
+                      );
+                    } else {
+                      // 접근 불가 시 토스트 메시지 표시
+                      ToastMessage.show(
+                        'You have not reached the required tier to access this question.',
+                      );
+                    }
                   },
                 );
               },

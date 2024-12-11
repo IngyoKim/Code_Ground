@@ -6,6 +6,7 @@ class Tier {
   final int bonusScore; // 보너스 스코어
   final int bonusExp; // 보너스 경험치
 
+  // 생성자
   Tier({
     required this.name,
     required this.grades,
@@ -13,6 +14,7 @@ class Tier {
     required this.bonusExp,
   });
 
+  /// 정적 메서드: 티어 이름으로 티어 객체 찾기
   static Tier? getTierByName(String tierName) {
     try {
       return tiers.firstWhere((tier) => tier.name == tierName);
@@ -20,6 +22,26 @@ class Tier {
       debugPrint("Tier not found for name: $error");
       return null;
     }
+  }
+
+  /// 다음 티어까지 접근 가능한지 확인하는 메서드
+  bool accessibleTier(String currentTierName) {
+    final tierOrder = [
+      'Bronze',
+      'Silver',
+      'Gold',
+      'Platinum',
+      'Diamond',
+      'Master',
+      'Grand Master'
+    ];
+
+    final targetIndex = tierOrder.indexOf(name);
+    final currentIndex = tierOrder.indexOf(currentTierName);
+
+    return currentIndex != -1 &&
+        targetIndex != -1 &&
+        targetIndex <= currentIndex + 1;
   }
 }
 
@@ -73,7 +95,7 @@ final List<Tier> tiers = [
   Tier(
     name: 'Platinum',
     bonusScore: 100, // 플래티넘 보너스 스코어
-    bonusExp: 300, // 플래티넘 보너스 경험치
+    bonusExp: 500, // 플래티넘 보너스 경험치
     grades: [
       Grade(name: 'V', minScore: 5000),
       Grade(name: 'IV', minScore: 6000),
@@ -97,7 +119,7 @@ final List<Tier> tiers = [
   Tier(
     name: 'Master',
     bonusScore: 500, // 마스터 보너스 스코어
-    bonusExp: 10000, // 마스터 보너스 경험치
+    bonusExp: 5000, // 마스터 보너스 경험치
     grades: [
       Grade(name: '', minScore: 30000),
     ],

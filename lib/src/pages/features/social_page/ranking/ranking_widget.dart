@@ -1,3 +1,4 @@
+import 'package:code_ground/src/utils/gettierimage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,7 @@ class RankingWidget extends StatefulWidget {
 }
 
 class _RankingWidgetState extends State<RankingWidget> {
+  static final Map<String, String?> _nicknameCache = {};
   String? nickname;
   bool isLoading = true;
 
@@ -30,6 +32,14 @@ class _RankingWidgetState extends State<RankingWidget> {
   }
 
   Future<void> _fetchNickname() async {
+    if (_nicknameCache.containsKey(widget.rankingData.uid)) {
+      setState(() {
+        nickname = _nicknameCache[widget.rankingData.uid];
+        isLoading = false;
+      });
+      return;
+    }
+
     final userViewModel = context.read<UserViewModel>();
     await userViewModel.fetchOtherUserData(widget.rankingData.uid);
     final userData = userViewModel.otherUserData;
@@ -37,6 +47,7 @@ class _RankingWidgetState extends State<RankingWidget> {
     if (mounted) {
       setState(() {
         nickname = userData?.nickname;
+        _nicknameCache[widget.rankingData.uid] = nickname;
         isLoading = false;
       });
     }
@@ -45,26 +56,26 @@ class _RankingWidgetState extends State<RankingWidget> {
   @override
   Widget build(BuildContext context) {
     return CommonListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.blueAccent,
-        child: Text(
-          '#${widget.rank}',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+      leading: Transform.translate(
+        offset: const Offset(-8, -2),
+        child: CircleAvatar(
+          backgroundColor: Colors.orange.shade300,
+          child: Text(
+            '#${widget.rank}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),
-      title: nickname ?? 'Unknown',
+      title: nickname ?? '',
       subtitle:
           "Score: ${widget.rankingData.score} | Exp: ${widget.rankingData.exp}",
-      trailing: Text(
-        widget.rankingData.tier,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-        ),
+      trailing: Image.asset(
+        getTierImage(widget.rankingData.tier),
+        width: 40,
+        height: 40,
       ),
     );
   }

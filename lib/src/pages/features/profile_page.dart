@@ -1,18 +1,17 @@
-import 'package:code_ground/src/pages/app_info/registrate_friend.dart';
-import 'package:code_ground/src/pages/questions/question_state_page.dart';
-import 'package:code_ground/src/services/messaging/custom_url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:code_ground/src/services/messaging/kakao_messaging.dart';
-
 import 'package:code_ground/src/pages/app_info/setting_page.dart';
 import 'package:code_ground/src/pages/app_info/about_page.dart';
 import 'package:code_ground/src/pages/app_info/help_page.dart';
 import 'package:code_ground/src/pages/app_info/faq_page.dart';
+import 'package:code_ground/src/pages/questions/question_state_page.dart';
 
+import 'package:code_ground/src/models/level_data.dart';
+import 'package:code_ground/src/utils/gettierimage.dart';
 import 'package:code_ground/src/components/logout_dialog.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
+import 'package:code_ground/src/services/messaging/notifications.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -36,34 +35,46 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final KakaoMessaging kakaoMessaging = KakaoMessaging();
     final userViewModel = context.watch<UserViewModel>();
     final progressViewModel = context.watch<ProgressViewModel>();
 
     final userData = userViewModel.currentUserData;
     final progressData = progressViewModel.progressData;
+    final levels = generateLevels();
 
+    final currentLevel = getCurrentLevel(levels, progressData?.exp ?? 0);
+    final nextLevel = getNextLevel(levels, progressData?.exp ?? 0);
+
+    final progress = progressData != null
+        ? (progressData.exp - currentLevel.requiredExp) /
+            (nextLevel.requiredExp - currentLevel.requiredExp)
+                .clamp(1, double.infinity)
+        : 0;
     final List<Map<String, dynamic>> learningMenuItems = [
       {
         'icon': Icons.check_circle,
+        'iconColor': Colors.green.shade500,
         'text': 'Solved Questions',
+        'color': Colors.grey.shade300,
         'onTap': () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const QuestionStatePage(),
+              builder: (context) => const QuestionStatePage(state: 'successed'),
             ),
           );
         },
       },
       {
         'icon': Icons.error,
+        'iconColor': Colors.red,
         'text': 'Failed Questions',
+        'color': Colors.grey.shade300,
         'onTap': () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const QuestionStatePage(),
+              builder: (context) => const QuestionStatePage(state: 'failed'),
             ),
           );
         },
@@ -83,6 +94,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 role: userData?.role ?? 'member',
                 nickname: userData?.nickname ?? 'Guest',
                 userData: userData,
+                friendData: userData?.friendCode ?? '',
               ),
             ),
           );
@@ -125,23 +137,10 @@ class _ProfilePageState extends State<ProfilePage> {
         },
       },
       {
-        'icon': Icons.person_add,
-        'text': 'Invite',
-        'onTap': () async {
-          final inviteUrl = await createCustomLink(userData!.uid);
-          await kakaoMessaging.shareContent(userData.nickname, inviteUrl);
-        },
-      },
-      {
-        'icon': Icons.person,
-        'text': 'Friend',
+        'icon': Icons.notifications,
+        'text': 'Notifications Test',
         'onTap': () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const RegistrateFriend(),
-            ),
-          );
+          FlutterLocalNotification.printCurrentTime();
         },
       },
     ];
@@ -163,7 +162,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: ListTile(
-                    //닉네임 재 정의할 떄마다 바로바로 새고고침 되도록하기
                     leading: ClipOval(
                       child: (userData?.photoUrl != null &&
                               userData!.photoUrl.isNotEmpty)
@@ -190,6 +188,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             userData?.nickname.isNotEmpty == true
                                 ? userData!.nickname
                                 : userData?.name ?? 'Guest',
+                            style: const TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                     subtitle: Text(userData?.name ?? 'enter your name'),
                     trailing: Row(
@@ -248,136 +250,146 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
+                      // Tier에 따라 다른 이미지 표시
+                      Image.asset(
+                        getTierImage(progressData?.tier),
+                        width: 300,
+                        height: 300,
+                      ),
+                      const SizedBox(height: 8.0),
+                      // Tier
                       Text(
-                        "Level: ${progressData?.level ?? 0}",
+                        "${progressData?.tier ?? 'Bronze'} ${progressData?.grade ?? 'V'}",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8.0),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: LinearProgressIndicator(
-                          value: progressData?.exp != null
-                              ? (progressData!.exp / 100)
-                              : 0.0,
-                          backgroundColor: Colors.grey[300],
-                          valueColor:
-                              const AlwaysStoppedAnimation<Color>(Colors.blue),
-                          minHeight: 8.0,
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
+
                       Text(
-                        progressData != null
-                            ? "EXP: ${progressData.exp}/100"
-                            : "EXP: 0/100",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
-                      Text(
-                        "Tier: ${progressData?.tier ?? 'Bronze'} ${progressData?.grade ?? 'V'}",
+                        "Lv.${currentLevel.level} | ${progressData?.score ?? 0} score",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8.0),
-                      Text(
-                        "Score: ${progressData?.score ?? 0}",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+
+                      Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: LinearProgressIndicator(
+                              value: progress.toDouble(),
+                              backgroundColor: Colors.grey[300],
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Colors.blue),
+                              minHeight: 8.0,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            progressData != null
+                                ? "${progressData.exp}/${nextLevel.requiredExp}"
+                                : "0/100",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      /// Learning menu items
+                      const Divider(
+                        height: 50.0,
+                        color: Colors.grey,
+                        thickness: 0.5,
+                        endIndent: 20.0,
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: const Text(
+                          "Learning Data",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ...learningMenuItems.map(
+                        (item) => Column(
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: item['color'],
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 15.0, horizontal: 20.0),
+                              ),
+                              onPressed: item['onTap'],
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(item['icon'], color: item['iconColor']),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    item['text'],
+                                    style: const TextStyle(color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      /// Application menu items
+                      const Divider(
+                        height: 50.0,
+                        color: Colors.grey,
+                        thickness: 0.5,
+                        endIndent: 20.0,
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: const Text(
+                          "Application Data",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ...appMenuItems.map(
+                        (item) => Column(
+                          children: [
+                            ListTile(
+                              leading: Icon(
+                                item['icon'],
+                                color: Colors.black,
+                              ),
+                              title: Text(item['text']),
+                              onTap: item['onTap'],
+                              trailing: const Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const Divider(
+                              height: 10.0,
+                              color: Colors.grey,
+                              thickness: 0.5,
+                              endIndent: 20.0,
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
-
-              /// Learning menu items
-              const Divider(
-                height: 50.0,
-                color: Colors.grey,
-                thickness: 0.5,
-                endIndent: 20.0,
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: const Text(
-                  "Learning Data",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 10),
-              ...learningMenuItems.map(
-                (item) => Column(
-                  children: [
-                    ListTile(
-                      leading: Icon(
-                        item['icon'],
-                        color: Colors.black,
-                      ),
-                      title: Text(item['text']),
-                      onTap: item['onTap'],
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const Divider(
-                      height: 10.0,
-                      color: Colors.grey,
-                      thickness: 0.5,
-                      endIndent: 20.0,
-                    ),
-                  ],
-                ),
-              ),
-
-              /// Application menu items
-              const Divider(
-                height: 50.0,
-                color: Colors.grey,
-                thickness: 0.5,
-                endIndent: 20.0,
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: const Text(
-                  "Application Data",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 10),
-              ...appMenuItems.map(
-                (item) => Column(
-                  children: [
-                    ListTile(
-                      leading: Icon(
-                        item['icon'],
-                        color: Colors.black,
-                      ),
-                      title: Text(item['text']),
-                      onTap: item['onTap'],
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const Divider(
-                      height: 10.0,
-                      color: Colors.grey,
-                      thickness: 0.5,
-                      endIndent: 20.0,
-                    ),
-                  ],
                 ),
               ),
             ],

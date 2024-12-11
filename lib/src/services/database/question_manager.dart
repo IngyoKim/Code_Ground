@@ -18,12 +18,34 @@ class QuestionManager {
     'sequencing': '5',
   };
 
+  /// 카테고리 접두사 가져오기
+  static String getPrefix(String category) {
+    return _categoryPrefixes[category.toLowerCase()] ?? '0';
+  }
+
+  /// 질문 ID 존재 여부 확인
+  Future<bool> doesQuestionIdExist(String questionId) async {
+    final category = _getCategoryFromId(questionId);
+    if (category == null) return false;
+
+    final path = '$basePath/${category.toLowerCase()}/$questionId';
+    try {
+      final data = await _dbService.readDB(path);
+      return data != null;
+    } catch (error) {
+      debugPrint('[doesQuestionIdExist] Error checking ID: $error');
+      return false;
+    }
+  }
+
   /// ID로 카테고리 추출
-  String? _getCategoryFromId(String questionId) {
+  static String? _getCategoryFromId(String questionId) {
     final prefix = questionId.substring(0, 1);
     return _categoryPrefixes.entries
-            .firstWhere((entry) => entry.value == prefix,
-                orElse: () => const MapEntry('', ''))
+            .firstWhere(
+              (entry) => entry.value == prefix,
+              orElse: () => const MapEntry('', ''),
+            )
             .key
             .isNotEmpty
         ? _categoryPrefixes.entries
@@ -32,9 +54,44 @@ class QuestionManager {
         : null;
   }
 
-  /// 카테고리 접두사 가져오기
-  String _getPrefixFromCategory(String category) {
-    return _categoryPrefixes[category.toLowerCase()] ?? '0';
+  /// 새로운 질문 ID 생성 및 패딩
+  Future<String> generateQuestionId(String category,
+      {String input = ''}) async {
+    final prefix = getPrefix(category);
+
+    if (input.isNotEmpty) {
+      // 입력값이 있을 때, 접두사 + 입력값 + 나머지 부분을 '0'으로 채움
+      String baseId = (prefix + input).padRight(6, '0');
+
+      int counter = 1;
+
+      // 중복 확인 및 고유한 ID 생성
+      while (await doesQuestionIdExist(baseId)) {
+        baseId = prefix +
+            input.padRight(6 - prefix.length - counter.toString().length, '0') +
+            counter.toString();
+        counter++;
+
+        // 최대 6자리를 초과하지 않도록 보장
+        if (baseId.length > 6) {
+          throw Exception('Cannot generate a unique ID within 6 characters.');
+        }
+      }
+
+      return baseId;
+    }
+
+    debugPrint(
+        '[generateQuestionId] Generating new ID for category: $category');
+
+    // 가장 최신의 질문 데이터를 가져옴
+    final questions = await fetchQuestions(category);
+    final lastNumber = questions
+        .map((q) => int.tryParse(q.questionId.substring(1)) ?? 0)
+        .fold(0, (max, value) => value > max ? value : max);
+
+    final newNumber = (lastNumber + 1).toString().padLeft(5, '0');
+    return '$prefix$newNumber';
   }
 
   /// 질문 ID로 질문 가져오기
@@ -61,28 +118,15 @@ class QuestionManager {
     }
   }
 
-  /// 새로운 질문 ID 생성
-  Future<String> generateQuestionId(String category) async {
-    debugPrint('[generateQuestionId] Generating ID for category: $category');
-    final prefix = _getPrefixFromCategory(category);
-
-    // 가장 최신의 질문 데이터를 가져옴
-    final questions = await fetchQuestions(category);
-    final lastNumber = questions
-        .map((q) => int.tryParse(q.questionId.substring(1)) ?? 0)
-        .fold(0, (max, value) => value > max ? value : max);
-
-    final newNumber = (lastNumber + 1).toString().padLeft(5, '0'); // 5자리 패딩
-    return '$prefix$newNumber';
-  }
-
   /// 질문 데이터 저장
   Future<void> writeQuestionData(QuestionData questionData) async {
     debugPrint('[writeQuestionData] Writing question data');
-    if (questionData.questionId.isEmpty) {
-      final newId = await generateQuestionId(questionData.category);
-      questionData = questionData.copyWith(questionId: newId);
-    }
+    String questionId = await generateQuestionId(
+      questionData.category,
+      input: questionData.questionId,
+    );
+
+    questionData = questionData.copyWith(questionId: questionId);
 
     final path =
         '$basePath/${questionData.category.toLowerCase()}/${questionData.questionId}';

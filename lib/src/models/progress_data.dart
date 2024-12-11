@@ -19,14 +19,13 @@ class ProgressData {
 
   factory ProgressData.fromJson(Map<String, dynamic> json) {
     return ProgressData(
-      uid: json['uid'] ?? '', // 기본값 설정
-      level: json['level'] ?? 1, // 기본값 설정
-      exp: json['exp'] ?? 0, // 기본값 설정
-      score: json['score'] ?? 0, // 기본값 설정
-      tier: json['tier'] ?? 'Bronze', // 기본값 설정
-      grade: json['grade'] ?? 'V', // 기본값 설정
-      questionState:
-          Map<String, String>.from(json['questionState'] ?? {}), // 기본값 설정
+      uid: json['uid'] ?? '',
+      level: json['level'] ?? 1,
+      exp: json['exp'] ?? 0,
+      score: json['score'] ?? 0,
+      tier: json['tier'] ?? 'Bronze',
+      grade: json['grade'] ?? 'V',
+      questionState: Map<String, String>.from(json['questionState'] ?? {}),
     );
   }
 
