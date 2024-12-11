@@ -22,7 +22,9 @@ class UserViewModel with ChangeNotifier {
     final hash = sha256.convert(bytes);
 
     /// SHA-256 hashing
-    return hash.toString().substring(0, 12).toUpperCase(); // 상위 12자만 사용
+    return hash.toString().substring(0, 12).toUpperCase();
+
+    /// Use Top 12 Characters Only
   }
 
   /// 현재 로그인된 유저의 데이터 가져오기
