@@ -69,7 +69,7 @@ class UserViewModel with ChangeNotifier {
     }
   }
 
-  /// 특정 ID의 유저 데이터 가져오기 (다른 유저)
+  /// Get user data with a specific ID (other users)
   Future<void> fetchOtherUserData(String uid) async {
     try {
       _otherUserData = await _userManager.readUserData(uid);
