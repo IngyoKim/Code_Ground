@@ -43,7 +43,7 @@ class UserViewModel with ChangeNotifier {
       if (_currentUserData == null) {
         final User? firebaseUser = FirebaseAuth.instance.currentUser;
 
-        // 새로운 친구 초대 코드 생성
+        /// Create a new friend invitation code
         final generatedFriendCode = generateFriendCode(currentUserId);
 
         // 유저 데이터 초기화
