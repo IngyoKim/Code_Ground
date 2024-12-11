@@ -47,7 +47,7 @@ dependencies:
 
 # Development-only dependencies used for testing and linting.
 dev_dependencies:
-  flutter_test:
+  flutter_test: 
     sdk: flutter # Flutter's test framework for unit and widget testing.
 
   flutter_lints: ^5.0.0 # A collection of lints to encourage good coding practices.

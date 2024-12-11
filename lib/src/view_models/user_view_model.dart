@@ -14,7 +14,7 @@ class UserViewModel with ChangeNotifier {
   UserData? get currentUserData => _currentUserData;
   UserData? get otherUserData => _otherUserData;
 
-  /// `uid`를 해싱하여 12자리 고유 친구 코드 생성
+  /// Hashes 'uid' to generate 12-digit unique friend code
   String generateFriendCode(String uid) {
     final bytes = utf8.encode(uid); // UID를 바이트로 변환
     final hash = sha256.convert(bytes); // SHA-256 해싱
