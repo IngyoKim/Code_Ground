@@ -71,7 +71,7 @@ class _AboutPageState extends State<AboutPage> {
               ),
               const SizedBox(height: 8),
 
-              /// 개발자 정보를 표시하는 리스트
+              /// List displaying developer information
               ListView.builder(
                 shrinkWrap: true, // ListView 크기 고정
                 physics: const NeverScrollableScrollPhysics(), // 내부 스크롤 비활성화
