@@ -101,7 +101,7 @@ class UserViewModel with ChangeNotifier {
       /// Import all user data
       final users = await _userManager.fetchUsers();
 
-      /// friendCode로 사용자 찾기
+      /// Find the user with friendCode
       final friendUser = users.firstWhere(
         (user) => user.friendCode == friendCode,
         orElse: () => throw Exception('No user found with this friend code.'),
