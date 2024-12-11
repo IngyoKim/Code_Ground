@@ -128,7 +128,9 @@ class _HelpPageState extends State<HelpPage> {
             ),
           ),
         ),
-      ], // 아래로 향하는 삼각형 아이콘
+      ],
+
+      /// 아래로 향하는 삼각형 아이콘
     );
   }
 }
