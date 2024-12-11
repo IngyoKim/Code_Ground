@@ -125,7 +125,7 @@ class UserViewModel with ChangeNotifier {
             .updateUserData({'friends': _currentUserData!.friends});
       }
 
-      /// 상대방 친구 목록에도 현재 사용자의 friendCode 추가
+      /// Add the friendCode of the current user to the list of your friends
       final currentUserMap = {
         'uid': _currentUserData!.uid,
         'friendCode': _currentUserData!.friendCode,
