@@ -112,7 +112,7 @@ class UserViewModel with ChangeNotifier {
         throw Exception('You cannot add yourself as a friend.');
       }
 
-      /// 친구 목록에 friendCode 추가
+      /// Add friendCode to Friends List
       final friendMap = {
         'uid': friendUser.uid,
         'friendCode': friendUser.friendCode,
