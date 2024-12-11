@@ -59,7 +59,7 @@ class _HelpPageState extends State<HelpPage> {
               context,
               title: 'Tier Chart',
               subtitle:
-                  '*모든 티어는 score 기준으로 나뉩니다.\n브론즈: 0-499\n실버: 500-1999\n골드: 2000-4999\n플래티넘: 5000-9999\n다이아: 10000-29999\n마스터: 30000-',
+                  '*모든 티어는 score 기준으로 나뉩니다.\n브론즈: 0-499\n실버: 500-1999\n골드: 2000-4999\n플래티넘: 5000-9999\n다이아: 10000-29999\n마스터: 30000-49999\n그랜드마스터: 50000-',
               onTap: () {
                 /// Show dialog with customer support contact information
                 showDialog(
@@ -80,7 +80,7 @@ class _HelpPageState extends State<HelpPage> {
               context,
               title: 'Admin권한',
               subtitle:
-                  'Admin권한은 3단계로 나뉩니다.\n memder-문제 풀기만 가능\nOperatior-문제 풀기, 수정 가능\nMaster-문제 풀기, 수정, 생성 가능\nAdmin권한을 얻기 위해선 제작자들에게 메일 주세요.',
+                  'Admin권한은 3단계로 나뉩니다.\n memder-문제 풀기만 가능\nOperatior-문제 풀기, 수정 가능\nMaster-문제 풀기, 수정, 생성 가능',
               onTap: () {
                 /// Show dialog for sending feedback
                 showDialog(
