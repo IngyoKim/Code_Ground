@@ -57,7 +57,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  // 특정 카테고리의 question 불러오기
+  /// 특정 카테고리의 question 불러오기
   Future<List<QuestionData>> fetchQuestions({
     required String category,
   }) async {
@@ -95,7 +95,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  // question add
+  /// question add
   Future<void> addQuestion(QuestionData questionData) async {
     try {
       if (questionData.questionId.isEmpty) {
@@ -112,7 +112,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  // question update
+  /// question update
   Future<void> updateQuestion(QuestionData updatedQuestion) async {
     try {
       await _questionManager.updateQuestionData(updatedQuestion);
@@ -147,7 +147,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  // 특정 질문 setting
+  // certain question setting
   void setSelectedQuestion(QuestionData question) {
     _selectedQuestion = question;
     notifyListeners();

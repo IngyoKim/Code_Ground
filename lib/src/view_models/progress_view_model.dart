@@ -73,7 +73,7 @@ class ProgressViewModel with ChangeNotifier {
 
       await _progressManager.updateProgressData(currentUserId, updates);
 
-      // Fetch the updated data
+      /// Fetch the updated data
       _progressData = await _progressManager.readProgressData(currentUserId);
 
       _updateLevel();
@@ -123,7 +123,7 @@ class ProgressViewModel with ChangeNotifier {
       }
     }
 
-    //Update only when the current tier and rating need to be changed
+    ///Update only when the current tier and rating need to be changed
     if (newTier != null && newGrade != null) {
       if (_progressData!.tier != newTier || _progressData!.grade != newGrade) {
         debugPrint('Updated tier to $newTier and grade to $newGrade');
@@ -156,7 +156,7 @@ class ProgressViewModel with ChangeNotifier {
       if (fetchedRankings.isEmpty) {
         _hasMoreData = false;
       } else {
-        // 마지막으로 가져온 `score` 값 업데이트
+        // lastest `score` value update
         _lastFetchedValue = fetchedRankings.last.score;
 
         _rankings.addAll(fetchedRankings);
