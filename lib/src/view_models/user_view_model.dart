@@ -80,7 +80,7 @@ class UserViewModel with ChangeNotifier {
     }
   }
 
-  /// 닉네임 업데이트
+  /// Nickname update
   Future<void> updateNickname(String nickname) async {
     if (_currentUserData != null) {
       _currentUserData!.nickname = nickname;
@@ -91,7 +91,7 @@ class UserViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// 친구 추가 메서드
+  /// How to add friends
   Future<void> addFriend(String friendCode) async {
     try {
       if (_currentUserData == null) {
