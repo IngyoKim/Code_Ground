@@ -8,7 +8,7 @@ class FAQPage extends StatefulWidget {
 }
 
 class _FAQPageState extends State<FAQPage> {
-  // FAQ 질문 및 답변 목록
+  // FAQ Questions and Answers List
   final List<Map<String, String>> faqs = [
     {
       'question': 'How do I reset my password?',
