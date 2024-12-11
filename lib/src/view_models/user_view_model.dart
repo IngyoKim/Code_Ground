@@ -36,7 +36,7 @@ class UserViewModel with ChangeNotifier {
         throw Exception('No user is currently logged in.');
       }
 
-      // 데이터베이스에서 현재 유저 데이터 가져오기
+      /// Import current user data from database
       _currentUserData = await _userManager.readUserData();
 
       // 유저 데이터가 없을 경우 초기화
