@@ -84,6 +84,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
+  /// Method to update level based on experience
   Future<void> _updateLevel() async {
     if (_progressData == null) return;
 
