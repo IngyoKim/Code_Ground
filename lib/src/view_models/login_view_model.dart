@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:code_ground/src/services/auth/social_login.dart';
 import 'package:code_ground/src/services/auth/login_preference.dart';
 
+//login session
 class LoginViewModel extends ChangeNotifier {
   final LoginPreference _loginPreference = LoginPreference();
   SocialLogin? _socialLogin;
@@ -20,10 +21,10 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+// Save the selected login type to preferences.
   Future<void> setLoginType(SocialLogin socialLogin) async {
     _socialLogin = socialLogin;
 
-    /// Save the selected login type to preferences.
     await _loginPreference.setLoginType(socialLogin);
     notifyListeners();
   }
@@ -48,6 +49,7 @@ class LoginViewModel extends ChangeNotifier {
       await _loginPreference.clearPreferences();
       _socialLogin = null;
       notifyListeners();
+      //login firebase
     }
   }
 }

@@ -9,10 +9,13 @@ import 'package:code_ground/src/services/auth/firebase_auth_data.dart';
 
 /// Kakao Login
 class KakaoLogin implements SocialLogin {
+  // Firebase 인증 객체
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  // Firebase 커스텀 토큰 생성에 필요한 클래스
   final FirebaseAuthData _firebaseAuthData = FirebaseAuthData();
 
   @override
+  //로그인 타입 지정 (카카오)
   String loginType = "Kakao";
 
   @override
@@ -22,17 +25,22 @@ class KakaoLogin implements SocialLogin {
       if (await kakao.isKakaoTalkInstalled()) {
         debugPrint("KakaoTalk is installed.");
         try {
+          //KakaoTalk을 이용한 로그인
           await kakao.UserApi.instance.loginWithKakaoTalk();
           debugPrint("Successed to login with KakaoTalk.");
         } catch (error) {
+          //카카오톡 로그인 실패
           debugPrint("Fail to login with KakaoTalk.\n$error");
         }
       } else {
+        //KakaoTalk 미설치 확인
         debugPrint("KakaoTalk isn't installed.");
         try {
+          //카카오 계정을 이용한 로그인
           await kakao.UserApi.instance.loginWithKakaoAccount();
           debugPrint("Successed to login with Kakao.");
         } catch (error) {
+          //카카오 계정 로그인 실패
           debugPrint("Fail to login with Kakao.\n$error");
         }
       }
@@ -47,11 +55,12 @@ class KakaoLogin implements SocialLogin {
         'email': user.kakaoAccount?.email ?? '',
         'photoURL': user.kakaoAccount?.profile?.profileImageUrl ?? '',
       });
-
+      //Firebase로부터 받은 JSON 응답에서 토큰 추출
       final tokenData = jsonDecode(response);
       final customToken = tokenData['token'] ?? '';
 
       if (customToken.isEmpty) {
+        //커스텀 토큰 생성
         debugPrint("Failed to retrieve custom token.");
         return null;
       }
@@ -59,11 +68,12 @@ class KakaoLogin implements SocialLogin {
       /// Firebase login
       UserCredential userCredential =
           await _auth.signInWithCustomToken(customToken);
-      await _auth.currentUser?.reload();
+      await _auth.currentUser?.reload(); //Firebase 인증 상태 갱신
 
       /// Update user information
       return userCredential.user;
     } catch (error) {
+      //로그인 프로세스 중 오류 발생
       debugPrint("Kakao login failed. $error");
       return null;
     }
@@ -72,18 +82,22 @@ class KakaoLogin implements SocialLogin {
   @override
   Future<void> logout() async {
     try {
+      // 카카오 계정 연결 해제
       debugPrint("Attempting to unlink Kakao account...");
       await kakao.UserApi.instance.unlink();
       debugPrint("Successfully unlinked Kakao account.");
     } catch (error) {
+      // 카카오 계정 연결 해제 실패
       debugPrint("Failed to unlink Kakao account: $error");
     }
 
     try {
+      // Firebase 로그아웃 처리
       debugPrint("Attempting to sign out from Firebase...");
-      await _auth.signOut();
+      await _auth.signOut(); //Firebase 에서 로그아웃
       debugPrint("Successfully signed out from Firebase.");
     } catch (error) {
+      //Firebase 로그아웃 실패
       debugPrint("Failed to sign out from Firebase: $error");
     }
   }

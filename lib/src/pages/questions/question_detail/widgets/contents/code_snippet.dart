@@ -39,7 +39,7 @@ Widget codeSnippet(MapEntry<String, String> entry) {
 }
 
 // 필터링된 코드 스니펫 표시
-Widget filterdCodeSnippets({
+Widget filteredCodeSnippets({
   required Map<String, String> codeSnippets,
   required String selectedLanguage,
 }) {

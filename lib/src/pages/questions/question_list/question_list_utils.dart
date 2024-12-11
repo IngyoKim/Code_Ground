@@ -1,4 +1,4 @@
-import 'package:code_ground/src/utils/paging_controller.dart';
+import 'package:code_ground/src/utils/paging/paging_controller.dart';
 
 class QuestionListUtil<T> {
   final List<T> _visibleItems = [];

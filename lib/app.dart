@@ -1,4 +1,3 @@
-import 'package:code_ground/src/view_models/category_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +7,8 @@ import 'package:code_ground/src/view_models/login_view_model.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
+import 'package:code_ground/src/view_models/category_view_model.dart';
+import 'package:code_ground/src/services/ads/rewarded_ad_service.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -23,6 +24,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProgressViewModel()),
         ChangeNotifierProvider(create: (_) => QuestionViewModel()),
         ChangeNotifierProvider(create: (_) => CategoryViewModel()),
+        ChangeNotifierProvider(create: (_) => RewardedAdService()),
       ],
       child: MaterialApp(
         /// App title.

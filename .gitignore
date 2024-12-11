@@ -50,6 +50,7 @@ serviceAccountKey.json
 
 # Firebase configuration files for Android and iOS
 google-services.json
+android/app/google-services.json
 GoogleService-Info.plist
 
 # Firebase CLI settings and logs

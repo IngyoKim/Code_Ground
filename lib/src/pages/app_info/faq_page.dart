@@ -8,27 +8,26 @@ class FAQPage extends StatefulWidget {
 }
 
 class _FAQPageState extends State<FAQPage> {
-  // FAQ 질문 및 답변 목록
+  /// FAQ Questions and Answers List
   final List<Map<String, String>> faqs = [
     {
-      'question': 'How do I reset my password?',
+      'question': '친구 추가는 어떻게 하나요?',
       'answer':
-          'To reset your password, go to the settings page and select "Reset Password". You will receive an email with a link to reset your password.',
+          'settings의 Your Info 부분 안의 친구코드를 친구에게 공유하세요.\nSocial Page의 friend에서 친구 코드를 통해 친구를 추가할 수 있습니다.',
     },
     {
-      'question': 'How can I contact support?',
+      'question': '문제 추가하는 방법은 무엇인가요?',
       'answer':
-          'You can contact support through the "Help" section in the app. Simply click on the "Contact Support" button.',
+          '문제를 추가하기 위해선 admin권한을 얻어야 합니다.\nadmin권한에 대한 자세한 내용은 Help에 기재되어 있습니다.',
     },
     {
-      'question': 'What is the app\'s privacy policy?',
-      'answer':
-          'Our privacy policy can be accessed through the "About" page in the app. It outlines how we handle your data and your privacy rights.',
+      'question': 'Admin 권한을 어떻게 요청하나요?',
+      'answer': '/카페 링크 기입 예정\n 해당 카페에서 요청하실 수 있습니다.',
     },
     {
-      'question': 'How do I update the app?',
+      'question': '문제는 어떻게 해결하나요?',
       'answer':
-          'App updates are available through your device\'s app store (Google Play or Apple App Store). Make sure to enable automatic updates or check for updates manually.',
+          'sequencing문제를 제외한 모든 문제들은 객관식과 주관식 문제들로 나뉘어 있습니다.\n객관식 문제들은 주어진 선지들 중 옳은 선지를 구하는 문제입니다. 주관식 문제는 문제 생성자가 요구한 답과 동일한 답을 작성하여 제출하여야 하는 문제입니다.\nsequencing문제는 주어진 선지들의 순서를 드래그를 통해 바꾸는 문제입니다. 옳은 순서를 맞춘다면 정답처리됩니다.',
     },
     {
       'question': 'How can I give feedback?',
@@ -37,7 +36,7 @@ class _FAQPageState extends State<FAQPage> {
     },
   ];
 
-  // FAQ 목록에 대한 선택 상태를 추적
+  /// Track selection status for FAQ lists
   final List<bool> _isExpanded = List.generate(5, (_) => false);
 
   @override
@@ -59,18 +58,25 @@ class _FAQPageState extends State<FAQPage> {
                   children: [
                     const Icon(Icons.question_answer),
                     const SizedBox(width: 8.0),
-                    Text(
-                      faq['question']!,
-                      style: const TextStyle(
-                        fontSize: 18.0,
+                    Flexible(
+                      /// Adjust text width for remaining space
+                      child: Text(
+                        faq['question']!,
+                        style: const TextStyle(
+                          fontSize: 18.0,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                initiallyExpanded: _isExpanded[index], // 기존 상태값에 맞춰서 열림/닫힘 설정
+                initiallyExpanded: _isExpanded[index],
+
+                /// Set Open/Close to Existing Status Values
                 onExpansionChanged: (bool expanded) {
                   setState(() {
-                    _isExpanded[index] = expanded; // 열림/닫힘 상태 갱신
+                    _isExpanded[index] = expanded;
+
+                    /// Update Open/Closed Status
                   });
                 },
                 children: [

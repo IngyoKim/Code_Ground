@@ -16,14 +16,14 @@ class QuestionListWidget extends StatelessWidget {
   });
 
   IconData? _getLeadingIcon(String? state) {
-    if (state == 'correct') return Icons.check_circle;
-    if (state == 'wrong') return Icons.cancel;
+    if (state == 'successed') return Icons.check_circle;
+    if (state == 'failed') return Icons.cancel;
     return null;
   }
 
   Color? _getIconColor(String? state) {
-    if (state == 'correct') return Colors.green;
-    if (state == 'wrong') return Colors.red;
+    if (state == 'successed') return Colors.green;
+    if (state == 'failed') return Colors.red;
     return null;
   }
 

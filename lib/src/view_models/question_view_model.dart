@@ -6,24 +6,24 @@ import 'package:code_ground/src/services/database/question_manager.dart';
 class QuestionViewModel with ChangeNotifier {
   final QuestionManager _questionManager = QuestionManager();
   Map<String, List<QuestionData>> _categoryQuestions = {};
-  Map<String, int?> _lastCreatedAt = {}; // 각 카테고리의 마지막 createdAt 값 (타임스탬프)
+  Map<String, int?> _lastCreatedAt = {};
   bool _isFetching = false;
   bool _hasMoreData = true;
-  QuestionData? _selectedQuestion; // 선택된 질문 데이터
+  QuestionData? _selectedQuestion;
 
-  /// 카테고리별 질문 데이터
+  // Question data by category
   Map<String, List<QuestionData>> get categoryQuestions => _categoryQuestions;
 
-  /// 로딩 상태
+  // Loading Status
   bool get isFetching => _isFetching;
 
-  /// 더 가져올 데이터가 있는지 여부
+  // Do you have more data to import
   bool get hasMoreData => _hasMoreData;
 
-  /// 선택된 질문 가져오기
+  // Import Selected Questions
   QuestionData? get selectedQuestion => _selectedQuestion;
 
-  /// 모든 질문 초기화
+  // Iniialize all questions
   void clearQuestions() {
     _categoryQuestions = {};
     _lastCreatedAt = {};
@@ -33,7 +33,7 @@ class QuestionViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// 카테고리 상태 초기화
+  // catagory
   void resetCategoryState(String category) {
     _categoryQuestions[category] = [];
     _lastCreatedAt[category] = null;
@@ -41,7 +41,7 @@ class QuestionViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// 특정 질문 ID로 질문 가져오기
+  // certain question load by ID
   Future<void> fetchQuestionById(String questionId) async {
     try {
       final question = await _questionManager.fetchQuestionById(questionId);
@@ -57,14 +57,16 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 특정 카테고리의 질문 불러오기 (페이징 기반)
+  // category question load
   Future<List<QuestionData>> fetchQuestions({
     required String category,
   }) async {
     if (_isFetching || !_hasMoreData) return [];
 
     _isFetching = true;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final questions = await _questionManager.fetchQuestions(
@@ -80,7 +82,10 @@ class QuestionViewModel with ChangeNotifier {
         _categoryQuestions[category]!.addAll(questions);
       }
 
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+
       return questions;
     } catch (error) {
       debugPrint('[fetchQuestions] Error: $error');
@@ -90,22 +95,24 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 질문 추가
+  // question add
   Future<void> addQuestion(QuestionData questionData) async {
     try {
-      await _questionManager.writeQuestionData(questionData);
-      final category = questionData.category.toLowerCase();
-      if (!_categoryQuestions.containsKey(category)) {
-        _categoryQuestions[category] = [];
+      if (questionData.questionId.isEmpty) {
+        final generatedId =
+            await _questionManager.generateQuestionId(questionData.category);
+        questionData = questionData.copyWith(questionId: generatedId);
       }
-      _categoryQuestions[category]!.insert(0, questionData);
+
+      await _questionManager.writeQuestionData(questionData);
       notifyListeners();
     } catch (error) {
       debugPrint('Error adding question: $error');
+      rethrow;
     }
   }
 
-  /// 질문 업데이트
+  // question update
   Future<void> updateQuestion(QuestionData updatedQuestion) async {
     try {
       await _questionManager.updateQuestionData(updatedQuestion);
@@ -130,7 +137,17 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 특정 질문 설정
+  Future<bool> doesQuestionIdExist(String questionId) async {
+    try {
+      final question = await _questionManager.fetchQuestionById(questionId);
+      return question != null;
+    } catch (error) {
+      debugPrint('[doesQuestionIdExist] Error checking question ID: $error');
+      return false;
+    }
+  }
+
+  // certain question setting
   void setSelectedQuestion(QuestionData question) {
     _selectedQuestion = question;
     notifyListeners();

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:code_ground/src/utils/ranking_utils.dart';
-import 'package:code_ground/src/components/ranking_widget.dart';
+import 'package:code_ground/src/pages/features/social_page/ranking/ranking_utils.dart';
+import 'package:code_ground/src/pages/features/social_page/ranking/ranking_widget.dart';
 import 'package:code_ground/src/components/loading_indicator.dart';
 
 import 'package:code_ground/src/models/progress_data.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
 
-class SocialPage extends StatefulWidget {
-  const SocialPage({super.key});
+class RankingPage extends StatefulWidget {
+  const RankingPage({super.key});
 
   @override
-  State<SocialPage> createState() => _SocialPageState();
+  State<RankingPage> createState() => _RankingPageState();
 }
 
-class _SocialPageState extends State<SocialPage> {
+class _RankingPageState extends State<RankingPage> {
   final RankingUtils<ProgressData> _rankingListUtil = RankingUtils();
   final ScrollController _scrollController = ScrollController();
   bool _isInitialLoading = true;
@@ -29,24 +29,35 @@ class _SocialPageState extends State<SocialPage> {
   }
 
   /// 초기 데이터 로딩
+  /// 초기 데이터 로딩
   Future<void> _initializePage() async {
-    final progressViewModel =
-        Provider.of<ProgressViewModel>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final progressViewModel =
+          Provider.of<ProgressViewModel>(context, listen: false);
 
-    setState(() {
-      _isInitialLoading = true;
-    });
-
-    _rankingListUtil.reset();
-
-    await progressViewModel.fetchRankings(orderBy: 'score');
-    _rankingListUtil.addItems(progressViewModel.rankings);
-
-    if (mounted) {
       setState(() {
-        _isInitialLoading = false;
+        _isInitialLoading = true;
       });
-    }
+
+      _rankingListUtil.reset();
+
+      await progressViewModel.fetchRankings(orderBy: 'score');
+
+      if (mounted) {
+        setState(() {
+          _isInitialLoading = false;
+        });
+      }
+
+      await _rankingListUtil.addItemsGradually(
+        progressViewModel.rankings,
+        () {
+          if (mounted) {
+            setState(() {}); // UI 업데이트
+          }
+        },
+      );
+    });
   }
 
   /// 스크롤 이벤트 핸들러
@@ -63,20 +74,25 @@ class _SocialPageState extends State<SocialPage> {
     final progressViewModel =
         Provider.of<ProgressViewModel>(context, listen: false);
 
-    if (progressViewModel.isFetchingRankings) return;
+    if (progressViewModel.isFetchingRankings ||
+        !progressViewModel.hasMoreData) {
+      return;
+    }
 
     setState(() {
       _isFetchingMore = true;
     });
 
-    await progressViewModel.fetchRankings(orderBy: 'score');
-    _rankingListUtil.addItems(progressViewModel.rankings);
+    await progressViewModel.fetchRankings(
+      orderBy: 'score',
+      lastValue: progressViewModel.rankings.isNotEmpty
+          ? progressViewModel.rankings.last.score
+          : null,
+    );
 
-    if (mounted) {
-      setState(() {
-        _isFetchingMore = false;
-      });
-    }
+    setState(() {
+      _isFetchingMore = false;
+    });
   }
 
   @override

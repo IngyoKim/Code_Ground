@@ -1,4 +1,4 @@
-import 'package:code_ground/src/utils/paging_controller.dart';
+import 'package:code_ground/src/utils/paging/paging_controller.dart';
 
 class RankingUtils<T> {
   final List<T> _visibleItems = [];
@@ -56,7 +56,7 @@ class RankingUtils<T> {
       await addItemsGradually(pagingController.items, refreshCallback);
     } else {
       addItems(pagingController.items);
-      refreshCallback(); // UI 갱신
+      refreshCallback();
     }
   }
 }

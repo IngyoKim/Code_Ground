@@ -4,8 +4,8 @@ import 'package:code_ground/src/utils/permission_utils.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
-import 'package:code_ground/src/pages/questions/question_list_page.dart';
-import 'package:code_ground/src/pages/questions/add_question_page.dart';
+import 'package:code_ground/src/pages/questions/question_list/question_list_page.dart';
+import 'package:code_ground/src/pages/questions/question_crud/add_question_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -33,18 +33,27 @@ class HomePage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/logo/code_ground_logo.png',
-                    height: 100,
-                    fit: BoxFit.contain,
+                  Flexible(
+                    flex: 2, // 이미지가 더 많은 공간을 차지하도록 설정
+                    child: Image.asset(
+                      'assets/logo/code_ground_logo.png',
+                      height: 100,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                  const SizedBox(width: 20),
-                  const Text(
-                    'CODEGROUND',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 38,
+                  const SizedBox(width: 16),
+                  Flexible(
+                    flex: 3, // 텍스트가 남은 공간을 차지
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown, // 텍스트 크기가 넘치지 않도록 조정
+                      child: const Text(
+                        'CODEGROUND',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 38,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -132,6 +141,7 @@ class HomePage extends StatelessWidget {
 
                       // 질문 페이지로 이동
                       Navigator.push(
+                        // ignore: use_build_context_synchronously
                         context,
                         MaterialPageRoute(
                           builder: (context) => const QuestionListPage(),

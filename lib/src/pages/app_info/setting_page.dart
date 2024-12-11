@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class SettingPage extends StatefulWidget {
   final String initialNickname;
   final String role;
-  final dynamic userData; // userData 객체 추가
+  final String friendData;
+  final dynamic userData;
 
   const SettingPage({
     super.key,
@@ -11,6 +12,7 @@ class SettingPage extends StatefulWidget {
     required this.role,
     required this.userData,
     required String nickname,
+    required this.friendData,
   });
 
   @override
@@ -18,9 +20,7 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  bool _darkMode = false;
   bool _notificationsEnabled = true;
-  String _language = 'English';
   bool _isInfoExpanded = false;
 
   late TextEditingController _nicknameController;
@@ -54,7 +54,12 @@ class _SettingPageState extends State<SettingPage> {
         children: [
           // Your Info Section
           ListTile(
-            title: const Text('Your INFO'),
+            title: Text(
+              'Your INFO',
+              style: const TextStyle(
+                fontSize: 20.0,
+              ),
+            ),
             trailing: Icon(
               _isInfoExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
             ),
@@ -65,64 +70,45 @@ class _SettingPageState extends State<SettingPage> {
             },
           ),
           if (_isInfoExpanded) ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    'NickName: $_nickname', // 현재 닉네임 표시
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Text(
+                '닉네임: $_nickname',
+                style: const TextStyle(fontSize: 16.0),
+              ),
             ),
             const SizedBox(height: 8.0),
-            Text(
-              'Role: ${widget.role}',
-              style: const TextStyle(fontSize: 16.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Text(
+                'admin 권한: ${widget.role}',
+                style: const TextStyle(fontSize: 16.0),
+              ),
             ),
+            const SizedBox(height: 8.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Text(
+                '친구 코드: ${widget.friendData}',
+                style: const TextStyle(fontSize: 16.0),
+              ),
+            ),
+            const SizedBox(height: 16.0),
           ],
           const Divider(),
 
-          // Other Settings Section
           ListTile(
-            title: const Text('Dark Mode'),
-            trailing: Switch(
-              value: _darkMode,
-              onChanged: (bool value) {
-                setState(() {
-                  _darkMode = value;
-                });
-              },
+            title: Text(
+              'Notifications',
+              style: const TextStyle(
+                fontSize: 20.0,
+              ),
             ),
-          ),
-          const Divider(),
-
-          ListTile(
-            title: const Text('Notifications'),
             trailing: Switch(
               value: _notificationsEnabled,
               onChanged: (bool value) {
                 setState(() {
                   _notificationsEnabled = value;
-                });
-              },
-            ),
-          ),
-          const Divider(),
-
-          ListTile(
-            title: const Text('Language'),
-            subtitle: Text(_language),
-            trailing: DropdownButton<String>(
-              value: _language,
-              items: const [
-                DropdownMenuItem(value: 'English', child: Text('English')),
-                DropdownMenuItem(value: 'Korean', child: Text('Korean')),
-              ],
-              onChanged: (String? newValue) {
-                setState(() {
-                  _language = newValue!;
                 });
               },
             ),
