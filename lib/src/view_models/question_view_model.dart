@@ -11,19 +11,19 @@ class QuestionViewModel with ChangeNotifier {
   bool _hasMoreData = true;
   QuestionData? _selectedQuestion;
 
-  /// Question data by category
+  // Question data by category
   Map<String, List<QuestionData>> get categoryQuestions => _categoryQuestions;
 
-  /// Loading Status
+  // Loading Status
   bool get isFetching => _isFetching;
 
-  /// Do you have more data to import
+  // Do you have more data to import
   bool get hasMoreData => _hasMoreData;
 
-  /// Import Selected Questions
+  // Import Selected Questions
   QuestionData? get selectedQuestion => _selectedQuestion;
 
-  /// Initialize all questions
+  // Iniialize all questions
   void clearQuestions() {
     _categoryQuestions = {};
     _lastCreatedAt = {};
@@ -33,7 +33,7 @@ class QuestionViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// 카테고리 상태 초기화
+  // catagory
   void resetCategoryState(String category) {
     _categoryQuestions[category] = [];
     _lastCreatedAt[category] = null;
@@ -41,7 +41,7 @@ class QuestionViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// 특정 질문 ID로 질문 가져오기
+  // certain question load by ID
   Future<void> fetchQuestionById(String questionId) async {
     try {
       final question = await _questionManager.fetchQuestionById(questionId);
@@ -57,7 +57,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 특정 카테고리의 질문 불러오기 (페이징 기반)
+  // category question load
   Future<List<QuestionData>> fetchQuestions({
     required String category,
   }) async {
@@ -95,7 +95,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 질문 추가
+  // question add
   Future<void> addQuestion(QuestionData questionData) async {
     try {
       if (questionData.questionId.isEmpty) {
@@ -112,7 +112,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 질문 업데이트
+  // question update
   Future<void> updateQuestion(QuestionData updatedQuestion) async {
     try {
       await _questionManager.updateQuestionData(updatedQuestion);
@@ -147,7 +147,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 특정 질문 설정
+  // certain question setting
   void setSelectedQuestion(QuestionData question) {
     _selectedQuestion = question;
     notifyListeners();

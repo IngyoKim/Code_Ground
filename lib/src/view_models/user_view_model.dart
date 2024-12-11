@@ -14,20 +14,20 @@ class UserViewModel with ChangeNotifier {
   UserData? get currentUserData => _currentUserData;
   UserData? get otherUserData => _otherUserData;
 
-  /// Hashes 'uid' to generate 12-digit unique friend code
+  // Hashes 'uid' to generate 12-digit unique friend code
   String generateFriendCode(String uid) {
     final bytes = utf8.encode(uid);
 
-    /// Converting UID to Bytes
+    // Converting UID to Bytes
     final hash = sha256.convert(bytes);
 
-    /// SHA-256 hashing
+    // SHA-256 hashing
     return hash.toString().substring(0, 12).toUpperCase();
 
-    /// Use Top 12 Characters Only
+    // Use Top 12 Characters Only
   }
 
-  /// Import data from the currently logged-in user
+  // Import data from the currently logged-in user
   Future<void> fetchCurrentUserData() async {
     try {
       final currentUserId = FirebaseAuth.instance.currentUser?.uid;
@@ -36,17 +36,17 @@ class UserViewModel with ChangeNotifier {
         throw Exception('No user is currently logged in.');
       }
 
-      /// Import current user data from database
+      // Import current user data from database
       _currentUserData = await _userManager.readUserData();
 
-      /// Initialize when no user data is available
+      // Initialize when no user data is available
       if (_currentUserData == null) {
         final User? firebaseUser = FirebaseAuth.instance.currentUser;
 
-        /// Create a new friend invitation code
+        // Create a new friend invitation code
         final generatedFriendCode = generateFriendCode(currentUserId);
 
-        /// Initialize user data
+        // Initialize user data
         _currentUserData = UserData(
           uid: currentUserId,
           name: firebaseUser?.displayName ?? 'Guest',
@@ -58,7 +58,7 @@ class UserViewModel with ChangeNotifier {
           friends: [],
         );
 
-        /// Save to database
+        // Save to database
         await _userManager.writeUserData(_currentUserData!);
       }
       notifyListeners();
@@ -69,7 +69,7 @@ class UserViewModel with ChangeNotifier {
     }
   }
 
-  /// Get user data with a specific ID (other users)
+  // Get user data with a specific ID (other users)
   Future<void> fetchOtherUserData(String uid) async {
     try {
       _otherUserData = await _userManager.readUserData(uid);
@@ -80,7 +80,7 @@ class UserViewModel with ChangeNotifier {
     }
   }
 
-  /// Nickname update
+  // Nickname update
   Future<void> updateNickname(String nickname) async {
     if (_currentUserData != null) {
       _currentUserData!.nickname = nickname;
@@ -91,17 +91,17 @@ class UserViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// How to add friends
+  // How to add friends
   Future<void> addFriend(String friendCode) async {
     try {
       if (_currentUserData == null) {
         throw Exception('Current user data is not loaded.');
       }
 
-      /// Import all user data
+      // Import all user data
       final users = await _userManager.fetchUsers();
 
-      /// Find the user with friendCode
+      // Find the user with friendCode
       final friendUser = users.firstWhere(
         (user) => user.friendCode == friendCode,
         orElse: () => throw Exception('No user found with this friend code.'),
@@ -112,7 +112,7 @@ class UserViewModel with ChangeNotifier {
         throw Exception('You cannot add yourself as a friend.');
       }
 
-      /// Add friendCode to Friends List
+      // Add friendCode to Friends List
       final friendMap = {
         'uid': friendUser.uid,
         'friendCode': friendUser.friendCode,
@@ -125,7 +125,7 @@ class UserViewModel with ChangeNotifier {
             .updateUserData({'friends': _currentUserData!.friends});
       }
 
-      /// Add the friendCode of the current user to the list of your friends
+      // Add the friendCode of the current user to the list of your friends
       final currentUserMap = {
         'uid': _currentUserData!.uid,
         'friendCode': _currentUserData!.friendCode,

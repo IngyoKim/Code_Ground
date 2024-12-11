@@ -13,6 +13,7 @@ class ProgressViewModel with ChangeNotifier {
   final List<ProgressData> _rankings = [];
   bool _isFetchingRankings = false;
   bool _hasMoreData = true;
+
   // ignore: unused_field
   int? _lastFetchedValue;
 
@@ -25,7 +26,7 @@ class ProgressViewModel with ChangeNotifier {
 
   get questionState => null;
 
-  /// Fetch progress data for a specific user or the current user if userId is null
+  // Fetch progress data for a specific user or the current user if userId is null
   Future<void> fetchProgressData([String? userId]) async {
     try {
       final currentUserId = userId ?? FirebaseAuth.instance.currentUser?.uid;
@@ -60,7 +61,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
-  /// Update progress data for a specific user or the current user if userId is null
+  // Update progress data for a specific user or the current user if userId is null
   Future<void> updateProgressData(Map<String, dynamic> updates,
       [String? userId]) async {
     try {
@@ -84,7 +85,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
-  /// 경험치에 따라 레벨을 업데이트하는 메서드
+  // Method to update level based on experience
   Future<void> _updateLevel() async {
     if (_progressData == null) return;
 
@@ -101,7 +102,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
-  /// Tier 및 Grade 업데이트
+  // Tier and Grade update
   void _updateTier() {
     if (_progressData == null) return;
 
@@ -122,7 +123,7 @@ class ProgressViewModel with ChangeNotifier {
       }
     }
 
-    // 현재 티어와 등급이 변경될 필요가 있을 때만 업데이트
+    //Update only when the current tier and rating need to be changed
     if (newTier != null && newGrade != null) {
       if (_progressData!.tier != newTier || _progressData!.grade != newGrade) {
         debugPrint('Updated tier to $newTier and grade to $newGrade');
@@ -134,7 +135,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
-  /// Fetch rankings by score or exp with pagination
+  // Fetch rankings by score or exp with pagination
   Future<void> fetchRankings({
     required String orderBy,
     int? lastValue,
@@ -155,7 +156,7 @@ class ProgressViewModel with ChangeNotifier {
       if (fetchedRankings.isEmpty) {
         _hasMoreData = false;
       } else {
-        // 마지막으로 가져온 `score` 값 업데이트
+        // lastest `score` value update
         _lastFetchedValue = fetchedRankings.last.score;
 
         _rankings.addAll(fetchedRankings);
@@ -170,7 +171,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
-  /// Reset the rankings and pagination state
+  // Reset the rankings and pagination state
   void resetRankings() {
     _rankings.clear();
     _hasMoreData = true;
