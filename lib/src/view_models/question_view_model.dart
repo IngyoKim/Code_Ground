@@ -23,7 +23,7 @@ class QuestionViewModel with ChangeNotifier {
   /// Import Selected Questions
   QuestionData? get selectedQuestion => _selectedQuestion;
 
-  /// 모든 질문 초기화
+  /// Initialize all questions
   void clearQuestions() {
     _categoryQuestions = {};
     _lastCreatedAt = {};
