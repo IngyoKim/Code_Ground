@@ -21,12 +21,12 @@ class RewardedAdService extends ChangeNotifier {
         onAdLoaded: (RewardedAd ad) {
           _rewardedAd = ad;
           _isLoading = false;
-          notifyListeners(); // 상태 변경 알림
+          notifyListeners();
           debugPrint('[RewardedAdService] RewardedAd loaded');
         },
         onAdFailedToLoad: (LoadAdError error) {
           _isLoading = false;
-          notifyListeners(); // 상태 변경 알림
+          notifyListeners();
           debugPrint('[RewardedAdService] RewardedAd failed to load: $error');
         },
       ),
@@ -49,6 +49,7 @@ class RewardedAdService extends ChangeNotifier {
     }
   }
 
+  @override
   void dispose() {
     _rewardedAd?.dispose();
     super.dispose();
