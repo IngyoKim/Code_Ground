@@ -33,7 +33,7 @@ class QuestionViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// catagory init
+  /// catagory
   void resetCategoryState(String category) {
     _categoryQuestions[category] = [];
     _lastCreatedAt[category] = null;
@@ -57,7 +57,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 특정 카테고리의 질문 불러오기 (페이징 기반)
+  /// 특정 카테고리의 질문 불러오기
   Future<List<QuestionData>> fetchQuestions({
     required String category,
   }) async {
