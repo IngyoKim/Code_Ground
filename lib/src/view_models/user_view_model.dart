@@ -98,7 +98,7 @@ class UserViewModel with ChangeNotifier {
         throw Exception('Current user data is not loaded.');
       }
 
-      /// 전체 사용자 데이터를 가져옴
+      /// Import all user data
       final users = await _userManager.fetchUsers();
 
       /// friendCode로 사용자 찾기
