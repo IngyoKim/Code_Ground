@@ -39,6 +39,14 @@
           }
         },
         {
+          "client_id": "278986162898-tvoshhke9l28hh0t9rgk5tqof404t64k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.oss.code_ground",
+            "certificate_hash": "4febc62355c831ce4b747989d27b97750ba121f4"
+          }
+        },
+        {
           "client_id": "278986162898-u33u062uq79bq9fmi7m4q7dl1065m5qr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
