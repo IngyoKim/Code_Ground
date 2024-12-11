@@ -13,7 +13,8 @@ class ProgressViewModel with ChangeNotifier {
   final List<ProgressData> _rankings = [];
   bool _isFetchingRankings = false;
   bool _hasMoreData = true;
-  // ignore: unused_field
+
+  /// ignore: unused_field
   int? _lastFetchedValue;
 
   ProgressData? get progressData => _progressData;
