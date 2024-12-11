@@ -1,8 +1,11 @@
-import 'package:code_ground/src/pages/questions/add_question_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:code_ground/src/utils/permission_utils.dart';
+import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
+import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/pages/questions/question_list_page.dart';
+import 'package:code_ground/src/pages/questions/add_question_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -32,16 +35,16 @@ class HomePage extends StatelessWidget {
                 children: [
                   Image.asset(
                     'assets/logo/code_ground_logo.png',
-                    height: 80,
+                    height: 100,
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(width: 20),
                   const Text(
-                    'CODE GROUND',
+                    'CODEGROUND',
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      fontSize: 30,
+                      fontSize: 38,
                     ),
                   ),
                 ],
@@ -49,7 +52,7 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // "Select a Category" - Fixed position
+            // "Select a Category" with Fixed Add Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -57,28 +60,40 @@ class HomePage extends StatelessWidget {
                   const Text(
                     'Select a Category',
                     style: TextStyle(
-                      fontSize: 26,
+                      fontSize: 25,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Expanded(
-                    child: Container(),
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.add_rounded,
-                      fill: 1,
-                      size: 35,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AddQuestionPage(),
+                  const Spacer(),
+                  // 고정된 크기의 버튼
+                  Consumer<UserViewModel>(
+                    builder: (context, userViewModel, child) {
+                      final role = userViewModel.currentUserData?.role ?? '';
+                      return SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: IconButton(
+                          icon: Icon(
+                            RolePermissions.canPerformAction(role, 'create')
+                                ? Icons.add_rounded
+                                : null, // 기본 아이콘 제공
+                          ),
+                          onPressed:
+                              RolePermissions.canPerformAction(role, 'create')
+                                  ? () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AddQuestionPage(),
+                                        ),
+                                      );
+                                    }
+                                  : null, // 관리자가 아닐 경우 비활성화
                         ),
                       );
                     },
-                  )
+                  ),
                 ],
               ),
             ),
@@ -99,9 +114,23 @@ class HomePage extends StatelessWidget {
                   ];
 
                   return GestureDetector(
-                    onTap: () {
-                      Provider.of<CategoryViewModel>(context, listen: false)
-                          .selectCategory(category['name']);
+                    onTap: () async {
+                      final categoryViewModel = Provider.of<CategoryViewModel>(
+                          context,
+                          listen: false);
+                      final questionViewModel = Provider.of<QuestionViewModel>(
+                          context,
+                          listen: false);
+
+                      // 카테고리 선택 및 상태 초기화
+                      categoryViewModel.selectCategory(
+                          category['name'], questionViewModel);
+
+                      // 새로운 질문 데이터를 로드
+                      await questionViewModel.fetchQuestions(
+                          category: category['name']);
+
+                      // 질문 페이지로 이동
                       Navigator.push(
                         context,
                         MaterialPageRoute(

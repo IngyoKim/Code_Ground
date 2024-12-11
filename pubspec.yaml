@@ -29,30 +29,35 @@ dependencies:
   cloud_firestore: ^5.5.0 # Firebase Cloud Firestore API.
   firebase_database: ^11.1.5 # Firebase Realtime Database API.
 
-  webview_flutter: ^4.9.0 # WebView support for embedding web content.
+  webview_flutter: ^4.9.0
 
-  http: ^1.2.2 # HTTP client for making network requests.
-  provider: ^6.1.2  # State management solution using the Provider package.
+  http: ^1.2.2 # http 통신 기능 추가
+  provider: ^6.1.2  # 프로바이더 추가
 
-  fluttertoast: ^8.0.9 # Package for displaying toast messages.
-  cupertino_icons: ^1.0.8 # Icons package for iOS-style components.
-  shared_preferences: ^2.3.2 # Local storage for simple key-value data.
-  intl: ^0.19.0 # Internationalization and localization utilities.
-  collection: ^1.18.0 # Collection utilities for Dart.
-  crypto: ^3.0.6
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  fluttertoast: ^8.0.9 # 토스트 위젯 추가
+  cupertino_icons: ^1.0.8 # IOS 모양 위젯 추가
+  shared_preferences: ^2.3.2
+  google_sign_in: ^6.2.2
+  intl: ^0.19.0
+  collection: ^1.18.0
 
-  flutter_local_notifications:
-  permission_handler:
-  timezone:
-
-# Development-only dependencies used for testing and linting.
 dev_dependencies:
-  flutter_test: 
-    sdk: flutter # Flutter's test framework for unit and widget testing.
+  flutter_test:
+    sdk: flutter
 
-  flutter_lints: ^5.0.0 # A collection of lints to encourage good coding practices.
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^5.0.0
 
-# Flutter-specific configurations for assets and fonts.
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
 flutter:
   uses-material-design: true # Enables the use of Material Design icons.
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/view_models/login_view_model.dart';
@@ -22,7 +21,7 @@ void showLogoutDialog(BuildContext context) {
           ),
         ),
         content: const Text(
-          '로그아웃하시면 앱이 종료됩니다.\n계속 진행하시겠어요?',
+          '정말 로그아웃하시겠습니까?',
           style: TextStyle(fontSize: 16),
         ),
         actions: <Widget>[
@@ -48,9 +47,7 @@ void showLogoutDialog(BuildContext context) {
               Navigator.of(context).pop(true);
 
               /// Close dialog on "Confirm"
-              SystemNavigator.pop();
-
-              /// Close the app
+              //SystemNavigator.pop();
             },
             child: const Text(
               '확인',
