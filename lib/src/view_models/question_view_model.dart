@@ -23,7 +23,7 @@ class QuestionViewModel with ChangeNotifier {
   /// Import Selected Questions
   QuestionData? get selectedQuestion => _selectedQuestion;
 
-  // Initialize all questions
+  /// Iniialize all questions
   void clearQuestions() {
     _categoryQuestions = {};
     _lastCreatedAt = {};
@@ -33,7 +33,7 @@ class QuestionViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // catagory
+  /// catagory
   void resetCategoryState(String category) {
     _categoryQuestions[category] = [];
     _lastCreatedAt[category] = null;
@@ -41,7 +41,7 @@ class QuestionViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// 특정 질문 ID로 질문 가져오기
+  /// certain question load by ID
   Future<void> fetchQuestionById(String questionId) async {
     try {
       final question = await _questionManager.fetchQuestionById(questionId);
@@ -57,7 +57,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 특정 카테고리의 question 불러오기
+  /// category question load
   Future<List<QuestionData>> fetchQuestions({
     required String category,
   }) async {
@@ -112,7 +112,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  // question update
+  /// question update
   Future<void> updateQuestion(QuestionData updatedQuestion) async {
     try {
       await _questionManager.updateQuestionData(updatedQuestion);
