@@ -21,10 +21,10 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+// Save the selected login type to preferences.
   Future<void> setLoginType(SocialLogin socialLogin) async {
     _socialLogin = socialLogin;
 
-    // Save the selected login type to preferences.
     await _loginPreference.setLoginType(socialLogin);
     notifyListeners();
   }
@@ -53,4 +53,3 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 }
-//login version
