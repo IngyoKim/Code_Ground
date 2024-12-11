@@ -84,7 +84,7 @@ class ProgressViewModel with ChangeNotifier {
     }
   }
 
-  /// 경험치에 따라 레벨을 업데이트하는 메서드
+  /// Method to update level based on experience
   Future<void> _updateLevel() async {
     if (_progressData == null) return;
 
