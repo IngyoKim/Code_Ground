@@ -91,7 +91,7 @@ class UserViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// How to add friends
+  // How to add friends
   Future<void> addFriend(String friendCode) async {
     try {
       if (_currentUserData == null) {
@@ -125,7 +125,7 @@ class UserViewModel with ChangeNotifier {
             .updateUserData({'friends': _currentUserData!.friends});
       }
 
-      // Add the friendCode of the current user to the list of your friends
+      /// Add the friendCode of the current user to the list of your friends
       final currentUserMap = {
         'uid': _currentUserData!.uid,
         'friendCode': _currentUserData!.friendCode,
