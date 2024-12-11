@@ -17,7 +17,7 @@ class QuestionViewModel with ChangeNotifier {
   /// Loading Status
   bool get isFetching => _isFetching;
 
-  /// 더 가져올 데이터가 있는지 여부
+  /// Do you have more data to import
   bool get hasMoreData => _hasMoreData;
 
   /// 선택된 질문 가져오기
