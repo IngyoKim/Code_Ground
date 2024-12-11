@@ -33,7 +33,7 @@ class QuestionViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// 카테고리 상태 초기화
+  /// catagory init
   void resetCategoryState(String category) {
     _categoryQuestions[category] = [];
     _lastCreatedAt[category] = null;
