@@ -112,7 +112,7 @@ class QuestionViewModel with ChangeNotifier {
     }
   }
 
-  /// 질문 업데이트
+  /// question update
   Future<void> updateQuestion(QuestionData updatedQuestion) async {
     try {
       await _questionManager.updateQuestionData(updatedQuestion);
