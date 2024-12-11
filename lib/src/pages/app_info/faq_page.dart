@@ -70,7 +70,8 @@ class _FAQPageState extends State<FAQPage> {
                     ),
                   ],
                 ),
-                initiallyExpanded: _isExpanded[index], // 기존 상태값에 맞춰서 열림/닫힘 설정
+                initiallyExpanded: _isExpanded[
+                    index], // Set Open/Close to Existing Status Values
                 onExpansionChanged: (bool expanded) {
                   setState(() {
                     _isExpanded[index] = expanded; // 열림/닫힘 상태 갱신
