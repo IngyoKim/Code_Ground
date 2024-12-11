@@ -39,7 +39,7 @@ class UserViewModel with ChangeNotifier {
       /// Import current user data from database
       _currentUserData = await _userManager.readUserData();
 
-      // 유저 데이터가 없을 경우 초기화
+      /// Initialize when no user data is available
       if (_currentUserData == null) {
         final User? firebaseUser = FirebaseAuth.instance.currentUser;
 
