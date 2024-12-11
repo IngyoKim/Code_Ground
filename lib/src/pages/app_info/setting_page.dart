@@ -81,7 +81,7 @@ class _SettingPageState extends State<SettingPage> {
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: Text(
-                'Role: ${widget.role}',
+                'admin 권한: ${widget.role}',
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
@@ -89,7 +89,7 @@ class _SettingPageState extends State<SettingPage> {
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: Text(
-                'FriendCode: ${widget.friendData}',
+                '친구 코드: ${widget.friendData}',
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
@@ -112,16 +112,6 @@ class _SettingPageState extends State<SettingPage> {
                 });
               },
             ),
-          ),
-          const Divider(),
-          ListTile(
-            title: Text(
-              'Insert Friends Code',
-              style: const TextStyle(
-                fontSize: 20.0,
-              ),
-            ),
-            onTap: () {},
           ),
           const Divider(),
         ],
