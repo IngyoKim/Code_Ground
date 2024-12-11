@@ -74,7 +74,7 @@ class _FAQPageState extends State<FAQPage> {
                     index], // Set Open/Close to Existing Status Values
                 onExpansionChanged: (bool expanded) {
                   setState(() {
-                    _isExpanded[index] = expanded; // 열림/닫힘 상태 갱신
+                    _isExpanded[index] = expanded; // Update Open/Closed Status
                   });
                 },
                 children: [
