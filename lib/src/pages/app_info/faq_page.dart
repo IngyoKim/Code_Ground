@@ -37,7 +37,7 @@ class _FAQPageState extends State<FAQPage> {
     },
   ];
 
-  // FAQ 목록에 대한 선택 상태를 추적
+  // Track selection status for FAQ lists
   final List<bool> _isExpanded = List.generate(5, (_) => false);
 
   @override
