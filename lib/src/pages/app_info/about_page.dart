@@ -9,7 +9,7 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
-  // 5명의 개발자 정보를 리스트로 관리
+  // Manage 5 developer information as a list
   final List<Map<String, String>> developers = [
     {
       'name': '김인교',
