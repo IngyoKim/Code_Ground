@@ -79,7 +79,6 @@ class FlutterLocalNotification {
         showNotification();
       }
 
-      // 1분 후에 다시 체크
       Future.delayed(const Duration(seconds: 60), checkTime);
     }
 
