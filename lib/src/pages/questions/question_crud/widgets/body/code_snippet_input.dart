@@ -56,7 +56,13 @@ class CodeSnippetInput extends StatelessWidget {
               ToastMessage.show('Snippet cannot be empty.');
             }
           },
-          child: const Text('Add Snippet'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey[200],
+          ),
+          child: const Text(
+            'Add Snippet',
+            style: TextStyle(color: Colors.black),
+          ),
         ),
         const SizedBox(height: 16),
         if (codeSnippets.isNotEmpty) ...[
