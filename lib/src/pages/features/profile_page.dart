@@ -368,7 +368,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               fit: BoxFit.scaleDown,
                               child: Text(
                                 'Solved Questions',
-                                style: TextStyle(fontSize: 16),
+                                style: TextStyle(fontSize: 12),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -395,7 +395,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               fit: BoxFit.scaleDown,
                               child: Text(
                                 'Failed Questions',
-                                style: TextStyle(fontSize: 16),
+                                style: TextStyle(fontSize: 12),
                                 textAlign: TextAlign.center,
                               ),
                             ),
