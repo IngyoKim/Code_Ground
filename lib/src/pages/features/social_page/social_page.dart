@@ -15,8 +15,10 @@ class SocialPage extends StatelessWidget {
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           title: const Text("Social"),
-          toolbarHeight: 40,
           bottom: const TabBar(
+            indicatorColor: Colors.black, // 선택된 탭 아래 인디케이터 색상
+            labelColor: Colors.black, // 선택된 탭의 글자 색상
+            unselectedLabelColor: Colors.grey, // 선택되지 않은 탭의 글자 색상 (선택사항)
             tabs: [
               Tab(text: "Ranking"),
               Tab(text: "Friends"),

@@ -252,11 +252,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               fit: BoxFit.scaleDown,
                               child: Text(
                                 'Solved Questions',
-                                style: TextStyle(fontSize: 12),
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.black),
                                 textAlign: TextAlign.center,
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Colors.grey[200], // 버튼 바탕색: 옅은 회색
                               padding:
                                   const EdgeInsets.symmetric(vertical: 12.0),
                             ),
@@ -279,11 +282,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               fit: BoxFit.scaleDown,
                               child: Text(
                                 'Failed Questions',
-                                style: TextStyle(fontSize: 12),
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.black),
                                 textAlign: TextAlign.center,
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Colors.grey[200], // 버튼 바탕색: 옅은 회색
                               padding:
                                   const EdgeInsets.symmetric(vertical: 12.0),
                             ),

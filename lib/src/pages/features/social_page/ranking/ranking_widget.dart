@@ -63,7 +63,7 @@ class _RankingWidgetState extends State<RankingWidget> {
           SizedBox(
             width: 40,
             child: CircleAvatar(
-              backgroundColor: Colors.orange.shade300,
+              backgroundColor: _getRankColor(widget.rank),
               child: Text(
                 '#${widget.rank}',
                 style: const TextStyle(
@@ -112,5 +112,19 @@ class _RankingWidgetState extends State<RankingWidget> {
         ],
       ),
     );
+  }
+
+  // 등수에 따라 색상을 반환
+  Color _getRankColor(int rank) {
+    switch (rank) {
+      case 1:
+        return Colors.amber; // 금색
+      case 2:
+        return Colors.grey; // 은색
+      case 3:
+        return Colors.brown; // 동색
+      default:
+        return const Color.fromARGB(255, 89, 89, 89); // 기본 색상
+    }
   }
 }

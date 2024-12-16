@@ -144,8 +144,15 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _handleSubmit,
-              child: const Text('Add Friend'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[200],
+              ),
+              child: const Text(
+                'Add Friend',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
+
             const SizedBox(height: 16.0),
             Expanded(
               child: friends.isEmpty
