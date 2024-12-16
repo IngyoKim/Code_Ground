@@ -15,7 +15,6 @@ class SocialPage extends StatelessWidget {
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           title: const Text("Social"),
-          toolbarHeight: 40,
           bottom: const TabBar(
             tabs: [
               Tab(text: "Ranking"),
