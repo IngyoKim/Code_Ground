@@ -32,7 +32,6 @@ class _ProfilePageState extends State<ProfilePage> {
         TextEditingController(text: userData?.nickname ?? 'Guest');
   }
 
-  /// Application Data를 표시하는 BottomSheet
   void _showApplicationData(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -120,6 +119,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   FlutterLocalNotification.printCurrentTime();
                 },
               ),
+              ListTile(
+                leading: const Icon(Icons.power_off),
+                title: const Text('Logout'),
+                onTap: () {
+                  Navigator.pop(context);
+                  showLogoutDialog(context);
+                },
+              ),
             ],
           ),
         );
@@ -144,37 +151,6 @@ class _ProfilePageState extends State<ProfilePage> {
             (nextLevel.requiredExp - currentLevel.requiredExp)
         : 0;
 
-    final List<Map<String, dynamic>> learningMenuItems = [
-      {
-        'icon': Icons.check_circle,
-        'iconColor': Colors.green.shade500,
-        'text': 'Solved Questions',
-        'color': Colors.grey.shade300,
-        'onTap': () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const QuestionStatePage(state: 'successed'),
-            ),
-          );
-        },
-      },
-      {
-        'icon': Icons.error,
-        'iconColor': Colors.red,
-        'text': 'Failed Questions',
-        'color': Colors.grey.shade300,
-        'onTap': () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const QuestionStatePage(state: 'failed'),
-            ),
-          );
-        },
-      },
-    ];
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -191,144 +167,199 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-            /// User profile card
-            /// User profile card
-            Card(
-              color: Colors.grey.shade100, // 밝은 회색 배경 설정
-              elevation: 2,
-              child: ListTile(
-                leading: ClipOval(
-                  child: (userData?.photoUrl != null &&
-                          userData!.photoUrl.isNotEmpty)
+            // 파란색 상단 영역
+            Container(
+              color: Colors.blue.shade100,
+              height: 200,
+              child: Center(
+                child: ClipOval(
+                  child: userData?.photoUrl != null &&
+                          userData!.photoUrl.isNotEmpty
                       ? Image.network(
                           userData.photoUrl,
-                          width: 50,
-                          height: 50,
+                          width: 100,
+                          height: 100,
                           fit: BoxFit.cover,
                         )
-                      : const Icon(Icons.person, color: Colors.grey, size: 50),
-                ),
-                title: _isEditingNickname
-                    ? TextField(
-                        controller: _nicknameController,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter new nickname',
-                        ),
-                      )
-                    : Text(
-                        userData?.nickname ?? 'Guest',
-                        style: const TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold),
-                      ),
-                subtitle: Text(userData?.name ?? 'Enter your name'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (!_isEditingNickname)
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                          setState(() {
-                            _nicknameController.text =
-                                userData?.nickname ?? 'Guest'; // 현재 닉네임 설정
-                            _isEditingNickname = true;
-                          });
-                        },
-                      ),
-                    if (_isEditingNickname)
-                      IconButton(
-                        icon: const Icon(Icons.check),
-                        onPressed: () async {
-                          if (_nicknameController.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Nickname cannot be empty!')),
-                            );
-                            return;
-                          }
-
-                          await userViewModel
-                              .updateNickname(_nicknameController.text);
-                          setState(() {
-                            _isEditingNickname = false;
-                          });
-                        },
-                      ),
-                    ElevatedButton(
-                      onPressed: () {
-                        showLogoutDialog(context);
-                      },
-                      child: const Text("Logout"),
-                    ),
-                  ],
+                      : const Icon(Icons.person,
+                          size: 100, color: Colors.white),
                 ),
               ),
             ),
 
-            /// Progress card
+            // 하얀색 카드 영역
             Card(
-              color: Colors.grey.shade100,
-              elevation: 2,
+              margin: const EdgeInsets.all(16.0),
+              color: Colors.white,
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               child: Padding(
-                padding: const EdgeInsets.all(15.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Image.asset(
-                      getTierImage(progressData?.tier),
-                      width: 300,
-                      height: 300,
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                        "${progressData?.tier ?? 'Bronze'} ${progressData?.grade ?? 'V'}"),
-                    Text(
-                        "Lv.${currentLevel.level} | ${progressData?.score ?? 0} score"),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20.0),
-                      child: LinearProgressIndicator(
-                        value: progress.toDouble(),
-                        backgroundColor: Colors.grey[300],
-                        valueColor:
-                            const AlwaysStoppedAnimation<Color>(Colors.blue),
-                        minHeight: 8.0,
-                      ),
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text("${progressData?.exp ?? 0}/${nextLevel.requiredExp}"),
-                  ],
-                ),
-              ),
-            ),
-
-            /// Learning menu items
-            const SizedBox(height: 20),
-            ...learningMenuItems.map(
-              (item) => Column(
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: item['color'],
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15.0, horizontal: 20.0),
-                    ),
-                    onPressed: item['onTap'],
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    // 닉네임과 티어 정보
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(item['icon'], color: item['iconColor']),
-                        const SizedBox(width: 10),
-                        Text(
-                          item['text'],
-                          style: const TextStyle(color: Colors.black),
+                        // 닉네임과 수정 버튼
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                _isEditingNickname
+                                    ? SizedBox(
+                                        width: 150,
+                                        child: TextField(
+                                          controller: _nicknameController,
+                                          decoration: const InputDecoration(
+                                            hintText: 'Enter new nickname',
+                                          ),
+                                        ),
+                                      )
+                                    : Text(
+                                        userData?.nickname ?? 'Guest',
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                const SizedBox(width: 8), // 간격 추가
+                                if (!_isEditingNickname)
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () {
+                                      setState(() {
+                                        _nicknameController.text =
+                                            userData?.nickname ?? 'Guest';
+                                        _isEditingNickname = true;
+                                      });
+                                    },
+                                  ),
+                                if (_isEditingNickname)
+                                  IconButton(
+                                    icon: const Icon(Icons.check),
+                                    onPressed: () async {
+                                      if (_nicknameController.text.isNotEmpty) {
+                                        await userViewModel.updateNickname(
+                                            _nicknameController.text);
+                                        setState(
+                                            () => _isEditingNickname = false);
+                                      }
+                                    },
+                                  ),
+                              ],
+                            ),
+                            Text(userData?.name ?? 'Enter your name'),
+                          ],
+                        ),
+
+                        // 티어 이미지와 정보
+                        Column(
+                          children: [
+                            Image.asset(
+                              getTierImage(progressData?.tier),
+                              width: 80,
+                              height: 80,
+                            ),
+                            Text(
+                                "${progressData?.tier ?? 'Bronze'} ${progressData?.grade ?? 'V'}"),
+                          ],
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 10.0),
-                ],
+
+                    const SizedBox(height: 16),
+
+                    // 레벨, 스코어, 진행 상태바
+                    Column(
+                      children: [
+                        Text(
+                            "Lv.${currentLevel.level} | ${progressData?.score ?? 0} score"),
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: LinearProgressIndicator(
+                            value: progress.toDouble(),
+                            backgroundColor: Colors.grey[300],
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                Colors.blue),
+                            minHeight: 8,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                            "${progressData?.exp ?? 0}/${nextLevel.requiredExp} EXP"),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Solved Questions와 Failed Questions 버튼을 수평으로 배치
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const QuestionStatePage(
+                                      state: 'successed'),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.check_circle,
+                                color: Colors.green),
+                            label: const FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'Solved Questions',
+                                style: TextStyle(fontSize: 16),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12.0),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10), // 버튼 사이 간격
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const QuestionStatePage(state: 'failed'),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.error, color: Colors.red),
+                            label: const FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'Failed Questions',
+                                style: TextStyle(fontSize: 16),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12.0),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
