@@ -146,10 +146,18 @@ class _ProfilePageState extends State<ProfilePage> {
     final currentLevel = getCurrentLevel(levels, progressData?.exp ?? 0);
     final nextLevel = getNextLevel(levels, progressData?.exp ?? 0);
 
-    final progress = progressData != null
+    double safeProgress(double value) {
+      if (value.isNaN || value.isInfinite) {
+        return 0.0;
+      }
+      return value;
+    }
+
+    final progress = safeProgress(progressData != null &&
+            nextLevel.requiredExp != currentLevel.requiredExp
         ? (progressData.exp - currentLevel.requiredExp) /
             (nextLevel.requiredExp - currentLevel.requiredExp)
-        : 0;
+        : 0);
 
     return Scaffold(
       backgroundColor: Colors.white,
