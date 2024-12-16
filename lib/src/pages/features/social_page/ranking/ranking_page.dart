@@ -106,23 +106,25 @@ class _RankingPageState extends State<RankingPage> {
     final rankings = _rankingListUtil.items;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Ranking System")),
       body: _isInitialLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              controller: _scrollController,
-              itemCount: rankings.length + 1,
-              itemBuilder: (context, index) {
-                if (index == rankings.length) {
-                  return LoadingIndicator(isFetching: _isFetchingMore);
-                }
+          : Padding(
+              padding: const EdgeInsets.only(top: 8.0), // 상단에 8픽셀 간격 추가
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: rankings.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == rankings.length) {
+                    return LoadingIndicator(isFetching: _isFetchingMore);
+                  }
 
-                final ranking = rankings[index];
-                return RankingWidget(
-                  rankingData: ranking,
-                  rank: index + 1,
-                );
-              },
+                  final ranking = rankings[index];
+                  return RankingWidget(
+                    rankingData: ranking,
+                    rank: index + 1,
+                  );
+                },
+              ),
             ),
     );
   }
