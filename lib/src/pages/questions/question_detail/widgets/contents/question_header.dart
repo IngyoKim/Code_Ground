@@ -22,11 +22,7 @@ class _QuestionHeaderState extends State<QuestionHeader> {
   bool _hasWatchedAd = false; // 광고 시청 상태
 
   void _fetchHint(RewardedAdService rewardedAdService) async {
-    if (_hasWatchedAd) {
-      // 이미 광고를 본 상태라면 바로 힌트 표시
-      ToastMessage.show('힌트를 확인하세요!');
-      return;
-    }
+    if (_hasWatchedAd) return; // 광고를 이미 봤으면 동작하지 않음
 
     setState(() => _isHintLoading = true); // 로딩 시작
 
@@ -34,7 +30,7 @@ class _QuestionHeaderState extends State<QuestionHeader> {
       if (rewardedAdService.isAdReady) {
         rewardedAdService.showRewardedAd(onRewardEarned: () {
           setState(() => _hasWatchedAd = true); // 광고 시청 완료 상태 설정
-          ToastMessage.show('힌트를 확인하세요!');
+          ToastMessage.show('광고 시청 완료! 힌트를 확인하세요.');
         });
       } else {
         ToastMessage.show('광고가 아직 준비되지 않았습니다.');
@@ -45,6 +41,24 @@ class _QuestionHeaderState extends State<QuestionHeader> {
     } finally {
       setState(() => _isHintLoading = false); // 로딩 종료
     }
+  }
+
+  void _showHintDialog(String hint) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('힌트'),
+          content: Text(hint),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('닫기'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -71,7 +85,13 @@ class _QuestionHeaderState extends State<QuestionHeader> {
                   ElevatedButton(
                     onPressed: _isHintLoading
                         ? null
-                        : () => _fetchHint(rewardedAdService),
+                        : () {
+                            if (_hasWatchedAd) {
+                              _showHintDialog(widget.question.hint!);
+                            } else {
+                              _fetchHint(rewardedAdService);
+                            }
+                          },
                     child: _isHintLoading
                         ? const SizedBox(
                             width: 16,
