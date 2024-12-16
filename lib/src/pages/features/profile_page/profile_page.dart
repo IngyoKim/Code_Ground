@@ -1,19 +1,14 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:code_ground/src/pages/app_info/setting_page.dart';
-import 'package:code_ground/src/pages/app_info/about_page.dart';
-import 'package:code_ground/src/pages/app_info/help_page.dart';
-import 'package:code_ground/src/pages/app_info/faq_page.dart';
-import 'package:code_ground/src/pages/questions/question_state_page.dart';
 
 import 'package:code_ground/src/models/level_data.dart';
 import 'package:code_ground/src/utils/gettierimage.dart';
-import 'package:code_ground/src/components/logout_dialog.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
-import 'package:code_ground/src/services/messaging/notifications.dart';
+
+import 'package:code_ground/src/pages/questions/question_state_page.dart';
+import 'package:code_ground/src/pages/features/profile_page/open_app_info.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -32,108 +27,6 @@ class _ProfilePageState extends State<ProfilePage> {
     final userData = context.read<UserViewModel>().currentUserData;
     _nicknameController =
         TextEditingController(text: userData?.nickname ?? 'Guest');
-  }
-
-  void _showApplicationData(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Application Data",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              ListTile(
-                leading: const Icon(Icons.settings),
-                title: const Text('Setting'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SettingPage(
-                        initialNickname: '',
-                        role: context
-                                .read<UserViewModel>()
-                                .currentUserData
-                                ?.role ??
-                            'member',
-                        nickname: context
-                                .read<UserViewModel>()
-                                .currentUserData
-                                ?.nickname ??
-                            'Guest',
-                        userData: context.read<UserViewModel>().currentUserData,
-                        friendData: context
-                                .read<UserViewModel>()
-                                .currentUserData
-                                ?.friendCode ??
-                            '',
-                      ),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.info),
-                title: const Text('About'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const AboutPage()));
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.help),
-                title: const Text('Help'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const HelpPage()));
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.question_answer),
-                title: const Text('FAQ'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const FAQPage()));
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.notifications),
-                title: const Text('Notifications Test'),
-                onTap: () {
-                  Navigator.pop(context);
-                  FlutterLocalNotification.printCurrentTime();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.power_off),
-                title: const Text('Logout'),
-                onTap: () {
-                  Navigator.pop(context);
-                  showLogoutDialog(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -171,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              _showApplicationData(context);
+              openAppInfo(context);
             },
           ),
         ],
@@ -179,8 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // 파란색 상단 영역
-            Container(
+            SizedBox(
               height: 200,
               child: Stack(
                 fit: StackFit.expand,
@@ -218,8 +110,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
-
-            // 하얀색 카드 영역
             Card(
               margin: const EdgeInsets.all(16.0),
               color: Colors.white,
@@ -230,11 +120,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    // 닉네임과 티어 정보
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // 닉네임과 수정 버튼
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -301,10 +189,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 16),
-
-                    // 레벨, 스코어, 진행 상태바
                     Column(
                       children: [
                         Text(
@@ -325,7 +210,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             "${progressData?.exp ?? 0}/${nextLevel.requiredExp} EXP"),
                       ],
                     ),
-
                     const SizedBox(height: 16),
                   ],
                 ),

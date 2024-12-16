@@ -38,6 +38,7 @@ class RewardedAdService extends ChangeNotifier {
     if (_rewardedAd != null) {
       _rewardedAd!.show(
         onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+          // 사용자가 광고 시청을 완료하면 실행할 로직
           onRewardEarned();
         },
       );

@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Flexible(
-                    flex: 2, // 이미지가 더 많은 공간을 차지하도록 설정
+                    flex: 2,
                     child: Image.asset(
                       'assets/logo/code_ground_logo.png',
                       height: 100,
@@ -43,9 +43,9 @@ class HomePage extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   Flexible(
-                    flex: 3, // 텍스트가 남은 공간을 차지
+                    flex: 3,
                     child: FittedBox(
-                      fit: BoxFit.scaleDown, // 텍스트 크기가 넘치지 않도록 조정
+                      fit: BoxFit.scaleDown,
                       child: const Text(
                         'CODEGROUND',
                         style: TextStyle(
@@ -74,7 +74,6 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  // 고정된 크기의 버튼
                   Consumer<UserViewModel>(
                     builder: (context, userViewModel, child) {
                       final role = userViewModel.currentUserData?.role ?? '';
@@ -85,7 +84,7 @@ class HomePage extends StatelessWidget {
                           icon: Icon(
                             RolePermissions.canPerformAction(role, 'create')
                                 ? Icons.add_rounded
-                                : null, // 기본 아이콘 제공
+                                : null,
                           ),
                           onPressed:
                               RolePermissions.canPerformAction(role, 'create')
@@ -98,7 +97,7 @@ class HomePage extends StatelessWidget {
                                         ),
                                       );
                                     }
-                                  : null, // 관리자가 아닐 경우 비활성화
+                                  : null,
                         ),
                       );
                     },

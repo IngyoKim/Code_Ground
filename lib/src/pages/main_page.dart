@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/pages/features/social_page/social_page.dart';
 import 'package:code_ground/src/pages/features/home_page.dart';
-import 'package:code_ground/src/pages/features/profile_page.dart';
+import 'package:code_ground/src/pages/features/profile_page/profile_page.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
 

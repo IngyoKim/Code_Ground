@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   const SizedBox(height: 50),
-                  const LoginFooter(), // Footer 추가
+                  const LoginFooter(),
                 ],
               ),
       ),

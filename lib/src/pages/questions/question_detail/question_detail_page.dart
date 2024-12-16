@@ -1,4 +1,3 @@
-import 'package:code_ground/src/view_models/progress_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,6 +8,7 @@ import 'package:code_ground/src/pages/questions/question_crud/edit_question_page
 
 import 'package:code_ground/src/models/user_data.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
+import 'package:code_ground/src/view_models/progress_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 
 import 'package:code_ground/src/components/loading_indicator.dart';
