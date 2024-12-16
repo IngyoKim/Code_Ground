@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:code_ground/src/pages/app_info/setting_page.dart';
@@ -179,21 +181,41 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             // 파란색 상단 영역
             Container(
-              color: Colors.blue.shade100,
               height: 200,
-              child: Center(
-                child: ClipOval(
-                  child: userData?.photoUrl != null &&
-                          userData!.photoUrl.isNotEmpty
-                      ? Image.network(
-                          userData.photoUrl,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        )
-                      : const Icon(Icons.person,
-                          size: 100, color: Colors.white),
-                ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (userData?.photoUrl != null &&
+                      userData!.photoUrl.isNotEmpty)
+                    Image.network(
+                      userData.photoUrl,
+                      fit: BoxFit.cover,
+                    )
+                  else
+                    Container(color: Colors.blue.shade100),
+                  Positioned.fill(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        color: Colors.black.withOpacity(0.2),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: ClipOval(
+                      child: userData?.photoUrl != null &&
+                              userData!.photoUrl.isNotEmpty
+                          ? Image.network(
+                              userData.photoUrl,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            )
+                          : const Icon(Icons.person,
+                              size: 100, color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
             ),
 
