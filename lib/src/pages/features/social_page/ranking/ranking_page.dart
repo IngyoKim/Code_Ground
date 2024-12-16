@@ -106,6 +106,7 @@ class _RankingPageState extends State<RankingPage> {
     final rankings = _rankingListUtil.items;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: _isInitialLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(

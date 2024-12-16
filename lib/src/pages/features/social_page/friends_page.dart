@@ -108,7 +108,10 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
     final friends = userViewModel.currentUserData?.friends ?? [];
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         title: const Text('Add Friend'),
       ),
       body: Padding(
