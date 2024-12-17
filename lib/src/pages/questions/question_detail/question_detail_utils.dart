@@ -106,20 +106,22 @@ class QuestionDetailUtil {
       int expGain = tier.bonusExp;
       int scoreGain = tier.bonusScore;
 
-      // Syntax 카테고리 조건 적용
-      if (question.category == 'syntax') {
-        expGain *= 2; // 경험치 2배 증가
-        scoreGain = 0; // Syntax는 스코어 추가 없음
-      }
-
       if (isCorrect) {
-        // 맞췄을 때
-        updates['exp'] = progressData.exp + expGain;
-        updates['score'] = progressData.score + scoreGain;
-        updates['questionState'] = {
-          ...progressData.questionState,
-          questionId: 'successed',
-        };
+        if (question.category == 'syntax') {
+          expGain *= 2;
+          updates['exp'] = progressData.exp + expGain;
+          updates['questionState'] = {
+            ...progressData.questionState,
+            questionId: 'successed',
+          };
+        } else {
+          updates['score'] = progressData.score + scoreGain;
+          updates['exp'] = progressData.exp + expGain;
+          updates['questionState'] = {
+            ...progressData.questionState,
+            questionId: 'successed',
+          };
+        }
 
         Fluttertoast.showToast(
           msg: question.category == 'syntax'

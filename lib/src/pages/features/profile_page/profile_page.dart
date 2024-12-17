@@ -25,7 +25,14 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    final userData = context.read<UserViewModel>().currentUserData;
+
+    final userViewModel = context.read<UserViewModel>();
+    userViewModel.fetchCurrentUserData();
+
+    final progressViewModel = context.read<ProgressViewModel>();
+    progressViewModel.fetchProgressData();
+
+    final userData = userViewModel.currentUserData;
     _nicknameController =
         TextEditingController(text: userData?.nickname ?? 'Guest');
   }
@@ -43,17 +50,26 @@ class _ProfilePageState extends State<ProfilePage> {
     final nextLevel = getNextLevel(levels, progressData?.exp ?? 0);
 
     double safeProgress(double value) {
-      if (value.isNaN || value.isInfinite) {
+      if (value.isNaN || value.isInfinite || value < 0.0) {
         return 0.0;
       }
       return value;
     }
 
-    final progress = safeProgress(progressData != null &&
-            nextLevel.requiredExp != currentLevel.requiredExp
-        ? (progressData.exp - currentLevel.requiredExp) /
-            (nextLevel.requiredExp - currentLevel.requiredExp)
-        : 0);
+    final int currentExp = progressData?.exp ?? 0;
+    final int currentRequiredExp = currentLevel.requiredExp;
+    final int nextRequiredExp = nextLevel.requiredExp;
+
+    double rawProgress;
+
+    if (nextRequiredExp == currentRequiredExp) {
+      rawProgress = currentExp / nextRequiredExp;
+    } else {
+      rawProgress = (currentExp - currentRequiredExp) /
+          (nextRequiredExp - currentRequiredExp);
+    }
+
+    final double progress = safeProgress(rawProgress.clamp(0.0, 1.0));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -204,7 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: LinearProgressIndicator(
-                            value: progress.toDouble(),
+                            value: progress,
                             backgroundColor: Colors.grey[300],
                             valueColor: const AlwaysStoppedAnimation<Color>(
                                 Colors.blue),

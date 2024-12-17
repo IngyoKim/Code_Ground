@@ -183,8 +183,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                         },
                       )
                     else if (question.questionType == 'Objective')
-                      objectiveSubmit(
-                        context: context,
+                      ObjectiveSubmit(
                         answerList: question.answerList!,
                         selectedAnswer: _selectedAnswer,
                         onAnswerSelected: (answer) {
@@ -197,8 +196,12 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                             ToastMessage.show('Please select an answer.');
                             return;
                           }
+
                           final isCorrect = QuestionDetailUtil.verifyAnswer(
-                              _selectedAnswer!, question);
+                            _selectedAnswer!,
+                            question,
+                          );
+
                           QuestionDetailUtil.showAnswerResult(
                               context, isCorrect);
                         },
