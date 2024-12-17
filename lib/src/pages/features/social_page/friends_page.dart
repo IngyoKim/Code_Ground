@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/services/database/user_manager.dart';
+import 'package:code_ground/src/pages/features/profile_page/user_detail_page.dart';
 
 class RegistrateFriends extends StatefulWidget {
   const RegistrateFriends({super.key});
@@ -20,11 +22,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
   void initState() {
     super.initState();
     _fetchFriends();
-
-    /// 초기 친구 목록 로드
     _fetchMyFriendCode();
-
-    /// 내 친구 코드 로드
   }
 
   /// 내 친구 코드 가져오기
@@ -50,17 +48,18 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
 
       if (uid != null && friendCode != null) {
         try {
-          /// UID로 닉네임 가져오기
           final userData = await _userManager.readUserData(uid);
           if (userData != null) {
             updatedFriendsList.add({
               'nickname': userData.nickname,
               'friendCode': friendCode,
+              'uid': uid, // 친구의 UID 추가
             });
           } else {
             updatedFriendsList.add({
               'nickname': 'Unknown',
               'friendCode': friendCode,
+              'uid': uid,
             });
           }
         } catch (error) {
@@ -68,6 +67,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
           updatedFriendsList.add({
             'nickname': 'Error',
             'friendCode': friendCode,
+            'uid': uid,
           });
         }
       }
@@ -77,8 +77,6 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
       _friendsList.clear();
       _friendsList.addAll(updatedFriendsList);
     });
-
-    debugPrint('Updated Friends List: $_friendsList');
   }
 
   /// 친구 추가 처리
@@ -89,15 +87,11 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
     if (inputText.isNotEmpty) {
       try {
         await userViewModel.addFriend(inputText);
-
-        /// 친구 추가 메서드 호출
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Friend added: $inputText')),
         );
         _controller.clear();
         _fetchFriends();
-
-        /// 친구 목록 갱신
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $error')),
@@ -160,7 +154,6 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
                 style: TextStyle(color: Colors.black),
               ),
             ),
-
             const SizedBox(height: 16.0),
             Expanded(
               child: friends.isEmpty
@@ -171,9 +164,13 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
                         final friend = _friendsList[index];
                         final nickname = friend['nickname'] ?? 'Unknown';
                         final friendCode = friend['friendCode'] ?? 'Unknown';
+                        final uid = friend['uid'] ?? '';
 
                         return ListTile(
-                          title: Text('$nickname($friendCode)'),
+                          title: Text('$nickname ($friendCode)'),
+                          onTap: () {
+                            UserDetailPage.show(context, uid);
+                          },
                         );
                       },
                     ),
