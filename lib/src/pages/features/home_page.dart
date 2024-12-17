@@ -61,7 +61,7 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // "Select a Category" with Fixed Add Button
+            /// "Select a Category" with Fixed Add Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
