@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class Tier {
-  final String name; // 티어 이름 (예: 브론즈, 실버)
-  final List<Grade> grades; // 등급 리스트
-  final int bonusScore; // 보너스 스코어
-  final int bonusExp; // 보너스 경험치
+  final String name; /// Tier name (e.g., Bronze, Silver)
+  final List<Grade> grades; /// List of grades
+  final int bonusScore; /// Bonus score
+  final int bonusExp; /// Bonus experience points
 
-  // 생성자
+  /// Constructor
   Tier({
     required this.name,
     required this.grades,
@@ -14,7 +14,7 @@ class Tier {
     required this.bonusExp,
   });
 
-  /// 정적 메서드: 티어 이름으로 티어 객체 찾기
+  /// Static method: Find a Tier object by its name
   static Tier? getTierByName(String tierName) {
     try {
       return tiers.firstWhere((tier) => tier.name == tierName);
@@ -24,7 +24,7 @@ class Tier {
     }
   }
 
-  /// 다음 티어까지 접근 가능한지 확인하는 메서드
+  /// Method to check if the next tier is accessible
   bool accessibleTier(String currentTierName) {
     final tierOrder = [
       'Bronze',
@@ -46,8 +46,8 @@ class Tier {
 }
 
 class Grade {
-  final String name; // 등급 이름 (예: V, IV)
-  final int minScore; // 최소 점수
+  final String name; /// Grade name (e.g., V, IV)
+  final int minScore; /// Minimum score required for the grade
 
   Grade({
     required this.name,
@@ -58,8 +58,8 @@ class Grade {
 final List<Tier> tiers = [
   Tier(
     name: 'Bronze',
-    bonusScore: 10, // 브론즈 보너스 스코어
-    bonusExp: 10, // 브론즈 보너스 경험치
+    bonusScore: 10, /// Bonus score for Bronze
+    bonusExp: 10, /// Bonus experience points for Bronze
     grades: [
       Grade(name: 'V', minScore: 0),
       Grade(name: 'IV', minScore: 100),
@@ -70,8 +70,8 @@ final List<Tier> tiers = [
   ),
   Tier(
     name: 'Silver',
-    bonusScore: 25, // 실버 보너스 스코어
-    bonusExp: 30, // 실버 보너스 경험치
+    bonusScore: 25, /// Bonus score for Silver
+    bonusExp: 30, /// Bonus experience points for Silver
     grades: [
       Grade(name: 'V', minScore: 500),
       Grade(name: 'IV', minScore: 750),
@@ -82,8 +82,8 @@ final List<Tier> tiers = [
   ),
   Tier(
     name: 'Gold',
-    bonusScore: 50, // 골드 보너스 스코어
-    bonusExp: 100, // 골드 보너스 경험치
+    bonusScore: 50, /// Bonus score for Gold
+    bonusExp: 100, /// Bonus experience points for Gold
     grades: [
       Grade(name: 'V', minScore: 2000),
       Grade(name: 'IV', minScore: 2500),
@@ -94,8 +94,8 @@ final List<Tier> tiers = [
   ),
   Tier(
     name: 'Platinum',
-    bonusScore: 100, // 플래티넘 보너스 스코어
-    bonusExp: 500, // 플래티넘 보너스 경험치
+    bonusScore: 100, /// Bonus score for Platinum
+    bonusExp: 500, /// Bonus experience points for Platinum
     grades: [
       Grade(name: 'V', minScore: 5000),
       Grade(name: 'IV', minScore: 6000),
@@ -106,8 +106,8 @@ final List<Tier> tiers = [
   ),
   Tier(
     name: 'Diamond',
-    bonusScore: 250, // 다이아몬드 보너스 스코어
-    bonusExp: 1000, // 다이아몬드 보너스 경험치
+    bonusScore: 250, /// Bonus score for Diamond
+    bonusExp: 1000, /// Bonus experience points for Diamond
     grades: [
       Grade(name: 'V', minScore: 10000),
       Grade(name: 'IV', minScore: 12500),
@@ -118,16 +118,16 @@ final List<Tier> tiers = [
   ),
   Tier(
     name: 'Master',
-    bonusScore: 500, // 마스터 보너스 스코어
-    bonusExp: 5000, // 마스터 보너스 경험치
+    bonusScore: 500, /// Bonus score for Master
+    bonusExp: 5000, /// Bonus experience points for Master
     grades: [
       Grade(name: '', minScore: 30000),
     ],
   ),
   Tier(
     name: 'Grand Master',
-    bonusScore: 0, // 그랜드마스터 보너스 스코어
-    bonusExp: 0, // 그랜드마스터 보너스 경험치
+    bonusScore: 0, /// Bonus score for Grand Master
+    bonusExp: 0, /// Bonus experience points for Grand Master
     grades: [
       Grade(name: '', minScore: 50000),
     ],

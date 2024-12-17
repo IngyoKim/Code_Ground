@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/services/database/user_manager.dart';
+import 'package:code_ground/src/pages/features/profile_page/user_detail_page.dart';
 
 class RegistrateFriends extends StatefulWidget {
   const RegistrateFriends({super.key});
@@ -19,8 +21,8 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
   @override
   void initState() {
     super.initState();
-    _fetchFriends(); // 초기 친구 목록 로드
-    _fetchMyFriendCode(); // 내 친구 코드 로드
+    _fetchFriends();
+    _fetchMyFriendCode();
   }
 
   /// 내 친구 코드 가져오기
@@ -46,17 +48,20 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
 
       if (uid != null && friendCode != null) {
         try {
-          // UID로 닉네임 가져오기
           final userData = await _userManager.readUserData(uid);
           if (userData != null) {
             updatedFriendsList.add({
               'nickname': userData.nickname,
               'friendCode': friendCode,
+              'uid': uid,
+
+              /// 친구의 UID 추가
             });
           } else {
             updatedFriendsList.add({
               'nickname': 'Unknown',
               'friendCode': friendCode,
+              'uid': uid,
             });
           }
         } catch (error) {
@@ -64,6 +69,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
           updatedFriendsList.add({
             'nickname': 'Error',
             'friendCode': friendCode,
+            'uid': uid,
           });
         }
       }
@@ -73,8 +79,6 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
       _friendsList.clear();
       _friendsList.addAll(updatedFriendsList);
     });
-
-    debugPrint('Updated Friends List: $_friendsList');
   }
 
   /// 친구 추가 처리
@@ -84,12 +88,12 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
 
     if (inputText.isNotEmpty) {
       try {
-        await userViewModel.addFriend(inputText); // 친구 추가 메서드 호출
+        await userViewModel.addFriend(inputText);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Friend added: $inputText')),
+          SnackBar(content: Text('친구가 추가 되었습니다.: $inputText')),
         );
         _controller.clear();
-        _fetchFriends(); // 친구 목록 갱신
+        _fetchFriends();
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $error')),
@@ -97,7 +101,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid friend code')),
+        const SnackBar(content: Text('유효한 친구코드를 넣어주세요.')),
       );
     }
   }
@@ -108,15 +112,18 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
     final friends = userViewModel.currentUserData?.friends ?? [];
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Add Friend'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        title: const Text('친구 추가'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 내 친구 코드 표시
+            /// 내 친구 코드 표시
             Container(
               margin: const EdgeInsets.only(bottom: 16.0),
               padding: const EdgeInsets.all(16.0),
@@ -125,7 +132,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Text(
-                'My Friend Code: $_myFriendCode',
+                '나의 친구 코드: $_myFriendCode',
                 style: const TextStyle(
                     fontSize: 16.0, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
@@ -134,28 +141,37 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
             TextField(
               controller: _controller,
               decoration: const InputDecoration(
-                labelText: 'Enter Friend Code',
+                labelText: '친구 코드 입력',
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _handleSubmit,
-              child: const Text('Add Friend'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[200],
+              ),
+              child: const Text(
+                '친구 추가',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
             const SizedBox(height: 16.0),
             Expanded(
               child: friends.isEmpty
-                  ? const Center(child: Text('No friends added yet.'))
+                  ? const Center(child: Text('아직 친구가 없습니다.'))
                   : ListView.builder(
                       itemCount: _friendsList.length,
                       itemBuilder: (context, index) {
                         final friend = _friendsList[index];
                         final nickname = friend['nickname'] ?? 'Unknown';
-                        final friendCode = friend['friendCode'] ?? 'Unknown';
+                        final uid = friend['uid'] ?? '';
 
                         return ListTile(
-                          title: Text('$nickname($friendCode)'),
+                          title: Text(nickname),
+                          onTap: () {
+                            UserDetailPage.show(context, uid);
+                          },
                         );
                       },
                     ),

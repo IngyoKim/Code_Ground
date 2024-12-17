@@ -8,6 +8,7 @@ import 'package:code_ground/src/pages/questions/question_detail/question_detail_
 import 'package:code_ground/src/pages/questions/question_list/question_list_utils.dart';
 
 import 'package:code_ground/src/models/tier_data.dart';
+import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/category_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
@@ -143,6 +144,8 @@ class _QuestionListPageState extends State<QuestionListPage> {
                         Provider.of<QuestionViewModel>(context, listen: false);
                     final progressViewModel =
                         Provider.of<ProgressViewModel>(context, listen: false);
+                    final userViewModel =
+                        Provider.of<UserViewModel>(context, listen: false);
 
                     final question = questions[index];
                     final currentTierName =
@@ -151,8 +154,10 @@ class _QuestionListPageState extends State<QuestionListPage> {
 
                     final requiredTier = Tier.getTierByName(requiredTierName);
 
-                    if (requiredTier != null &&
-                        requiredTier.accessibleTier(currentTierName)) {
+                    // 'master' role은 모든 문제 접근 가능
+                    if (userViewModel.currentUserData?.role == 'master' ||
+                        (requiredTier != null &&
+                            requiredTier.accessibleTier(currentTierName))) {
                       questionViewModel.setSelectedQuestion(question);
                       Navigator.push(
                         context,
@@ -161,7 +166,6 @@ class _QuestionListPageState extends State<QuestionListPage> {
                         ),
                       );
                     } else {
-                      // 접근 불가 시 토스트 메시지 표시
                       ToastMessage.show(
                         'You have not reached the required tier to access this question.',
                       );

@@ -23,9 +23,17 @@ Widget subjectiveSubmit({
         maxLines: 1,
       ),
       const SizedBox(height: 16),
-      ElevatedButton(
-        onPressed: () => onAnswerSubmitted(controller.text),
-        child: const Text('Submit Answer'),
+      Center(
+        child: ElevatedButton(
+          onPressed: () => onAnswerSubmitted(controller.text),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey[200],
+          ),
+          child: const Text(
+            'Submit Answer',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
       ),
     ],
   );

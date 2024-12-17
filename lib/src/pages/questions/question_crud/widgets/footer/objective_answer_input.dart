@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 
 class ObjectiveAnswerInput extends StatelessWidget {
-  final List<String> answerChoices; // 객관식 답안 리스트
-  final String? selectedAnswer; // 선택된 답안
-  final ValueChanged<String> onAddChoice; // 답안 추가 콜백
-  final ValueChanged<String> onDeleteChoice; // 답안 삭제 콜백
-  final ValueChanged<String?> onSelectAnswer; // 답안 선택 콜백
+  final List<String> answerChoices;
+
+  /// 객관식 답안 리스트
+  final String? selectedAnswer;
+
+  /// 선택된 답안
+  final ValueChanged<String> onAddChoice;
+
+  /// 답안 추가 콜백
+  final ValueChanged<String> onDeleteChoice;
+
+  /// 답안 삭제 콜백
+  final ValueChanged<String?> onSelectAnswer;
+
+  /// 답안 선택 콜백
 
   const ObjectiveAnswerInput({
     super.key,
@@ -40,7 +50,13 @@ class ObjectiveAnswerInput extends StatelessWidget {
                   choiceController.clear();
                 }
               },
-              child: const Text('Add'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[200],
+              ),
+              child: const Text(
+                'Add',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         ),

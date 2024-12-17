@@ -1,4 +1,3 @@
-import 'package:code_ground/src/view_models/progress_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,6 +8,7 @@ import 'package:code_ground/src/pages/questions/question_crud/edit_question_page
 
 import 'package:code_ground/src/models/user_data.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
+import 'package:code_ground/src/view_models/progress_view_model.dart';
 import 'package:code_ground/src/view_models/question_view_model.dart';
 
 import 'package:code_ground/src/components/loading_indicator.dart';
@@ -59,7 +59,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       await questionViewModel.fetchQuestionById(question.questionId);
       await userViewModel.fetchOtherUserData(question.writer);
 
-      // 권한 확인
+      /// 권한 확인
       final role = userViewModel.currentUserData?.role ?? '';
       final isOwner = userViewModel.currentUserData?.uid == question.writer;
       _hasEditPermission = RolePermissions.canPerformAction(role, 'edit_all') ||
@@ -67,7 +67,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
 
       _writer = userViewModel.otherUserData;
 
-      // 언어 초기화
+      /// 언어 초기화
       final updatedQuestion = questionViewModel.selectedQuestion;
       if (updatedQuestion?.codeSnippets.isNotEmpty == true) {
         _selectedLanguage = updatedQuestion!.codeSnippets.keys.first;
@@ -168,7 +168,9 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                         selectedLanguage: _selectedLanguage!,
                       ),
                     ],
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
+                    const Divider(),
+                    const SizedBox(height: 16),
                     if (question.questionType == 'Subjective')
                       subjectiveSubmit(
                         context: context,
@@ -181,8 +183,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                         },
                       )
                     else if (question.questionType == 'Objective')
-                      objectiveSubmit(
-                        context: context,
+                      ObjectiveSubmit(
                         answerList: question.answerList!,
                         selectedAnswer: _selectedAnswer,
                         onAnswerSelected: (answer) {
@@ -195,8 +196,12 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                             ToastMessage.show('Please select an answer.');
                             return;
                           }
+
                           final isCorrect = QuestionDetailUtil.verifyAnswer(
-                              _selectedAnswer!, question);
+                            _selectedAnswer!,
+                            question,
+                          );
+
                           QuestionDetailUtil.showAnswerResult(
                               context, isCorrect);
                         },

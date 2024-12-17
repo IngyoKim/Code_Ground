@@ -90,6 +90,7 @@ class QuestionDetailUtil {
       final currentState = progressData.questionState[questionId] ?? '';
       final updates = <String, dynamic>{};
 
+      // 이미 성공한 문제라면 바로 리턴
       if (currentState == 'successed') {
         Fluttertoast.showToast(
           msg: "You already solved this question.",
@@ -101,39 +102,60 @@ class QuestionDetailUtil {
         return;
       }
 
-      if (isCorrect) {
-        final expGain = tier.bonusExp;
-        final scoreGain = tier.bonusScore;
+      // 경험치 및 스코어 계산
+      int expGain = tier.bonusExp;
+      int scoreGain = tier.bonusScore;
 
-        updates['exp'] = progressData.exp + expGain;
-        updates['score'] = progressData.score + scoreGain;
-        updates['questionState'] = {
-          ...progressData.questionState,
-          questionId: 'successed',
-        };
+      if (isCorrect) {
+        if (question.category == 'syntax') {
+          expGain *= 2;
+          updates['exp'] = progressData.exp + expGain;
+          updates['questionState'] = {
+            ...progressData.questionState,
+            questionId: 'successed',
+          };
+        } else {
+          updates['score'] = progressData.score + scoreGain;
+          updates['exp'] = progressData.exp + expGain;
+          updates['questionState'] = {
+            ...progressData.questionState,
+            questionId: 'successed',
+          };
+        }
 
         Fluttertoast.showToast(
-          msg: "Correct! Gained $expGain EXP and $scoreGain points.",
+          msg: question.category == 'syntax'
+              ? "Correct! Gained $expGain EXP."
+              : "Correct! Gained $expGain EXP and $scoreGain scores.",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.green,
           textColor: Colors.white,
         );
 
-        // 유저가 이미 solvers에 없으면 추가
         if (!question.solvers.contains(uid)) {
           final updatedSolvers = List<String>.from(question.solvers)..add(uid);
           final updatedQuestion = question.copyWith(solvers: updatedSolvers);
           await questionViewModel.updateQuestion(updatedQuestion);
         }
       } else {
+        int scorePenalty = 0;
+
+        if (question.category != 'syntax') {
+          scorePenalty = (scoreGain * 2 / 5).floor();
+          int newScore = progressData.score - scorePenalty;
+          updates['score'] = newScore > 0 ? newScore : 0;
+        }
+
         updates['questionState'] = {
           ...progressData.questionState,
           questionId: 'failed',
         };
 
         Fluttertoast.showToast(
-          msg: "Wrong! Try Again.",
+          msg: question.category == 'syntax'
+              ? "Wrong!"
+              : "Wrong! Lost $scorePenalty scores.",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.red,

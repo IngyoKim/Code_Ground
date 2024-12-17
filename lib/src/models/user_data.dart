@@ -1,12 +1,12 @@
 class UserData {
-  final String uid;
-  final String name;
-  final String email;
-  final String photoUrl;
-  String nickname;
-  final String role;
-  final String friendCode;
-  final List<Map<String, String>> friends;
+  final String uid; /// User ID
+  final String name; /// User's full name
+  final String email; /// User's email address
+  final String photoUrl; /// URL of the user's profile photo
+  String nickname; /// User's nickname
+  final String role; /// User's role (e.g., admin, member)
+  final String friendCode; /// Unique friend code for the user
+  final List<Map<String, String>> friends; /// List of friends (as maps of key-value pairs)
 
   UserData({
     required this.uid,
@@ -19,15 +19,15 @@ class UserData {
     required this.friends,
   });
 
-  // JSON -> Object
+  /// Convert JSON to UserData object
   factory UserData.fromJson(Map<String, dynamic> json) {
     return UserData(
-      uid: json['uid'] ?? '', // 기본값 설정
-      name: json['name'] ?? 'Unknown User', // 기본값 설정
-      email: json['email'] ?? 'No Email', // 기본값 설정
-      photoUrl: json['photoUrl'] ?? '', // 기본값 설정
-      nickname: json['nickname'] ?? '', // 기본값 설정
-      role: json['role'] ?? '', // 기본값 설정
+      uid: json['uid'] ?? '', /// Default value
+      name: json['name'] ?? 'Unknown User', /// Default value
+      email: json['email'] ?? 'No Email', /// Default value
+      photoUrl: json['photoUrl'] ?? '', /// Default value
+      nickname: json['nickname'] ?? '', /// Default value
+      role: json['role'] ?? '', /// Default value
       friendCode: json['friendCode'] ?? '',
       friends: List<Map<String, String>>.from(json['friends']?.map((friend) {
             return Map<String, String>.from(friend);
@@ -36,7 +36,7 @@ class UserData {
     );
   }
 
-  // Object -> JSON
+  /// Convert UserData object to JSON
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
@@ -51,3 +51,4 @@ class UserData {
     };
   }
 }
+

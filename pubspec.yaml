@@ -1,66 +1,108 @@
 name: code_ground
 description: "A new Flutter project."
 # This project is private and won't be published to pub.dev.
-publish_to: 'none' # To publish, remove this line.
+publish_to: 'none' # Remove this line to publish the package.
 
 # Versioning for the application.
-# Follows major.minor.patch+buildNumber format.
+# Follows the format: major.minor.patch+buildNumber.
 version: 1.0.0+1
 
-# Specifies the Dart SDK version required for this project.
+# Dart SDK version required for the project.
 environment:
   sdk: ^3.5.4
 
-# Dependencies used by the application.
+# --------------------------------------------------------
+# Dependencies: Core libraries and features.
+# --------------------------------------------------------
 dependencies:
+  # Flutter framework
   flutter:
     sdk: flutter
-  kakao_flutter_sdk: ^1.9.5 # Kakao SDK for various Kakao platform APIs.
-  kakao_flutter_sdk_user: ^1.9.5 # Kakao User API for login.
-  kakao_flutter_sdk_share: ^1.9.5 # Kakao Share API for sharing content.
-  kakao_flutter_sdk_talk: ^1.9.5 # KakaoTalk API for messages and social features.
-  kakao_flutter_sdk_friend: ^1.9.5 # Kakao Friends Picker API.
-  kakao_flutter_sdk_navi: ^1.9.5 # KakaoNavi API for navigation services.
 
-  google_sign_in: ^6.2.2 # Google Sign-In for authentication.
+  # Kakao Platform APIs for social features
+  kakao_flutter_sdk: ^1.9.5 # Core Kakao SDK
+  kakao_flutter_sdk_user: ^1.9.5 # Kakao Login API
+  kakao_flutter_sdk_share: ^1.9.5 # Kakao Share API
+  kakao_flutter_sdk_talk: ^1.9.5 # KakaoTalk features
+  kakao_flutter_sdk_friend: ^1.9.5 # Kakao Friends Picker API
+  kakao_flutter_sdk_navi: ^1.9.5 # KakaoNavi for navigation
 
-  firebase_core: ^3.8.0 # Core Firebase functionalities.
-  firebase_auth: ^5.3.3 # Firebase Authentication API.
-  cloud_firestore: ^5.5.0 # Firebase Cloud Firestore API.
-  firebase_database: ^11.1.5 # Firebase Realtime Database API.
+  # Google Sign-In for Authentication
+  google_sign_in: ^6.2.2
 
-  webview_flutter: ^4.9.0 # WebView support for embedding web content.
+  # Firebase Core Features
+  firebase_core: ^3.8.0 # Firebase SDK initialization
+  firebase_auth: ^5.3.3 # Firebase Authentication for user management
+  cloud_firestore: ^5.5.0 # Cloud Firestore for database operations
+  firebase_database: ^11.1.5 # Realtime Database API
 
-  http: ^1.2.2 # HTTP client for making network requests.
-  provider: ^6.1.2  # State management solution using the Provider package.
+  # Firebase Messaging for Push Notifications
+  firebase_messaging: ^15.1.6
 
-  fluttertoast: ^8.0.9 # Package for displaying toast messages.
-  cupertino_icons: ^1.0.8 # Icons package for iOS-style components.
-  shared_preferences: ^2.3.2 # Local storage for simple key-value data.
-  intl: ^0.19.0 # Internationalization and localization utilities.
-  collection: ^1.18.0 # Collection utilities for Dart.
-  crypto: ^3.0.6
+  # Local Notifications for handling push notifications locally
+  flutter_local_notifications: ^17.0.0 # Add version explicitly
 
-  flutter_local_notifications:
-  permission_handler:
-  timezone:
+  # Permission handler for managing app permissions
+  permission_handler: ^11.0.1 # Add version explicitly
+
+  # Timezone package for working with time zones
+  timezone: ^0.9.2 # Add version explicitly
+
+  # Google Ads for monetization
   google_mobile_ads: ^5.2.0
 
-# Development-only dependencies used for testing and linting.
+  # WebView support for displaying web content
+  webview_flutter: ^4.9.0
+
+  # Networking: HTTP requests
+  http: ^1.2.2
+
+  # State management
+  provider: ^6.1.2
+
+  # User notifications: Toast messages
+  fluttertoast: ^8.0.9
+
+  # Cupertino icons for iOS components
+  cupertino_icons: ^1.0.8
+
+  # Shared Preferences for local storage
+  shared_preferences: ^2.3.2
+
+  # Internationalization and localization
+  intl: ^0.19.0
+
+  # Collection and utility libraries
+  collection: ^1.18.0
+  crypto: ^3.0.6
+
+# --------------------------------------------------------
+# Development-only dependencies: Testing and linting.
+# --------------------------------------------------------
 dev_dependencies:
-  flutter_test: 
-    sdk: flutter # Flutter's test framework for unit and widget testing.
+  flutter_test:
+    sdk: flutter # Flutter testing framework
 
-  flutter_lints: ^5.0.0 # A collection of lints to encourage good coding practices.
+  flutter_lints: ^5.0.0 # Code quality linter
 
-# Flutter-specific configurations for assets and fonts.
+# --------------------------------------------------------
+# Flutter-specific configurations: Assets, Fonts, etc.
+# --------------------------------------------------------
 flutter:
-  uses-material-design: true # Enables the use of Material Design icons.
+  # Enables Material Design icons and components
+  uses-material-design: true
 
+  # Asset directories
   assets:
-    - assets/images/ # Directory for image assets.
-    - assets/images/languages/ # Subdirectory for language-specific images.
-    - assets/logo/ # Directory for logos.
+    - assets/images/ # General images
+    - assets/images/languages/ # Language-specific images
+    - assets/logo/ # Logos and icons
 
-  # Fonts can be added here by defining their families and styles.
-  # Example structure is included but commented out.
+  # Fonts can be added here if needed
+  # Example:
+  # fonts:
+  #   - family: CustomFont
+  #     fonts:
+  #       - asset: assets/fonts/CustomFont-Regular.ttf
+  #       - asset: assets/fonts/CustomFont-Bold.ttf
+  #         weight: 700

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class SettingPage extends StatefulWidget {
-  final String initialNickname;
-  final String role;
-  final String friendData;
-  final dynamic userData;
+  final String initialNickname; /// Initial nickname
+  final String role; /// User's role
+  final String friendData; /// Friend data
+  final dynamic userData; /// User data object
 
   const SettingPage({
     super.key,
@@ -20,16 +20,15 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  bool _notificationsEnabled = true;
-  bool _isInfoExpanded = false;
+  bool _isInfoExpanded = false; /// Whether the info section is expanded
 
-  late TextEditingController _nicknameController;
-  late String _nickname;
+  late TextEditingController _nicknameController; /// Controller for nickname input
+  late String _nickname; /// Current nickname
 
   @override
   void initState() {
     super.initState();
-    // 닉네임 초기화: userData 기반
+    /// Initialize nickname based on userData
     _nickname = widget.userData?.nickname.isNotEmpty == true
         ? widget.userData!.nickname
         : widget.userData?.name ?? 'Guest';
@@ -47,15 +46,15 @@ class _SettingPageState extends State<SettingPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          // Your Info Section
+          /// Your Info Section
           ListTile(
             title: Text(
-              'Your INFO',
+              'Your Info',
               style: const TextStyle(
                 fontSize: 20.0,
               ),
@@ -73,7 +72,7 @@ class _SettingPageState extends State<SettingPage> {
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: Text(
-                '닉네임: $_nickname',
+                'Nickname: $_nickname',
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
@@ -81,7 +80,7 @@ class _SettingPageState extends State<SettingPage> {
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: Text(
-                'admin 권한: ${widget.role}',
+                'Role: ${widget.role}',
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
@@ -89,33 +88,16 @@ class _SettingPageState extends State<SettingPage> {
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: Text(
-                '친구 코드: ${widget.friendData}',
+                'Friend Code: ${widget.friendData}',
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
             const SizedBox(height: 16.0),
           ],
           const Divider(),
-
-          ListTile(
-            title: Text(
-              'Notifications',
-              style: const TextStyle(
-                fontSize: 20.0,
-              ),
-            ),
-            trailing: Switch(
-              value: _notificationsEnabled,
-              onChanged: (bool value) {
-                setState(() {
-                  _notificationsEnabled = value;
-                });
-              },
-            ),
-          ),
-          const Divider(),
         ],
       ),
     );
   }
 }
+

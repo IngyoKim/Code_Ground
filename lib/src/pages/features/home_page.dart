@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Logo and title
+            /// Logo and title
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Flexible(
-                    flex: 2, // 이미지가 더 많은 공간을 차지하도록 설정
+                    flex: 2,
                     child: Image.asset(
                       'assets/logo/code_ground_logo.png',
                       height: 100,
@@ -43,9 +43,9 @@ class HomePage extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   Flexible(
-                    flex: 3, // 텍스트가 남은 공간을 차지
+                    flex: 3,
                     child: FittedBox(
-                      fit: BoxFit.scaleDown, // 텍스트 크기가 넘치지 않도록 조정
+                      fit: BoxFit.scaleDown,
                       child: const Text(
                         'CODEGROUND',
                         style: TextStyle(
@@ -61,20 +61,19 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // "Select a Category" with Fixed Add Button
+            /// "Select a Category" with Fixed Add Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 children: <Widget>[
                   const Text(
-                    'Select a Category',
+                    '카테고리를 선택해주세요',
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const Spacer(),
-                  // 고정된 크기의 버튼
                   Consumer<UserViewModel>(
                     builder: (context, userViewModel, child) {
                       final role = userViewModel.currentUserData?.role ?? '';
@@ -85,7 +84,7 @@ class HomePage extends StatelessWidget {
                           icon: Icon(
                             RolePermissions.canPerformAction(role, 'create')
                                 ? Icons.add_rounded
-                                : null, // 기본 아이콘 제공
+                                : null,
                           ),
                           onPressed:
                               RolePermissions.canPerformAction(role, 'create')
@@ -98,7 +97,7 @@ class HomePage extends StatelessWidget {
                                         ),
                                       );
                                     }
-                                  : null, // 관리자가 아닐 경우 비활성화
+                                  : null,
                         ),
                       );
                     },
@@ -108,7 +107,7 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 25),
 
-            // Scrollable menu list
+            /// Scrollable menu list
             Expanded(
               child: ListView.builder(
                 itemCount: categories.length,
@@ -131,17 +130,17 @@ class HomePage extends StatelessWidget {
                           context,
                           listen: false);
 
-                      // 카테고리 선택 및 상태 초기화
+                      /// 카테고리 선택 및 상태 초기화
                       categoryViewModel.selectCategory(
                           category['name'], questionViewModel);
 
-                      // 새로운 질문 데이터를 로드
+                      /// 새로운 질문 데이터를 로드
                       await questionViewModel.fetchQuestions(
                           category: category['name']);
 
-                      // 질문 페이지로 이동
+                      /// 질문 페이지로 이동
                       Navigator.push(
-                        // ignore: use_build_context_synchronously
+                        /// ignore: use_build_context_synchronously
                         context,
                         MaterialPageRoute(
                           builder: (context) => const QuestionListPage(),

@@ -29,7 +29,6 @@ class _RankingPageState extends State<RankingPage> {
   }
 
   /// 초기 데이터 로딩
-  /// 초기 데이터 로딩
   Future<void> _initializePage() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final progressViewModel =
@@ -53,7 +52,9 @@ class _RankingPageState extends State<RankingPage> {
         progressViewModel.rankings,
         () {
           if (mounted) {
-            setState(() {}); // UI 업데이트
+            setState(() {});
+
+            /// UI 업데이트
           }
         },
       );
@@ -106,23 +107,26 @@ class _RankingPageState extends State<RankingPage> {
     final rankings = _rankingListUtil.items;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Ranking System")),
+      backgroundColor: Colors.white,
       body: _isInitialLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              controller: _scrollController,
-              itemCount: rankings.length + 1,
-              itemBuilder: (context, index) {
-                if (index == rankings.length) {
-                  return LoadingIndicator(isFetching: _isFetchingMore);
-                }
+          : Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: rankings.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == rankings.length) {
+                    return LoadingIndicator(isFetching: _isFetchingMore);
+                  }
 
-                final ranking = rankings[index];
-                return RankingWidget(
-                  rankingData: ranking,
-                  rank: index + 1,
-                );
-              },
+                  final ranking = rankings[index];
+                  return RankingWidget(
+                    rankingData: ranking,
+                    rank: index + 1,
+                  );
+                },
+              ),
             ),
     );
   }

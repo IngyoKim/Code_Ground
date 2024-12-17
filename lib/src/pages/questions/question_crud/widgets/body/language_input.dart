@@ -12,7 +12,7 @@ class LanguageInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 프로그래밍 언어 리스트
+    /// 프로그래밍 언어 리스트
     final List<String> languages = ['C', 'C++', 'Java', 'Python', 'Dart'];
 
     return Column(

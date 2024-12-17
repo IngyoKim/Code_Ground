@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/models/progress_data.dart';
-import 'package:code_ground/src/components/common_list_tile.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
+import 'package:code_ground/src/pages/features/profile_page/user_detail_page.dart';
 
 class RankingWidget extends StatefulWidget {
   final ProgressData rankingData;
@@ -55,28 +55,82 @@ class _RankingWidgetState extends State<RankingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return CommonListTile(
-      leading: Transform.translate(
-        offset: const Offset(-8, -2),
-        child: CircleAvatar(
-          backgroundColor: Colors.orange.shade300,
-          child: Text(
-            '#${widget.rank}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () {
+        UserDetailPage.show(context, widget.rankingData.uid);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            /// 등수
+            SizedBox(
+              width: 40,
+              child: CircleAvatar(
+                backgroundColor: _getRankColor(widget.rank),
+                child: Text(
+                  '#${widget.rank}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-          ),
+            const SizedBox(width: 16),
+
+            /// 티어 이미지
+            Image.asset(
+              getTierImage(widget.rankingData.tier),
+              width: 48,
+              height: 48,
+            ),
+            const SizedBox(width: 16),
+
+            /// 이름과 경험치, 스코어
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// 이름
+                  Text(
+                    nickname ?? 'Loading...',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+
+                  /// 경험치와 스코어
+                  Text(
+                    'Exp: ${widget.rankingData.exp}\nScore: ${widget.rankingData.score}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
-      title: nickname ?? '',
-      subtitle:
-          "Score: ${widget.rankingData.score} | Exp: ${widget.rankingData.exp}",
-      trailing: Image.asset(
-        getTierImage(widget.rankingData.tier),
-        width: 40,
-        height: 40,
-      ),
     );
+  }
+
+  /// 등수에 따라 색상을 반환
+  Color _getRankColor(int rank) {
+    switch (rank) {
+      case 1:
+        return Colors.amber;
+      case 2:
+        return Colors.grey;
+      case 3:
+        return Colors.brown;
+      default:
+        return const Color.fromARGB(255, 89, 89, 89);
+    }
   }
 }

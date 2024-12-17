@@ -207,7 +207,13 @@ class _EditQuestionPageState extends State<EditQuestionPage> {
         const SizedBox(height: 20),
         ElevatedButton(
           onPressed: _saveQuestion,
-          child: const Text('Save Changes'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey[200],
+          ),
+          child: const Text(
+            'Save Changes',
+            style: TextStyle(color: Colors.black),
+          ),
         ),
       ],
     );

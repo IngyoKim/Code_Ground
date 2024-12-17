@@ -4,11 +4,12 @@ import 'package:code_ground/src/services/messaging/custom_url.dart';
 
 class KakaoMessaging {
   /// Method to dynamically create a FeedTemplate
-  FeedTemplate createFeedTemplate(String nickname, String customUrl) {
+  FeedTemplate createFeedTemplate(
+      String nickname, String customUrl, String friendCode) {
     return FeedTemplate(
       content: Content(
         title: 'Code Ground',
-        description: '코딩 공부의 일상화\n$nickname님이 초대했어요!',
+        description: '$nickname님이 초대했어요!\n친구 코드: $friendCode',
         imageUrl: Uri.parse(
             'https://raw.githubusercontent.com/IngyoKim/Code_Ground/refs/heads/main/assets/logo/code_ground_logo.png'),
         link: Link(
@@ -29,12 +30,14 @@ class KakaoMessaging {
   }
 
   /// Method to share content using a dynamically generated custom URL
-  Future<void> shareContent(String nickname, String friendUid) async {
+  Future<void> shareContent(
+      String nickname, String friendUid, String friendCode) async {
     /// Generate a custom link for the friend
     String customUrl = await createCustomLink(friendUid);
 
     /// Create the dynamic FeedTemplate with the custom URL
-    FeedTemplate dynamicFeedTemplate = createFeedTemplate(nickname, customUrl);
+    FeedTemplate dynamicFeedTemplate =
+        createFeedTemplate(nickname, customUrl, friendCode);
 
     /// Check if KakaoTalk is available to share
     bool isKakaoTalkSharingAvailable =

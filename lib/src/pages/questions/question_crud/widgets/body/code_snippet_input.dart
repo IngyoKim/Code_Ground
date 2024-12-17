@@ -38,10 +38,12 @@ class CodeSnippetInput extends StatelessWidget {
             final snippet = snippetController.text.trim();
             if (snippet.isNotEmpty) {
               if (category == 'Sequencing') {
-                // Sequencing: 'i0', 'i1', 'i2' 형식으로 키 값 생성
+                /// Sequencing: 'i0', 'i1', 'i2' 형식으로 키 값 생성
                 final key = 'i${codeSnippets.length}';
                 onAddSnippet(key, snippet);
-                _reorderKeys(); // 키 재정렬
+                _reorderKeys();
+
+                /// 키 재정렬
               } else {
                 if (codeSnippets.containsKey(selectedLanguage)) {
                   ToastMessage.show(
@@ -56,7 +58,13 @@ class CodeSnippetInput extends StatelessWidget {
               ToastMessage.show('Snippet cannot be empty.');
             }
           },
-          child: const Text('Add Snippet'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey[200],
+          ),
+          child: const Text(
+            'Add Snippet',
+            style: TextStyle(color: Colors.black),
+          ),
         ),
         const SizedBox(height: 16),
         if (codeSnippets.isNotEmpty) ...[
@@ -68,13 +76,17 @@ class CodeSnippetInput extends StatelessWidget {
           ...codeSnippets.entries.map(
             (entry) => ListTile(
               title: Text(entry.key),
-              subtitle: Text(entry.value),
+              subtitle: Text(
+                entry.value,
+                style: const TextStyle(fontSize: 14),
+                softWrap: true,
+                maxLines: null,
+              ),
               trailing: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
-                  // 삭제 및 키 재정렬
                   onDeleteSnippet(entry.key);
-                  _reorderKeys(); // 키 재정렬 호출
+                  _reorderKeys();
                 },
               ),
             ),
