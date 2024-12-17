@@ -10,7 +10,7 @@ class SocialPage extends StatelessWidget {
     return DefaultTabController(
       length: 2, // 탭의 개수
       child: Scaffold(
-        backgroundColor: Colors.white, // 배경색을 흰색으로 설정
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
