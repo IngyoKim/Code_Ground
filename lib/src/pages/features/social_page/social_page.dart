@@ -46,11 +46,13 @@ class _SocialPageState extends State<SocialPage>
         foregroundColor: Colors.black,
         title: const Text("소셜"),
         actions: [
-          if (_tabController.index == 1) // Friends 탭이 선택되었을 때만 아이콘 표시
+          if (_tabController.index == 1)
+
+            /// Friends 탭이 선택되었을 때만 아이콘 표시
             IconButton(
               icon: const Icon(Icons.person_add),
               onPressed: () async {
-                // 여기에 버튼 동작을 추가
+                /// 여기에 버튼 동작을 추가
                 final inviteUrl = await createCustomLink(userData!.uid);
                 await kakaoMessaging.shareContent(
                     userData.nickname, inviteUrl, userData.friendCode);
