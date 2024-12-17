@@ -40,7 +40,13 @@ class ObjectiveAnswerInput extends StatelessWidget {
                   choiceController.clear();
                 }
               },
-              child: const Text('Add'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[200],
+              ),
+              child: const Text(
+                'Add',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         ),
