@@ -29,7 +29,6 @@ class _RankingPageState extends State<RankingPage> {
   }
 
   /// 초기 데이터 로딩
-  /// 초기 데이터 로딩
   Future<void> _initializePage() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final progressViewModel =
