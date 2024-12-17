@@ -98,7 +98,7 @@ class _RankingWidgetState extends State<RankingWidget> {
                 ),
                 const SizedBox(height: 4),
 
-                // 경험치와 스코어 (줄 나눔)
+                // 경험치와 스코어
                 Text(
                   'Exp: ${widget.rankingData.exp}\nScore: ${widget.rankingData.score}',
                   style: const TextStyle(
