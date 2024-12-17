@@ -130,11 +130,11 @@ class HomePage extends StatelessWidget {
                           context,
                           listen: false);
 
-                      // 카테고리 선택 및 상태 초기화
+                      /// 카테고리 선택 및 상태 초기화
                       categoryViewModel.selectCategory(
                           category['name'], questionViewModel);
 
-                      // 새로운 질문 데이터를 로드
+                      /// 새로운 질문 데이터를 로드
                       await questionViewModel.fetchQuestions(
                           category: category['name']);
 
