@@ -81,6 +81,27 @@ class _QuestionHeaderState extends State<QuestionHeader> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // 날짜와 작성자
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      DateFormat('yyyy-MM-dd HH:mm:ss')
+                          .format(widget.question.updatedAt),
+                    ),
+                    Text(
+                      widget.writer?.nickname ?? 'unknown',
+                    ),
+                  ],
+                ),
+
+                // 광고 보기 버튼
                 if (hasHint)
                   ElevatedButton(
                     onPressed: _isHintLoading
@@ -106,18 +127,10 @@ class _QuestionHeaderState extends State<QuestionHeader> {
                           )
                         : Text(
                             _hasWatchedAd ? '힌트 보기' : '광고 보고 힌트 보기',
-                            style: TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.black),
                           ),
                   ),
               ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              DateFormat('yyyy-MM-dd HH:mm:ss')
-                  .format(widget.question.updatedAt),
-            ),
-            Text(
-              widget.writer?.nickname ?? 'unknown',
             ),
             const SizedBox(height: 16),
             const Divider(),
