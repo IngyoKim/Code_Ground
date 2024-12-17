@@ -8,7 +8,7 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  // 초기화 함수
+  /// Initialization function
   Future<void> initialize(BuildContext context) async {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint("Foreground Message: ${message.notification?.title}");
@@ -17,7 +17,8 @@ class NotificationService {
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       debugPrint("Notification Clicked: ${message.notification?.title}");
-      // ignore: use_build_context_synchronously
+
+      /// ignore: use_build_context_synchronously
       _handleMessageClick(context, message);
     });
 
@@ -35,7 +36,7 @@ class NotificationService {
     debugPrint("FCM Token: $token");
   }
 
-  // 로컬 알림 표시
+  /// Show local notifications
   Future<void> _showNotification(RemoteMessage message) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
