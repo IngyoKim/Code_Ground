@@ -22,7 +22,9 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
     _fetchFriends();
 
     /// 초기 친구 목록 로드
-    _fetchMyFriendCode(); // 내 친구 코드 로드
+    _fetchMyFriendCode();
+
+    /// 내 친구 코드 로드
   }
 
   /// 내 친구 코드 가져오기
