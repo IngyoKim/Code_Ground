@@ -95,7 +95,9 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
           SnackBar(content: Text('Friend added: $inputText')),
         );
         _controller.clear();
-        _fetchFriends(); // 친구 목록 갱신
+        _fetchFriends();
+
+        /// 친구 목록 갱신
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $error')),
