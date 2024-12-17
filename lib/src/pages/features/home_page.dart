@@ -130,7 +130,7 @@ class HomePage extends StatelessWidget {
                           context,
                           listen: false);
 
-                      // 카테고리 선택 및 상태 초기화
+                      /// 카테고리 선택 및 상태 초기화
                       categoryViewModel.selectCategory(
                           category['name'], questionViewModel);
 
