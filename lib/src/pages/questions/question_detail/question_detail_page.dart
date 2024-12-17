@@ -59,7 +59,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
       await questionViewModel.fetchQuestionById(question.questionId);
       await userViewModel.fetchOtherUserData(question.writer);
 
-      // 권한 확인
+      /// 권한 확인
       final role = userViewModel.currentUserData?.role ?? '';
       final isOwner = userViewModel.currentUserData?.uid == question.writer;
       _hasEditPermission = RolePermissions.canPerformAction(role, 'edit_all') ||
@@ -67,7 +67,7 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
 
       _writer = userViewModel.otherUserData;
 
-      // 언어 초기화
+      /// 언어 초기화
       final updatedQuestion = questionViewModel.selectedQuestion;
       if (updatedQuestion?.codeSnippets.isNotEmpty == true) {
         _selectedLanguage = updatedQuestion!.codeSnippets.keys.first;
