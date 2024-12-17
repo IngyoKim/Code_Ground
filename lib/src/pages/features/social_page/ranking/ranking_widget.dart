@@ -83,7 +83,7 @@ class _RankingWidgetState extends State<RankingWidget> {
           ),
           const SizedBox(width: 16),
 
-          // 이름과 경험치, 스코어
+          /// 이름과 경험치, 스코어
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
