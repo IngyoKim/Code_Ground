@@ -74,13 +74,17 @@ class CodeSnippetInput extends StatelessWidget {
           ...codeSnippets.entries.map(
             (entry) => ListTile(
               title: Text(entry.key),
-              subtitle: Text(entry.value),
+              subtitle: Text(
+                entry.value,
+                style: const TextStyle(fontSize: 14),
+                softWrap: true,
+                maxLines: null,
+              ),
               trailing: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
-                  // 삭제 및 키 재정렬
                   onDeleteSnippet(entry.key);
-                  _reorderKeys(); // 키 재정렬 호출
+                  _reorderKeys();
                 },
               ),
             ),
