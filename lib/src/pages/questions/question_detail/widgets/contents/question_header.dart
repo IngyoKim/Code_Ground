@@ -92,6 +92,9 @@ class _QuestionHeaderState extends State<QuestionHeader> {
                               _fetchHint(rewardedAdService);
                             }
                           },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[200],
+                    ),
                     child: _isHintLoading
                         ? const SizedBox(
                             width: 16,
@@ -101,7 +104,10 @@ class _QuestionHeaderState extends State<QuestionHeader> {
                               color: Colors.white,
                             ),
                           )
-                        : Text(_hasWatchedAd ? '힌트 보기' : '광고 보고 힌트 보기'),
+                        : Text(
+                            _hasWatchedAd ? '힌트 보기' : '광고 보고 힌트 보기',
+                            style: TextStyle(color: Colors.black),
+                          ),
                   ),
               ],
             ),
