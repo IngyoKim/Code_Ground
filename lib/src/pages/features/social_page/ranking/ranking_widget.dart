@@ -114,7 +114,7 @@ class _RankingWidgetState extends State<RankingWidget> {
     );
   }
 
-  // 등수에 따라 색상을 반환
+  /// 등수에 따라 색상을 반환
   Color _getRankColor(int rank) {
     switch (rank) {
       case 1:
