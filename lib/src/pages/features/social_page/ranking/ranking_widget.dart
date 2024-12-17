@@ -59,7 +59,7 @@ class _RankingWidgetState extends State<RankingWidget> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 등수
+          /// 등수
           SizedBox(
             width: 40,
             child: CircleAvatar(
@@ -75,7 +75,7 @@ class _RankingWidgetState extends State<RankingWidget> {
           ),
           const SizedBox(width: 16),
 
-          // 티어 이미지
+          /// 티어 이미지
           Image.asset(
             getTierImage(widget.rankingData.tier),
             width: 48,
@@ -83,12 +83,12 @@ class _RankingWidgetState extends State<RankingWidget> {
           ),
           const SizedBox(width: 16),
 
-          // 이름과 경험치, 스코어
+          /// 이름과 경험치, 스코어
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 이름
+                /// 이름
                 Text(
                   nickname ?? 'Loading...',
                   style: const TextStyle(
@@ -98,7 +98,7 @@ class _RankingWidgetState extends State<RankingWidget> {
                 ),
                 const SizedBox(height: 4),
 
-                // 경험치와 스코어 (줄 나눔)
+                /// 경험치와 스코어
                 Text(
                   'Exp: ${widget.rankingData.exp}\nScore: ${widget.rankingData.score}',
                   style: const TextStyle(
@@ -114,17 +114,17 @@ class _RankingWidgetState extends State<RankingWidget> {
     );
   }
 
-  // 등수에 따라 색상을 반환
+  /// 등수에 따라 색상을 반환
   Color _getRankColor(int rank) {
     switch (rank) {
       case 1:
-        return Colors.amber; // 금색
+        return Colors.amber;
       case 2:
-        return Colors.grey; // 은색
+        return Colors.grey;
       case 3:
-        return Colors.brown; // 동색
+        return Colors.brown;
       default:
-        return const Color.fromARGB(255, 89, 89, 89); // 기본 색상
+        return const Color.fromARGB(255, 89, 89, 89);
     }
   }
 }

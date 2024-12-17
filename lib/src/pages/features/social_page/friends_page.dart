@@ -19,8 +19,12 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
   @override
   void initState() {
     super.initState();
-    _fetchFriends(); // 초기 친구 목록 로드
-    _fetchMyFriendCode(); // 내 친구 코드 로드
+    _fetchFriends();
+
+    /// 초기 친구 목록 로드
+    _fetchMyFriendCode();
+
+    /// 내 친구 코드 로드
   }
 
   /// 내 친구 코드 가져오기
@@ -46,7 +50,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
 
       if (uid != null && friendCode != null) {
         try {
-          // UID로 닉네임 가져오기
+          /// UID로 닉네임 가져오기
           final userData = await _userManager.readUserData(uid);
           if (userData != null) {
             updatedFriendsList.add({
@@ -84,12 +88,16 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
 
     if (inputText.isNotEmpty) {
       try {
-        await userViewModel.addFriend(inputText); // 친구 추가 메서드 호출
+        await userViewModel.addFriend(inputText);
+
+        /// 친구 추가 메서드 호출
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Friend added: $inputText')),
         );
         _controller.clear();
-        _fetchFriends(); // 친구 목록 갱신
+        _fetchFriends();
+
+        /// 친구 목록 갱신
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $error')),
@@ -119,7 +127,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 내 친구 코드 표시
+            /// 내 친구 코드 표시
             Container(
               margin: const EdgeInsets.only(bottom: 16.0),
               padding: const EdgeInsets.all(16.0),

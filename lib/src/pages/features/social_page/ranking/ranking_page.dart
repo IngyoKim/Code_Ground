@@ -29,7 +29,6 @@ class _RankingPageState extends State<RankingPage> {
   }
 
   /// 초기 데이터 로딩
-  /// 초기 데이터 로딩
   Future<void> _initializePage() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final progressViewModel =
@@ -53,7 +52,9 @@ class _RankingPageState extends State<RankingPage> {
         progressViewModel.rankings,
         () {
           if (mounted) {
-            setState(() {}); // UI 업데이트
+            setState(() {});
+
+            /// UI 업데이트
           }
         },
       );
@@ -110,7 +111,7 @@ class _RankingPageState extends State<RankingPage> {
       body: _isInitialLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.only(top: 8.0), // 상단에 8픽셀 간격 추가
+              padding: const EdgeInsets.only(top: 8.0),
               child: ListView.builder(
                 controller: _scrollController,
                 itemCount: rankings.length + 1,
