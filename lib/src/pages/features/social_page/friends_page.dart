@@ -53,7 +53,9 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
             updatedFriendsList.add({
               'nickname': userData.nickname,
               'friendCode': friendCode,
-              'uid': uid, // 친구의 UID 추가
+              'uid': uid,
+
+              /// 친구의 UID 추가
             });
           } else {
             updatedFriendsList.add({
@@ -166,7 +168,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
                         final uid = friend['uid'] ?? '';
 
                         return ListTile(
-                          title: Text('$nickname'),
+                          title: Text(nickname),
                           onTap: () {
                             UserDetailPage.show(context, uid);
                           },
