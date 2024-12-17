@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   const Text(
-                    'Select a Category',
+                    '카테고리를 선택해주세요',
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.w600,

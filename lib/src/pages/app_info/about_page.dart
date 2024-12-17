@@ -109,7 +109,7 @@ class _AboutPageState extends State<AboutPage> {
               ),
               const SizedBox(height: 8),
               const Text(
-                '버전: 1.8.4',
+                '버전: 1.0.4',
                 style: TextStyle(
                   fontSize: 16.0,
                 ),

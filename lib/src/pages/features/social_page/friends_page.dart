@@ -88,7 +88,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
       try {
         await userViewModel.addFriend(inputText);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Friend added: $inputText')),
+          SnackBar(content: Text('친구가 추가 되었습니다.: $inputText')),
         );
         _controller.clear();
         _fetchFriends();
@@ -99,7 +99,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid friend code')),
+        const SnackBar(content: Text('유효한 친구코드를 넣어주세요.')),
       );
     }
   }
@@ -114,7 +114,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        title: const Text('Add Friend'),
+        title: const Text('친구 추가'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -130,7 +130,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Text(
-                'My Friend Code: $_myFriendCode',
+                '나의 친구 코드: $_myFriendCode',
                 style: const TextStyle(
                     fontSize: 16.0, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
@@ -139,7 +139,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
             TextField(
               controller: _controller,
               decoration: const InputDecoration(
-                labelText: 'Enter Friend Code',
+                labelText: '친구 코드 입력',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -150,14 +150,14 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
                 backgroundColor: Colors.grey[200],
               ),
               child: const Text(
-                'Add Friend',
+                '친구 추가',
                 style: TextStyle(color: Colors.black),
               ),
             ),
             const SizedBox(height: 16.0),
             Expanded(
               child: friends.isEmpty
-                  ? const Center(child: Text('No friends added yet.'))
+                  ? const Center(child: Text('아직 친구가 없습니다.'))
                   : ListView.builder(
                       itemCount: _friendsList.length,
                       itemBuilder: (context, index) {

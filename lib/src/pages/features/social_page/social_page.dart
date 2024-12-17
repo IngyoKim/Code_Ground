@@ -44,7 +44,7 @@ class _SocialPageState extends State<SocialPage>
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        title: const Text("Social"),
+        title: const Text("소셜"),
         actions: [
           if (_tabController.index == 1) // Friends 탭이 선택되었을 때만 아이콘 표시
             IconButton(
@@ -63,8 +63,8 @@ class _SocialPageState extends State<SocialPage>
           labelColor: Colors.black,
           unselectedLabelColor: Colors.grey,
           tabs: const [
-            Tab(text: "Ranking"),
-            Tab(text: "Friends"),
+            Tab(text: "랭킹"),
+            Tab(text: "친구"),
           ],
         ),
       ),
