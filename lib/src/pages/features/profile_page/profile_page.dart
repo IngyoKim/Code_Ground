@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/models/level_data.dart';
@@ -136,6 +137,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                           decoration: const InputDecoration(
                                             hintText: 'Enter new nickname',
                                           ),
+                                          inputFormatters: [
+                                            LengthLimitingTextInputFormatter(
+                                              12,
+                                            ),
+                                          ],
                                         ),
                                       )
                                     : Text(
@@ -242,7 +248,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const QuestionStatePage(
-                                      state: 'successed'),
+                                    state: 'successed',
+                                  ),
                                 ),
                               );
                             },
@@ -253,19 +260,20 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: Text(
                                 'Solved Questions',
                                 style: TextStyle(
-                                    fontSize: 12, color: Colors.black),
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
                                 textAlign: TextAlign.center,
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Colors.grey[200], // 버튼 바탕색: 옅은 회색
+                              backgroundColor: Colors.grey[200],
                               padding:
                                   const EdgeInsets.symmetric(vertical: 12.0),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 10), // 버튼 사이 간격
+                        const SizedBox(width: 10),
                         Expanded(
                           child: ElevatedButton.icon(
                             onPressed: () {
@@ -288,8 +296,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Colors.grey[200], // 버튼 바탕색: 옅은 회색
+                              backgroundColor: Colors.grey[200],
                               padding:
                                   const EdgeInsets.symmetric(vertical: 12.0),
                             ),
