@@ -138,9 +138,9 @@ class HomePage extends StatelessWidget {
                       await questionViewModel.fetchQuestions(
                           category: category['name']);
 
-                      // 질문 페이지로 이동
+                      /// 질문 페이지로 이동
                       Navigator.push(
-                        // ignore: use_build_context_synchronously
+                        /// ignore: use_build_context_synchronously
                         context,
                         MaterialPageRoute(
                           builder: (context) => const QuestionListPage(),
