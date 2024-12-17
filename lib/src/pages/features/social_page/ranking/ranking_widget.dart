@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:code_ground/src/models/progress_data.dart';
 import 'package:code_ground/src/view_models/user_view_model.dart';
+import 'package:code_ground/src/pages/features/profile_page/user_detail_page.dart';
 
 class RankingWidget extends StatefulWidget {
   final ProgressData rankingData;
@@ -54,62 +55,67 @@ class _RankingWidgetState extends State<RankingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          /// 등수
-          SizedBox(
-            width: 40,
-            child: CircleAvatar(
-              backgroundColor: _getRankColor(widget.rank),
-              child: Text(
-                '#${widget.rank}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () {
+        UserDetailPage.show(context, widget.rankingData.uid);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            /// 등수
+            SizedBox(
+              width: 40,
+              child: CircleAvatar(
+                backgroundColor: _getRankColor(widget.rank),
+                child: Text(
+                  '#${widget.rank}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 16),
+            const SizedBox(width: 16),
 
-          /// 티어 이미지
-          Image.asset(
-            getTierImage(widget.rankingData.tier),
-            width: 48,
-            height: 48,
-          ),
-          const SizedBox(width: 16),
-
-          /// 이름과 경험치, 스코어
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// 이름
-                Text(
-                  nickname ?? 'Loading...',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 4),
-
-                /// 경험치와 스코어
-                Text(
-                  'Exp: ${widget.rankingData.exp}\nScore: ${widget.rankingData.score}',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
+            /// 티어 이미지
+            Image.asset(
+              getTierImage(widget.rankingData.tier),
+              width: 48,
+              height: 48,
             ),
-          ),
-        ],
+            const SizedBox(width: 16),
+
+            /// 이름과 경험치, 스코어
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// 이름
+                  Text(
+                    nickname ?? 'Loading...',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+
+                  /// 경험치와 스코어
+                  Text(
+                    'Exp: ${widget.rankingData.exp}\nScore: ${widget.rankingData.score}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -20,7 +20,6 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  final bool _notificationsEnabled = true;
   bool _isInfoExpanded = false;
 
   late TextEditingController _nicknameController;
