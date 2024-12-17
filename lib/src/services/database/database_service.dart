@@ -57,8 +57,9 @@ class DatabaseService {
     Query? query,
   }) async {
     try {
-      final Query finalQuery =
-          query ?? database.ref(path); // Query가 없으면 기본 Query 사용
+      final Query finalQuery = query ?? database.ref(path);
+
+      /// Query가 없으면 기본 Query 사용
       final snapshot = await finalQuery.get();
 
       if (snapshot.exists) {
