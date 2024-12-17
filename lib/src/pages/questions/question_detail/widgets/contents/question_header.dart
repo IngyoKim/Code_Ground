@@ -120,6 +120,8 @@ class _QuestionHeaderState extends State<QuestionHeader> {
               widget.question.description,
               style: const TextStyle(fontSize: 16),
             ),
+            const SizedBox(height: 16),
+            const Divider(),
           ],
         );
       },
