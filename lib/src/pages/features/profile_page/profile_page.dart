@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:code_ground/src/pages/features/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -247,15 +246,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             onPressed: () {
                               Navigator.push(
                                 context,
-                                PageRouteBuilder(
-                                  pageBuilder: (context, animation,
-                                          secondaryAnimation) =>
-                                      HomePage(),
-                                  transitionsBuilder: (context, animation,
-                                      secondaryAnimation, child) {
-                                    return FadeTransition(
-                                        opacity: animation, child: child);
-                                  },
+                                MaterialPageRoute(
+                                  builder: (context) => const QuestionStatePage(
+                                      state: 'successed'),
                                 ),
                               );
                             },
