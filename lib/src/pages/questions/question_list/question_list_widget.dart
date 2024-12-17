@@ -17,7 +17,9 @@ class QuestionListWidget extends StatelessWidget {
   IconData? _getLeadingIcon(String? state) {
     if (state == 'successed') return Icons.check_circle;
     if (state == 'failed') return Icons.cancel;
-    return Icons.help_outline; // 디폴트 아이콘
+    return Icons.help_outline;
+
+    /// 디폴트 아이콘
   }
 
   Color _getIconColor(String? state) {
@@ -56,7 +58,7 @@ class QuestionListWidget extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 상태 아이콘
+              /// 상태 아이콘
               Icon(
                 leadingIcon,
                 color: iconColor,
@@ -64,7 +66,7 @@ class QuestionListWidget extends StatelessWidget {
               ),
               const SizedBox(width: 16),
 
-              // 제목과 언어 목록
+              /// 제목과 언어 목록
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +91,7 @@ class QuestionListWidget extends StatelessWidget {
                 ),
               ),
 
-              // 티어 이미지 (배경 제거)
+              /// 티어 이미지 (배경 제거)
               Image.asset(
                 _getTierImagePath(question.tier),
                 width: 36,
