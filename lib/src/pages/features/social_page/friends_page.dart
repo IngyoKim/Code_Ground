@@ -163,11 +163,10 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
                       itemBuilder: (context, index) {
                         final friend = _friendsList[index];
                         final nickname = friend['nickname'] ?? 'Unknown';
-                        final friendCode = friend['friendCode'] ?? 'Unknown';
                         final uid = friend['uid'] ?? '';
 
                         return ListTile(
-                          title: Text('$nickname ($friendCode)'),
+                          title: Text('$nickname'),
                           onTap: () {
                             UserDetailPage.show(context, uid);
                           },

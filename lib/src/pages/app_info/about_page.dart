@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:code_ground/src/utils/toast_message.dart'; // ToastMessage 추가
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
