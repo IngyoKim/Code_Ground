@@ -127,7 +127,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 내 친구 코드 표시
+            /// 내 친구 코드 표시
             Container(
               margin: const EdgeInsets.only(bottom: 16.0),
               padding: const EdgeInsets.all(16.0),
