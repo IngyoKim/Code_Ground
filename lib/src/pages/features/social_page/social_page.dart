@@ -52,7 +52,8 @@ class _SocialPageState extends State<SocialPage>
               onPressed: () async {
                 // 여기에 버튼 동작을 추가
                 final inviteUrl = await createCustomLink(userData!.uid);
-                await kakaoMessaging.shareContent(userData.nickname, inviteUrl);
+                await kakaoMessaging.shareContent(
+                    userData.nickname, inviteUrl, userData.friendCode);
               },
             ),
         ],
