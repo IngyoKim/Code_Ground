@@ -88,7 +88,9 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
 
     if (inputText.isNotEmpty) {
       try {
-        await userViewModel.addFriend(inputText); // 친구 추가 메서드 호출
+        await userViewModel.addFriend(inputText);
+
+        /// 친구 추가 메서드 호출
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Friend added: $inputText')),
         );
