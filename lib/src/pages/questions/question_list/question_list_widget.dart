@@ -26,6 +26,13 @@ class QuestionListWidget extends StatelessWidget {
     return Colors.grey;
   }
 
+  String _getTierImagePath(String tier) {
+    if (tier == 'Diamond') {
+      return 'assets/images/Dia.png';
+    }
+    return 'assets/images/$tier.png';
+  }
+
   @override
   Widget build(BuildContext context) {
     final questionState = context
@@ -78,22 +85,18 @@ class QuestionListWidget extends StatelessWidget {
                 ),
               ),
 
-              // 티어 배지
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Text(
-                  question.tier,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              // 티어 이미지
+              Image.asset(
+                _getTierImagePath(question.tier),
+                width: 32, // 이미지 너비
+                height: 32, // 이미지 높이
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.image_not_supported,
+                    size: 32,
+                    color: Colors.grey,
+                  ); // 이미지가 없을 경우 대체 아이콘 표시
+                },
               ),
             ],
           ),
