@@ -20,7 +20,7 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  bool _notificationsEnabled = true;
+  final bool _notificationsEnabled = true;
   bool _isInfoExpanded = false;
 
   late TextEditingController _nicknameController;
@@ -47,7 +47,7 @@ class _SettingPageState extends State<SettingPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
@@ -55,7 +55,7 @@ class _SettingPageState extends State<SettingPage> {
           // Your Info Section
           ListTile(
             title: Text(
-              'Your INFO',
+              '나의 정보',
               style: const TextStyle(
                 fontSize: 20.0,
               ),
@@ -81,7 +81,7 @@ class _SettingPageState extends State<SettingPage> {
             Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: Text(
-                'admin 권한: ${widget.role}',
+                '역할: ${widget.role}',
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
@@ -95,24 +95,6 @@ class _SettingPageState extends State<SettingPage> {
             ),
             const SizedBox(height: 16.0),
           ],
-          const Divider(),
-
-          ListTile(
-            title: Text(
-              'Notifications',
-              style: const TextStyle(
-                fontSize: 20.0,
-              ),
-            ),
-            trailing: Switch(
-              value: _notificationsEnabled,
-              onChanged: (bool value) {
-                setState(() {
-                  _notificationsEnabled = value;
-                });
-              },
-            ),
-          ),
           const Divider(),
         ],
       ),

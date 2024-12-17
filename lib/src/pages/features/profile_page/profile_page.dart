@@ -136,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         child: TextField(
                                           controller: _nicknameController,
                                           decoration: const InputDecoration(
-                                            hintText: 'Enter new nickname',
+                                            hintText: '새로운 닉네임',
                                           ),
                                           inputFormatters: [
                                             LengthLimitingTextInputFormatter(
@@ -234,7 +234,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   children: [
                     const Text(
-                      'Questions Status',
+                      '문제 풀이 현황',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
@@ -264,7 +264,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             label: const FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                'Solved Questions',
+                                '푼 문제',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.black,
@@ -295,7 +295,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             label: const FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                'Failed Questions',
+                                '실패한 문제',
                                 style: TextStyle(
                                     fontSize: 12, color: Colors.black),
                                 textAlign: TextAlign.center,
