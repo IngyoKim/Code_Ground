@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Logo and title
+            /// Logo and title
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
@@ -107,7 +107,7 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 25),
 
-            // Scrollable menu list
+            /// Scrollable menu list
             Expanded(
               child: ListView.builder(
                 itemCount: categories.length,
@@ -130,15 +130,15 @@ class HomePage extends StatelessWidget {
                           context,
                           listen: false);
 
-                      // 카테고리 선택 및 상태 초기화
+                      /// 카테고리 선택 및 상태 초기화
                       categoryViewModel.selectCategory(
                           category['name'], questionViewModel);
 
-                      // 새로운 질문 데이터를 로드
+                      /// 새로운 질문 데이터를 로드
                       await questionViewModel.fetchQuestions(
                           category: category['name']);
 
-                      // 질문 페이지로 이동
+                      /// 질문 페이지로 이동
                       Navigator.push(
                         // ignore: use_build_context_synchronously
                         context,
