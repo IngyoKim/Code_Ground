@@ -18,18 +18,18 @@ class QuestionHeader extends StatefulWidget {
 }
 
 class _QuestionHeaderState extends State<QuestionHeader> {
-  bool _isHintLoading = false; // 버튼 로딩 상태
-  bool _hasWatchedAd = false; // 광고 시청 상태
+  bool _isHintLoading = false;
+  bool _hasWatchedAd = false;
 
   void _fetchHint(RewardedAdService rewardedAdService) async {
-    if (_hasWatchedAd) return; // 광고를 이미 봤으면 동작하지 않음
+    if (_hasWatchedAd) return;
 
-    setState(() => _isHintLoading = true); // 로딩 시작
+    setState(() => _isHintLoading = true);
 
     try {
       if (rewardedAdService.isAdReady) {
         rewardedAdService.showRewardedAd(onRewardEarned: () {
-          setState(() => _hasWatchedAd = true); // 광고 시청 완료 상태 설정
+          setState(() => _hasWatchedAd = true);
           ToastMessage.show('광고 시청 완료! 힌트를 확인하세요.');
         });
       } else {
