@@ -50,7 +50,7 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
 
       if (uid != null && friendCode != null) {
         try {
-          // UID로 닉네임 가져오기
+          /// UID로 닉네임 가져오기
           final userData = await _userManager.readUserData(uid);
           if (userData != null) {
             updatedFriendsList.add({
