@@ -6,7 +6,6 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'package:code_ground/app.dart';
 import 'package:code_ground/firebase_options.dart';
-import 'package:code_ground/src/services/messaging/notifications.dart';
 
 void main() async {
   /// Initializes the Flutter core engine.
@@ -18,10 +17,6 @@ void main() async {
 
   /// Initializes AdMob
   MobileAds.instance.initialize();
-
-  await FlutterLocalNotification.init();
-  await FlutterLocalNotification.requestNotificationPermission();
-  FlutterLocalNotification.scheduleDailyCheck();
 
   /// Initializes the Flutter core engine.
   runApp(const App());
