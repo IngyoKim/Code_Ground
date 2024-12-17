@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 Widget objectiveSubmit({
   required BuildContext context,
   required List<String> answerList,
-  required ValueChanged<String?> onAnswerSelected, // String?로 변경
+  required ValueChanged<String?> onAnswerSelected,
   required VoidCallback onSubmit,
-  String? selectedAnswer, // 현재 선택된 답안
+  String? selectedAnswer,
 }) {
   // 선지들을 랜덤으로 섞기
   final shuffledChoices = List<String>.from(answerList)..shuffle(Random());
@@ -21,7 +21,7 @@ Widget objectiveSubmit({
       const SizedBox(height: 8),
       ...shuffledChoices.map(
         (choice) {
-          final isSelected = choice == selectedAnswer; // 선택된 상태인지 확인
+          final isSelected = choice == selectedAnswer;
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: ElevatedButton(

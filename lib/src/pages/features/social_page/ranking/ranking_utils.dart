@@ -1,3 +1,4 @@
+import 'package:code_ground/src/models/progress_data.dart';
 import 'package:code_ground/src/utils/paging/paging_controller.dart';
 
 class RankingUtils<T> {
@@ -17,23 +18,25 @@ class RankingUtils<T> {
     _isAdding = true;
 
     try {
-      final List<T> itemsToAdd =
-          newItems.where((item) => !_visibleItems.contains(item)).toList();
-      for (var item in itemsToAdd) {
-        _visibleItems.add(item);
-        refreshCallback(); // UI 갱신
-        await Future.delayed(const Duration(milliseconds: 200)); // 애니메이션 효과
+      for (var item in newItems) {
+        if (!_visibleItems.any((existing) => _isSameItem(existing, item))) {
+          _visibleItems.add(item);
+          refreshCallback();
+          await Future.delayed(const Duration(milliseconds: 200));
+        }
       }
     } finally {
       _isAdding = false;
     }
   }
 
-  /// 데이터를 즉시 추가
+  /// 데이터를 즉시 추가 (중복 체크 포함)
   void addItems(List<T> newItems) {
-    final List<T> itemsToAdd =
-        newItems.where((item) => !_visibleItems.contains(item)).toList();
-    _visibleItems.addAll(itemsToAdd);
+    for (var item in newItems) {
+      if (!_visibleItems.any((existing) => _isSameItem(existing, item))) {
+        _visibleItems.add(item);
+      }
+    }
   }
 
   /// 데이터 초기화
@@ -58,5 +61,13 @@ class RankingUtils<T> {
       addItems(pagingController.items);
       refreshCallback();
     }
+  }
+
+  /// 중복 여부를 확인하는 메서드
+  bool _isSameItem(T a, T b) {
+    if (a is ProgressData && b is ProgressData) {
+      return a.uid == b.uid;
+    }
+    return a == b;
   }
 }
