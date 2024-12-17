@@ -19,7 +19,9 @@ class _RegistrateFriendsState extends State<RegistrateFriends> {
   @override
   void initState() {
     super.initState();
-    _fetchFriends(); // 초기 친구 목록 로드
+    _fetchFriends();
+
+    /// 초기 친구 목록 로드
     _fetchMyFriendCode(); // 내 친구 코드 로드
   }
 
