@@ -118,7 +118,7 @@ class _RankingWidgetState extends State<RankingWidget> {
   Color _getRankColor(int rank) {
     switch (rank) {
       case 1:
-        return Colors.amber; // 금색
+        return Colors.amber;
       case 2:
         return Colors.grey; // 은색
       case 3:
