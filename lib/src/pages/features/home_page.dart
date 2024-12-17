@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// Logo and title
+            // Logo and title
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
@@ -61,7 +61,7 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // "Select a Category" with Fixed Add Button
+            /// "Select a Category" with Fixed Add Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
