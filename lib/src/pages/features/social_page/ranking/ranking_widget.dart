@@ -75,7 +75,7 @@ class _RankingWidgetState extends State<RankingWidget> {
           ),
           const SizedBox(width: 16),
 
-          // 티어 이미지
+          /// 티어 이미지
           Image.asset(
             getTierImage(widget.rankingData.tier),
             width: 48,
