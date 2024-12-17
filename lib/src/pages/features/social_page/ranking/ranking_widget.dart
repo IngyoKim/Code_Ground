@@ -120,7 +120,7 @@ class _RankingWidgetState extends State<RankingWidget> {
       case 1:
         return Colors.amber;
       case 2:
-        return Colors.grey; // 은색
+        return Colors.grey;
       case 3:
         return Colors.brown; // 동색
       default:
