@@ -122,7 +122,7 @@ class _RankingWidgetState extends State<RankingWidget> {
       case 2:
         return Colors.grey;
       case 3:
-        return Colors.brown; // 동색
+        return Colors.brown;
       default:
         return const Color.fromARGB(255, 89, 89, 89); // 기본 색상
     }
