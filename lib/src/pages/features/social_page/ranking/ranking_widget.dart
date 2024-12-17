@@ -88,7 +88,7 @@ class _RankingWidgetState extends State<RankingWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 이름
+                /// 이름
                 Text(
                   nickname ?? 'Loading...',
                   style: const TextStyle(
