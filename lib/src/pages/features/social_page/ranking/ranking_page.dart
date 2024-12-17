@@ -110,7 +110,7 @@ class _RankingPageState extends State<RankingPage> {
       body: _isInitialLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.only(top: 8.0), // 상단에 8픽셀 간격 추가
+              padding: const EdgeInsets.only(top: 8.0),
               child: ListView.builder(
                 controller: _scrollController,
                 itemCount: rankings.length + 1,
