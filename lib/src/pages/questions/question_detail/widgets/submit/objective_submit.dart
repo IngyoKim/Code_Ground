@@ -39,9 +39,17 @@ Widget objectiveSubmit({
         },
       ),
       const SizedBox(height: 16),
-      ElevatedButton(
-        onPressed: onSubmit, // 제출 버튼
-        child: const Text('Submit Answer'),
+      Center(
+        child: ElevatedButton(
+          onPressed: onSubmit, // 제출 버튼
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey[200],
+          ),
+          child: const Text(
+            'Submit Answer',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
       ),
     ],
   );

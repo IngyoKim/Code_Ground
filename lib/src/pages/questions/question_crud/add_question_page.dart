@@ -209,7 +209,13 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
           const SizedBox(height: 40),
           ElevatedButton(
             onPressed: _submitQuestion,
-            child: const Text('Submit'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey[200],
+            ),
+            child: const Text(
+              'Submit',
+              style: TextStyle(color: Colors.black),
+            ),
           ),
         ],
       ),
