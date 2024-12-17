@@ -46,7 +46,7 @@ class _AboutPageState extends State<AboutPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'App Name',
+                '앱 이름',
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
@@ -63,7 +63,7 @@ class _AboutPageState extends State<AboutPage> {
               const Divider(),
               const SizedBox(height: 8),
               const Text(
-                'Developer Information',
+                '개발자 정보',
                 style: TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold,
@@ -101,7 +101,7 @@ class _AboutPageState extends State<AboutPage> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Version Information',
+                '버전 정보',
                 style: TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold,
@@ -109,20 +109,10 @@ class _AboutPageState extends State<AboutPage> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Version: 1.0.0\n'
-                'Build: 100',
+                '버전: 1.8.4',
                 style: TextStyle(
                   fontSize: 16.0,
                 ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // Display messages through ToastMessage
-                  ToastMessage.show(
-                      'Open in browser functionality can be added.');
-                },
-                child: const Text('Visit Website'),
               ),
             ],
           ),
