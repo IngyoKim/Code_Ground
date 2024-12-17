@@ -38,10 +38,12 @@ class CodeSnippetInput extends StatelessWidget {
             final snippet = snippetController.text.trim();
             if (snippet.isNotEmpty) {
               if (category == 'Sequencing') {
-                // Sequencing: 'i0', 'i1', 'i2' 형식으로 키 값 생성
+                /// Sequencing: 'i0', 'i1', 'i2' 형식으로 키 값 생성
                 final key = 'i${codeSnippets.length}';
                 onAddSnippet(key, snippet);
-                _reorderKeys(); // 키 재정렬
+                _reorderKeys();
+
+                /// 키 재정렬
               } else {
                 if (codeSnippets.containsKey(selectedLanguage)) {
                   ToastMessage.show(
