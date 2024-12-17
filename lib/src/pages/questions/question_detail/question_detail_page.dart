@@ -168,7 +168,9 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
                         selectedLanguage: _selectedLanguage!,
                       ),
                     ],
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
+                    const Divider(),
+                    const SizedBox(height: 16),
                     if (question.questionType == 'Subjective')
                       subjectiveSubmit(
                         context: context,
