@@ -52,7 +52,9 @@ class _RankingPageState extends State<RankingPage> {
         progressViewModel.rankings,
         () {
           if (mounted) {
-            setState(() {}); // UI 업데이트
+            setState(() {});
+
+            /// UI 업데이트
           }
         },
       );
