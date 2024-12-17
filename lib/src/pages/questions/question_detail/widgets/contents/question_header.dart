@@ -114,6 +114,8 @@ class _QuestionHeaderState extends State<QuestionHeader> {
               widget.writer?.nickname ?? 'unknown',
             ),
             const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 16),
             Text(
               widget.question.description,
               style: const TextStyle(fontSize: 16),
