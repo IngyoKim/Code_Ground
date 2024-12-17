@@ -1,8 +1,9 @@
-//임시 위치임. utils로 옮길 예정
 String getTierImage(String? tier) {
   switch (tier) {
     case 'Bronze':
-      return 'assets/images/Bronze.png'; // 수정된 파일 이름
+      return 'assets/images/Bronze.png';
+
+    /// Modified File Name
     case 'Silver':
       return 'assets/images/Silver.png';
     case 'Gold':
@@ -16,6 +17,8 @@ String getTierImage(String? tier) {
     case 'Grand Master':
       return 'assets/images/GrandMaster.png';
     default:
-      return 'assets/images/Default.png'; // 기본 이미지
+      return 'assets/images/Default.png';
+
+    /// default image
   }
 }
