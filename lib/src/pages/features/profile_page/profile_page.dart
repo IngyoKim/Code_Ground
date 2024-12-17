@@ -167,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                const SizedBox(width: 8), // 간격 추가
+                                const SizedBox(width: 8),
                                 if (!_isEditingNickname)
                                   IconButton(
                                     icon: const Icon(Icons.edit),
@@ -197,7 +197,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
 
-                        // 티어 이미지와 정보
+                        
                         Column(
                           children: [
                             Image.asset(
