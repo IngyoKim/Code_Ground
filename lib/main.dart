@@ -20,6 +20,4 @@ void main() async {
 
   /// Initializes the Flutter core engine.
   runApp(const App());
-
-  //
 }
