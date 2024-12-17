@@ -44,67 +44,67 @@ class QuestionListWidget extends StatelessWidget {
     final iconColor = _getIconColor(questionState);
 
     return GestureDetector(
-      onTap: onTap, // 페이지 이동 기능
-      child: Column(
-        children: [
-          const Divider(height: 1, thickness: 1), // 상단 구분선
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            color: Colors.transparent, // 배경 없애기
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // 상태 아이콘
-                Icon(
-                  leadingIcon,
-                  color: iconColor,
-                  size: 28,
-                ),
-                const SizedBox(width: 12),
+      onTap: onTap,
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // 상태 아이콘
+              Icon(
+                leadingIcon,
+                color: iconColor,
+                size: 32,
+              ),
+              const SizedBox(width: 16),
 
-                // 제목과 언어 목록
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        question.title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
+              // 제목과 언어 목록
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      question.title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        question.languages.join(', '),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      question.languages.join(', '),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.blueGrey,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+              ),
 
-                // 티어 이미지
-                Image.asset(
-                  _getTierImagePath(question.tier),
-                  width: 32, // 이미지 너비
-                  height: 32, // 이미지 높이
-                  errorBuilder: (context, error, stackTrace) {
-                    return const Icon(
-                      Icons.image_not_supported,
-                      size: 32,
-                      color: Colors.grey,
-                    ); // 이미지가 없을 경우 대체 아이콘 표시
-                  },
-                ),
-              ],
-            ),
+              // 티어 이미지 (배경 제거)
+              Image.asset(
+                _getTierImagePath(question.tier),
+                width: 36,
+                height: 36,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.image_not_supported,
+                    size: 36,
+                    color: Colors.grey,
+                  );
+                },
+              ),
+            ],
           ),
-          const Divider(height: 1, thickness: 1), // 하단 구분선
-        ],
+        ),
       ),
     );
   }
