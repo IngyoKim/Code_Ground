@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Logo and title
+            /// Logo and title
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
