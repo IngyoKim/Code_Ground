@@ -7,7 +7,7 @@ import 'package:code_ground/src/view_models/user_view_model.dart';
 import 'package:code_ground/src/view_models/progress_view_model.dart';
 
 class UserDetailPage {
-// ignore_for_file: use_build_context_synchronously
+  /// ignore_for_file: use_build_context_synchronously
   static void show(BuildContext context, String uid) {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
     final progressViewModel =
