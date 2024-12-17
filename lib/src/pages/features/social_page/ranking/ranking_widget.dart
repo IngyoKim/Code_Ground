@@ -59,7 +59,7 @@ class _RankingWidgetState extends State<RankingWidget> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 등수
+          /// 등수
           SizedBox(
             width: 40,
             child: CircleAvatar(
